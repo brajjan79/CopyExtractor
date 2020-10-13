@@ -15,7 +15,7 @@ public class ConfigFactory {
     }
 
     public static Configuration createFromConfigFilePath(final String configFilePath) {
-        final JsonObject jsonConfig = ConfigFile.readConfigurationFile(configFilePath);
+        final JsonObject jsonConfig = ConfigFileUtil.readConfigurationFile(configFilePath);
         ConfigurationValidator.validate(jsonConfig);
         return createConfiguration(jsonConfig);
     }

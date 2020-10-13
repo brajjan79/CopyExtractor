@@ -5,35 +5,34 @@ import java.io.File;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.stage.FileChooser;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.input.KeyEvent;
+//import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.VBox;
+//import javafx.scene.layout.BorderPane;
+//import javafx.scene.layout.Pane;
+//import javafx.scene.layout.Priority;
+//import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
+//import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
+//import javafx.scene.shape.Rectangle;
+//import javafx.scene.text.Font;
+//import javafx.scene.text.FontPosture;
+//import javafx.scene.text.FontWeight;
+//import javafx.scene.text.Text;
 
 public class Gui extends Application {
 
     @Override
     public void start(final Stage primaryStage) {
         try {
-            final BorderPane root = new BorderPane();
+            //final BorderPane root = new BorderPane();
 
             final Line line = createLine(600.0, 0.0, 600.0, 1200.0);
             final Line line2 = createLine(0.0, 600.0, 600.0, 600.0);
@@ -110,7 +109,7 @@ public class Gui extends Application {
         return line;
     }
 
-    private Text createText(final String message, final int x, final int y, final int size) {
+    /*private Text createText(final String message, final int x, final int y, final int size) {
         final Text text = new Text();
         text.setFont(Font.font("verdana", FontWeight.NORMAL, FontPosture.REGULAR, size));
         text.setX(x);
@@ -130,7 +129,7 @@ public class Gui extends Application {
         circle.setFill(Color.BROWN);
         circle.setStrokeWidth(20);
         return circle;
-    }
+    }*/
 
     private EventHandler<MouseEvent> clickStart(final Button startButton) {
         //Creating the mouse event handler

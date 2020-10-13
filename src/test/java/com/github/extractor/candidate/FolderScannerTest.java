@@ -16,6 +16,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.configuration.Configuration;
+import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.DirHandler;
 
 @RunWith(PowerMockRunner.class)
@@ -182,7 +183,7 @@ public class FolderScannerTest {
      *
      * @throws Throwable
      */
-    @Test(expected = RuntimeException.class)
+    @Test(expected = FolderException.class)
     public void testScanInvalidDir() throws Throwable {
         folderScanner.scanFolders(mock_file_1, outputDir);
     }

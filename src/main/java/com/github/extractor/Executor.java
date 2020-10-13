@@ -9,9 +9,8 @@ import com.github.extractor.candidate.FolderScanner;
 import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.configuration.models.ConfigFolder;
+import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.CopyHandler;
-import com.github.extractor.handlers.DirHandler;
-import com.github.extractor.handlers.FileHandler;
 import com.github.extractor.handlers.RarHandler;
 import com.github.extractor.utils.Dirs;
 
@@ -32,16 +31,18 @@ public class Executor {
     public void scanForCandidates() {
         final FolderScanner folderScanner = new FolderScanner(config);
         for (final ConfigFolder folderItem : config.getFolders()) {
-            folderScanner.scanFolders(new File(folderItem.getInputFolder()),
-                                      new File(folderItem.getOutputFolder()));
+            try {
+                folderScanner.scanFolders(new File(folderItem.getInputFolder()),
+                                          new File(folderItem.getOutputFolder()));
+            } catch (final FolderException e) {
+                e.printStackTrace();
+            }
         }
         candidates = folderScanner.getCandidates();
 
     }
 
     public void copyAndUnrarCandidates() {
-        final FileHandler fileHandler = new FileHandler(config);
-        final DirHandler dirHandler = new DirHandler(fileHandler, config);
 
         int count = 1;
         int errorCount = 0;
@@ -52,7 +53,7 @@ public class Executor {
             count++;
 
             printProcess("Processing folder:", candidate);
-            final boolean success = copyAndUndrarCandidate(dirHandler, candidate);
+            final boolean success = copyAndUnrarCandidate(candidate);
             if (!success) {
                 errorCount++;
             }
@@ -64,7 +65,7 @@ public class Executor {
         }
     }
 
-    private boolean copyAndUndrarCandidate(final DirHandler dirHandler, final Candidate candidate) {
+    private boolean copyAndUnrarCandidate(final Candidate candidate) {
         boolean success = true;
         try {
             Dirs.createDirs(candidate.targetDir);

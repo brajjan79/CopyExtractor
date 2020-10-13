@@ -17,7 +17,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ConfigFactory.class, ConfigFile.class })
+@PrepareForTest({ ConfigFactory.class, ConfigFileUtil.class })
 public class ConfigFactoryTest {
 
     @Test
@@ -37,10 +37,10 @@ public class ConfigFactoryTest {
 
     @Test
     public void testCreateConfigFromFileAllParams() throws Throwable {
-        mockStatic(ConfigFile.class);
+        mockStatic(ConfigFileUtil.class);
         final JsonObject jsonConfig = createJsonConfig();
 
-        doReturn(jsonConfig).when(ConfigFile.class, "readConfigurationFile", "mocked");
+        doReturn(jsonConfig).when(ConfigFileUtil.class, "readConfigurationFile", "mocked");
 
         final JsonObject inputArgs = new JsonObject();
         inputArgs.addProperty("config-file-path", "mocked");

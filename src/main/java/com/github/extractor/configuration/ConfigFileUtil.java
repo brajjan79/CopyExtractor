@@ -16,7 +16,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 
-public class ConfigFile {
+public class ConfigFileUtil {
 
     public static JsonObject readConfigurationFile(final String pathString) {
         final Path path = Paths.get(pathString);

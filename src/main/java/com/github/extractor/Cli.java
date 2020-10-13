@@ -8,6 +8,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.github.extractor.exceptions.HelpGivenException;
 import com.github.extractor.exceptions.InputException;
 import com.google.gson.JsonObject;
 
@@ -22,8 +23,9 @@ public class Cli {
      *
      *
      * @param args - Program input args
+     * @throws HelpGivenException
      */
-    public static JsonObject parseArgs(final String[] args) {
+    public static JsonObject parseArgs(final String[] args) throws HelpGivenException {
         final Options options = addOptions();
         final CommandLine commandLine = parseInputToCommandLine(args, options);
         final JsonObject inputConfig = parseCommandLineInputToJson(commandLine);
@@ -84,11 +86,14 @@ public class Cli {
         return options;
     }
 
-    private static CommandLine parseInputToCommandLine(final String[] args, final Options options) {
+    private static CommandLine parseInputToCommandLine(final String[] args, final Options options) throws HelpGivenException {
         checkForHelpOption(args, options);
         try {
             final CommandLineParser parser = new DefaultParser();
             final CommandLine commandLine = parser.parse(options, args);
+            if (commandLine.getOptions().length < 1) {
+                throw new ParseException("Missing required options!");
+            }
             return commandLine;
         } catch (final ParseException e) {
             System.out.println(e.getMessage());
@@ -97,12 +102,12 @@ public class Cli {
         }
     }
 
-    private static void checkForHelpOption(final String[] args, final Options options) {
+    private static void checkForHelpOption(final String[] args, final Options options) throws HelpGivenException {
         for (final String argument : args) {
             final Boolean containsHelp = argument.equals("--help") || argument.equals("-h");
             if (containsHelp) {
                 writeHelp(options);
-                throw new InputException("Help option was given.");
+                throw new HelpGivenException("Help option was given.");
             }
         }
     }

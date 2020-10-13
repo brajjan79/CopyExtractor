@@ -1,8 +1,6 @@
 package com.github.extractor;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -14,9 +12,6 @@ import com.github.extractor.configuration.ConfigFactory;
 @PrepareForTest({ App.class, Cli.class, ConfigFactory.class })
 public class AppTest {
 
-    @Rule
-    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
-
     @Test
     public void testConstructor() {
         new App();
@@ -24,25 +19,21 @@ public class AppTest {
 
     @Test
     public void systemExitWithHelpArgs() {
-        exit.expectSystemExitWithStatus(1);
         App.main(new String[] {"--help"});
     }
 
-    @Test
+    @Test(expected=RuntimeException.class)
     public void systemExitWithInvalidArgs() {
-        exit.expectSystemExitWithStatus(1);
         App.main(new String[] {"--extract-path", "path"});
     }
 
-    @Test
+    @Test(expected=RuntimeException.class)
     public void systemExitWithNoArgs() {
-        exit.expectSystemExitWithStatus(1);
         App.main(new String[] {});
     }
 
-    @Test
+    @Test(expected=RuntimeException.class)
     public void systemExitWithExecutorError() throws Throwable {
-        exit.expectSystemExitWithStatus(1);
         final Executor mockExecutor = createMockExecutor();
         PowerMockito.doThrow(new RuntimeException()).when(mockExecutor, "run");
         App.main(new String[] {});

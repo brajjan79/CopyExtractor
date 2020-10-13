@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.configuration.Configuration;
+import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.DirHandler;
 import com.github.extractor.handlers.FileHandler;
 
@@ -27,9 +28,9 @@ public class FolderScanner {
         return candidates;
     }
 
-    public void scanFolders(final File inputDir, final File outputDir) {
+    public void scanFolders(final File inputDir, final File outputDir) throws FolderException {
         if (inputDir.isFile()) {
-            throw new RuntimeException("Invalid folder. Folder is file.");
+            throw new FolderException("Folder is not folder.");
         }
 
         createAndAddInputDirCandidate(inputDir, outputDir);
@@ -46,7 +47,7 @@ public class FolderScanner {
         }
     }
 
-    private void scanSubDirectories(final File inputDir, final File outputDir) {
+    private void scanSubDirectories(final File inputDir, final File outputDir) throws FolderException {
         final File[] directories = inputDir.listFiles();
         for (final File dir : directories) {
             if (!dir.isDirectory()) {
@@ -62,7 +63,7 @@ public class FolderScanner {
         }
     }
 
-    private void scanFolderForPossibleCandidates(final File dir, final File outputDir) {
+    private void scanFolderForPossibleCandidates(final File dir, final File outputDir) throws FolderException {
         if (dirHandler.folderHasMultipleFoldersToScan(dir)) {
             handleGroupedDirs(dir, outputDir);
         } else {
@@ -71,7 +72,7 @@ public class FolderScanner {
         }
     }
 
-    private void handleGroupedDirs(final File dir, final File outputDir) {
+    private void handleGroupedDirs(final File dir, final File outputDir) throws FolderException {
         if (config.isRecursive()) {
             if (config.isKeepFolderStructure()) {
                 final File childOutputDir = new File(outputDir, dir.getName());

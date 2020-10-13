@@ -26,7 +26,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ ConfigFile.class, FileWriter.class })
+@PrepareForTest({ ConfigFileUtil.class, FileWriter.class })
 public class ConfigFileTest {
 
     @Rule
@@ -46,14 +46,14 @@ public class ConfigFileTest {
 
     @Test
     public void testConstructor() throws Throwable {
-        new ConfigFile();
+        new ConfigFileUtil();
     }
 
     @Test
     public void testWriteThenReadConfiguration() throws Throwable {
-        ConfigFile.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
+        ConfigFileUtil.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
 
-        final JsonObject configFileJson = ConfigFile.readConfigurationFile(configFilePath.getAbsolutePath());
+        final JsonObject configFileJson = ConfigFileUtil.readConfigurationFile(configFilePath.getAbsolutePath());
 
         final JsonObject expectedJson = (JsonObject) gson.toJsonTree(configuration);
         assertTrue("Loaded configuration file should be the same as saved config file.",
@@ -65,7 +65,7 @@ public class ConfigFileTest {
         final FileWriter mockedFileWriter = mock(FileWriter.class);
         whenNew(FileWriter.class).withAnyArguments().thenReturn(mockedFileWriter);
         doThrow(new JsonIOException("")).when(mockedFileWriter, "write", Mockito.any());
-        ConfigFile.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
+        ConfigFileUtil.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
     }
 
     @Test(expected = WriteAbortedException.class)
@@ -73,18 +73,18 @@ public class ConfigFileTest {
         final FileWriter mockedFileWriter = mock(FileWriter.class);
         whenNew(FileWriter.class).withAnyArguments().thenReturn(mockedFileWriter);
         doThrow(new IOException("")).when(mockedFileWriter, "write", Mockito.any());
-        ConfigFile.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
+        ConfigFileUtil.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
     }
 
     @Test(expected = JsonParseException.class)
     public void testReadThrowsIOException() throws Throwable {
-        ConfigFile.readConfigurationFile(configFilePath.getAbsolutePath() + "/invalid/");
+        ConfigFileUtil.readConfigurationFile(configFilePath.getAbsolutePath() + "/invalid/");
     }
 
     @Test(expected = JsonParseException.class)
     public void testReadThrowsJsonSyntaxException() throws Throwable {
-        ConfigFile.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
+        ConfigFileUtil.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
         whenNew(String.class).withAnyArguments().thenReturn("Some invalid json ' Yes ' in JSON!");
-        ConfigFile.readConfigurationFile(configFilePath.getAbsolutePath());
+        ConfigFileUtil.readConfigurationFile(configFilePath.getAbsolutePath());
     }
 }
