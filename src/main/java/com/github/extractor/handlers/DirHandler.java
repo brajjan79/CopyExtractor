@@ -57,6 +57,10 @@ public class DirHandler {
 
     private int numberOfFoldersOfInterest(final File pathToScan, int count) {
         final File[] directories = pathToScan.listFiles();
+        if (directories == null) {
+            return count;
+        }
+
         for (final File dir : directories) {
             if (!dir.isDirectory()) {
                 continue;
