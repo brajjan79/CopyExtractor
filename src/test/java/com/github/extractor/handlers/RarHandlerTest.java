@@ -175,7 +175,7 @@ public class RarHandlerTest {
         final File file = new File("/path/to/file/file.jpg");
         final File[] fileList = new File[] { file };
 
-        final File dir = PowerMockito.mock(File.class);
+        final File dir = mock(File.class);
         when(dir.listFiles()).thenReturn(fileList);
 
         final boolean result = RarHandler.dirContainsUnrarable(dir);

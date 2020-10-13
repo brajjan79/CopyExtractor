@@ -13,8 +13,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.powermock.api.mockito.PowerMockito;
 
-import com.github.extractor.handlers.RarHandler;
-
 public class DirsTest {
 
     private File mockedDir;
