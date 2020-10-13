@@ -12,8 +12,8 @@ before_install:
   - sudo apt-get install -y openjdk-8-jre
   - PATH=$(echo "$PATH" | sed -e 's/:\/usr\/local\/lib\/jvm\/openjdk11\/bin//')
   - sudo apt-get install -y openjfx
-  - sudo cp -v -u /usr/share/java/openjfx/jre/lib/ext/* /usr/lib/jvm/java-1.8.0-openjdk-amd64/lib
-  - sudo cp -v -u /usr/share/java/openjfx/lib/* /usr/lib/jvm/java-1.8.0-openjdk-amd64/lib
+  #- sudo cp -v -u /usr/share/java/openjfx/jre/lib/ext/* /usr/lib/jvm/java-1.8.0-openjdk-amd64/lib
+  #- sudo cp -v -u /usr/share/java/openjfx/lib/* /usr/lib/jvm/java-1.8.0-openjdk-amd64/lib
   - sudo chmod 777 -R /usr/lib/jvm/java-1.8.0-openjdk-amd64
   - java -version
   - uname -a
