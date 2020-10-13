@@ -8,8 +8,13 @@ env:
 # Run before every job
 before_install:
   - sudo apt-get update
-  - sudo apt-get install -y openjdk-8-jdk
+#  - sudo apt-get install -y openjdk-8-jdk
+  - sudo apt-get install -y openjdk-8-jre
   - PATH=$(echo "$PATH" | sed -e 's/:\/usr\/local\/lib\/jvm\/openjdk11\/bin//')
+  - sudo apt-get install -y openjfx
+  - sudo cp /usr/share/java/openjfx/jre/lib/ext/* /usr/lib/jvm/java-1.8.0-openjdk-amd64/lib
+  - sudo cp /usr/share/java/openjfx/lib/* /usr/lib/jvm/java-1.8.0-openjdk-amd64/lib
+  - sudo chmod 777 -R /usr/lib/jvm/java-1.8.0-openjdk-amd64
   - java -version
   - uname -a
   - chmod +x pom.xml
