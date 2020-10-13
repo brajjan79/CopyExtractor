@@ -9,10 +9,8 @@ env:
 before_install:
   - sudo apt-get update
   - sudo apt-get install -y openjdk-8-jdk
-#  - sudo apt-get install -y openjdk-8-jre
   - PATH=$(echo "$PATH" | sed -e 's/:\/usr\/local\/lib\/jvm\/openjdk11\/bin//')
   - sudo apt-get install -y openjfx
-#  - sudo chmod 777 -R /usr/lib/jvm/java-1.8.0-openjdk-amd64
   - java -version
   - uname -a
   - chmod +x pom.xml
@@ -34,6 +32,6 @@ jobs:
       name: report_coverage
       # Generating test coverage report and publishing to Codacy
       script:
-        - mvn jacoco:prepare-agent test jacoco:report -B
+        - mvn cobertura:cobertura
         - curl -Ls -o codacy-coverage-reporter-assembly.jar https://github.com/codacy/codacy-coverage-reporter/releases/download/6.0.2/codacy-coverage-reporter-6.0.2-assembly.jar
-        - java -jar codacy-coverage-reporter-assembly.jar report -l Java -r target/site/jacoco/jacoco.xml
+        - java -jar codacy-coverage-reporter-assembly.jar report -l Java -r target/site/cobertura/coverage.xml
