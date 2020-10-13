@@ -13,9 +13,6 @@ public class App {
             new Executor(config).run();
         } catch (final HelpGivenException e) {
             System.out.println(e.getMessage());
-        } catch (final Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
         }
 	}
 }

@@ -3,9 +3,8 @@ package com.github.extractor.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.naming.ConfigurationException;
-
 import com.github.extractor.configuration.models.ConfigFolder;
+import com.github.extractor.exceptions.ConfigurationException;
 
 public class Configuration {
 
@@ -72,7 +71,7 @@ public class Configuration {
 
     public List<ConfigFolder> getFolders() {
         if (folders == null)
-            throw new RuntimeException("No folder configuration provided.");
+            throw new ConfigurationException("No folder configuration provided.");
 
         return folders;
     }

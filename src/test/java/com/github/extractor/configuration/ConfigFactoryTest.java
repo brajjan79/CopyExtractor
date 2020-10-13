@@ -6,13 +6,12 @@ import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
-import javax.naming.ConfigurationException;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.github.extractor.exceptions.ConfigurationException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 

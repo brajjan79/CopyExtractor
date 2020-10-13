@@ -1,13 +1,12 @@
 package com.github.extractor.configuration;
 
-import javax.naming.ConfigurationException;
-
+import com.github.extractor.exceptions.ConfigurationException;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 public class ConfigFactory {
 
-    public static Configuration createFromInputArgs(final JsonObject cliOptions) throws ConfigurationException {
+    public static Configuration createFromInputArgs(final JsonObject cliOptions) {
         if (cliOptions.has("config-file-path")) {
             return createFromConfigFilePath(cliOptions.get("config-file-path").getAsString());
         }
@@ -16,7 +15,6 @@ public class ConfigFactory {
 
     public static Configuration createFromConfigFilePath(final String configFilePath) {
         final JsonObject jsonConfig = ConfigFileUtil.readConfigurationFile(configFilePath);
-        ConfigurationValidator.validate(jsonConfig);
         return createConfiguration(jsonConfig);
     }
 

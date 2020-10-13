@@ -16,7 +16,7 @@ public class DirHandler {
     }
 
     public boolean folderHasMultipleFoldersToScan(final File source) {
-        final int count = numberOfFoldersOfInterest(source, 0);
+        final int count = numberOfFoldersOfInterest(source);
         return count > 0;
     }
 
@@ -55,7 +55,8 @@ public class DirHandler {
         return Dirs.getTargetDirName(dir, baseDir);
     }
 
-    private int numberOfFoldersOfInterest(final File pathToScan, int count) {
+    private int numberOfFoldersOfInterest(final File pathToScan) {
+        int count = 0;
         final File[] directories = pathToScan.listFiles();
         if (directories == null) {
             return count;
@@ -74,7 +75,7 @@ public class DirHandler {
                 count = count + 1;
                 continue;
             }
-            count = numberOfFoldersOfInterest(dir, count);
+            count = count + numberOfFoldersOfInterest(dir);
         }
         return count;
     }

@@ -63,10 +63,8 @@ public class Dirs {
         final long currentTime = System.currentTimeMillis();
         final long timeSinceModified = currentTime - lastModified;
 
-        if (timeSinceModified < millisec) {
-            return true;
-        }
-        return false;
+        final boolean isModifiedWithinTimeFrame = timeSinceModified < millisec;
+        return isModifiedWithinTimeFrame;
     }
 
     /**
