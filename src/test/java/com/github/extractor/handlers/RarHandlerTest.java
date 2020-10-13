@@ -2,6 +2,7 @@ package com.github.extractor.handlers;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -31,7 +32,11 @@ public class RarHandlerTest {
 
     @Test
     public void testInit() {
-        new RarHandler();
+        try {
+            new RarHandler();
+        } catch (final Exception e) {
+            fail("Failed to initiate RarHandler");
+        }
     }
 
     @Test
@@ -90,7 +95,7 @@ public class RarHandlerTest {
         final Candidate candidate = new Candidate("name", targetDir);
         candidate.filesToUnrar.add(rarFile);
 
-        final ContentDescription description = PowerMockito.mock(ContentDescription.class);
+        final ContentDescription description = mock(ContentDescription.class);
         description.path = "";
         final List<ContentDescription> descriptions = new ArrayList<>();
         descriptions.add(description);
@@ -98,7 +103,7 @@ public class RarHandlerTest {
         mockStatic(Junrar.class);
         when(Junrar.getContentsDescription(rarFile)).thenReturn(descriptions);
 
-        final File file = PowerMockito.mock(File.class);
+        final File file = mock(File.class);
         when(file.exists()).thenReturn(true);
         whenNew(File.class).withAnyArguments().thenReturn(file);
 
@@ -158,8 +163,8 @@ public class RarHandlerTest {
         final File file = new File("/path/to/file/file.rar");
         final File[] fileList = new File[] { file };
 
-        final File dir = PowerMockito.mock(File.class);
-        PowerMockito.when(dir.listFiles()).thenReturn(fileList);
+        final File dir = mock(File.class);
+        when(dir.listFiles()).thenReturn(fileList);
 
         final boolean result = RarHandler.dirContainsUnrarable(dir);
         assertTrue("Dir contains rar files.", result);
@@ -171,7 +176,7 @@ public class RarHandlerTest {
         final File[] fileList = new File[] { file };
 
         final File dir = PowerMockito.mock(File.class);
-        PowerMockito.when(dir.listFiles()).thenReturn(fileList);
+        when(dir.listFiles()).thenReturn(fileList);
 
         final boolean result = RarHandler.dirContainsUnrarable(dir);
         assertFalse("Dir contains rar files.", result);

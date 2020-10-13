@@ -1,5 +1,7 @@
 package com.github.extractor;
 
+import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -14,12 +16,20 @@ public class AppTest {
 
     @Test
     public void testConstructor() {
-        new App();
+        try {
+            new App();
+        } catch (final Exception e) {
+            fail("Could not initiate App.");
+        }
     }
 
     @Test
     public void systemExitWithHelpArgs() {
-        App.main(new String[] {"--help"});
+        try {
+            App.main(new String[] {"--help"});
+        } catch (final Exception e) {
+            fail("--help arg raised exxception.");
+        }
     }
 
     @Test(expected=RuntimeException.class)
@@ -43,7 +53,11 @@ public class AppTest {
     public void systemExitWithAllWell() throws Throwable {
         final Executor mockExecutor = createMockExecutor();
         PowerMockito.doNothing().when(mockExecutor, "run");
-        App.main(new String[] {});
+        try {
+            App.main(new String[] {});
+        } catch (final Exception e) {
+            fail("Unexpected exception.");
+        }
     }
 
     private Executor createMockExecutor() throws Exception {

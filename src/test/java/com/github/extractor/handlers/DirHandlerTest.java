@@ -61,8 +61,8 @@ public class DirHandlerTest {
 
     @Test
     public void testDirContainsIncludedFileTypes () {
-        PowerMockito.when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
-        PowerMockito.when(fileHandler.isIncludedFileType(Mockito.any())).thenReturn(true);
+        when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
+        when(fileHandler.isIncludedFileType(Mockito.any())).thenReturn(true);
         final File folder = new File("src/test/resources/folder_structure/folder_with_file");
         final boolean result = dirHandler.dirContainsIncludedFileTypes(folder);
         assertTrue("File should be included", result);
@@ -70,8 +70,8 @@ public class DirHandlerTest {
 
     @Test
     public void testDirDoesNotContainsIncludedFileTypes () {
-        PowerMockito.when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
-        PowerMockito.when(fileHandler.isIncludedFileType(Mockito.any())).thenReturn(false);
+        when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
+        when(fileHandler.isIncludedFileType(Mockito.any())).thenReturn(false);
         final File folder = new File("src/test/resources/folder_structure/folder_with_file");
         final boolean result = dirHandler.dirContainsIncludedFileTypes(folder);
         assertFalse("File should not be included", result);
@@ -80,7 +80,7 @@ public class DirHandlerTest {
 
     @Test
     public void tastNumberOfFoldersOfInterest () {
-        PowerMockito.when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
+        when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
         final File folder = new File("src/test/resources/folder_structure");
         final boolean result = dirHandler.folderHasMultipleFoldersToScan(folder);
         assertTrue("Dir should have interesting folders", result);
@@ -88,7 +88,7 @@ public class DirHandlerTest {
 
     @Test
     public void tastNumberOfFoldersOfInterestFalse () {
-        PowerMockito.when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
+        when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
         final File folder = new File("src/test/resources/folder_structure/empty_folder");
         final boolean result = dirHandler.folderHasMultipleFoldersToScan(folder);
         assertFalse("Dir should not have interesting folders", result);

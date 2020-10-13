@@ -1,6 +1,7 @@
 package com.github.extractor.configuration;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.powermock.api.mockito.PowerMockito.doThrow;
 import static org.powermock.api.mockito.PowerMockito.mock;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
@@ -27,7 +28,7 @@ import com.google.gson.JsonParseException;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ ConfigFileUtil.class, FileWriter.class })
-public class ConfigFileTest {
+public class ConfigFileUtilTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -46,7 +47,11 @@ public class ConfigFileTest {
 
     @Test
     public void testConstructor() throws Throwable {
-        new ConfigFileUtil();
+        try {
+            new ConfigFileUtil();           
+        } catch (Exception e) {
+            fail("Failed to initiate ConfigFactory");
+        }
     }
 
     @Test

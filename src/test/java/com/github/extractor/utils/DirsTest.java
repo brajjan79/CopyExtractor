@@ -3,6 +3,7 @@ package com.github.extractor.utils;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.powermock.api.mockito.PowerMockito.when;
 
 import java.io.File;
@@ -11,6 +12,8 @@ import java.io.IOException;
 import org.junit.Before;
 import org.junit.Test;
 import org.powermock.api.mockito.PowerMockito;
+
+import com.github.extractor.handlers.RarHandler;
 
 public class DirsTest {
 
@@ -28,7 +31,11 @@ public class DirsTest {
      */
     @Test
     public void testInit() {
-        new Dirs();
+        try {
+            new Dirs();
+        } catch (final Exception e) {
+            fail("Failed to initiate Dirs");
+        }
     }
 
     @Test

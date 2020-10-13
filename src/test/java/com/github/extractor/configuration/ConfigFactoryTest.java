@@ -3,6 +3,7 @@ package com.github.extractor.configuration;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
@@ -21,7 +22,11 @@ public class ConfigFactoryTest {
 
     @Test
     public void testConstructor() throws Throwable {
-        new ConfigFactory();
+        try {
+            new ConfigFactory();
+        } catch (final Exception e) {
+            fail("Failed to initiate ConfigFactory");
+        }
     }
 
     /**

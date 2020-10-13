@@ -29,8 +29,6 @@ public class FolderScannerTest {
     private File inputDirWithFiles;
 
     private File mock_file_1;
-    private File mock_file_2;
-    private File mock_file_3;
 
     private File outputDir;
 
@@ -197,8 +195,8 @@ public class FolderScannerTest {
         dir_level_3 = PowerMockito.mock(File.class);
 
         mock_file_1 = PowerMockito.mock(File.class);
-        mock_file_2 = PowerMockito.mock(File.class);
-        mock_file_3 = PowerMockito.mock(File.class);
+        final File mock_file_2 = PowerMockito.mock(File.class);
+        final File mock_file_3 = PowerMockito.mock(File.class);
 
         final File[] level_1_list = new File[] { dir_level_2, mock_file_1, mock_file_2 };
         final File[] level_2_list = new File[] { dir_level_3, mock_file_1, mock_file_2, mock_file_3 };

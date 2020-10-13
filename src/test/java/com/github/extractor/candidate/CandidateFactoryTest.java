@@ -15,7 +15,9 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.github.extractor.candidate.models.Candidate;
-import com.github.extractor.handlers.*;
+import com.github.extractor.handlers.DirHandler;
+import com.github.extractor.handlers.FileHandler;
+import com.github.extractor.handlers.RarHandler;
 import com.github.extractor.utils.Dirs;
 
 @RunWith(PowerMockRunner.class)
@@ -30,8 +32,6 @@ public class CandidateFactoryTest {
     private File rarFile_2;
     private File rarFile_3;
     private File subFolder;
-    private File[] rarFolderList;
-    private File[] subFolderList;
     private File sourceDir;
     private File targetDir;
     private File photoFile_1;
@@ -197,8 +197,9 @@ public class CandidateFactoryTest {
         photoFile_1 = new File("/some_folder/photo3.png");
         photoFile_2 = new File("/some_folder/photo3.png");
         photoFile_3 = new File("/some_folder/subFolder/photo3.png");
-        subFolderList = new File[] { rarFile_3, photoFile_3 };
-        rarFolderList = new File[] { rarFile_1, rarFile_2, subFolder, photoFile_1, photoFile_2 };
+
+        final File[] subFolderList = new File[] { rarFile_3, photoFile_3 };
+        final File[] rarFolderList = new File[] { rarFile_1, rarFile_2, subFolder, photoFile_1, photoFile_2 };
 
         when(sourceDir.listFiles()).thenReturn(rarFolderList);
         when(subFolder.listFiles()).thenReturn(subFolderList);
