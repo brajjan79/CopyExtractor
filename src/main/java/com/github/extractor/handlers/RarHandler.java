@@ -64,7 +64,7 @@ public class RarHandler {
         final boolean fileIsFirstOfParts = fileName.contains(".part001.")
                 || fileName.contains(".part01.");
 
-        return !fileName.contains(".part") && fileIsFirstOfParts;
+        return !fileName.contains(".part") || fileIsFirstOfParts;
     }
 
     private static boolean performExtraction(final File file, final File targetDir) {
