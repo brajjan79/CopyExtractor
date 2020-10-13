@@ -1,0 +1,21 @@
+{
+	"copyFiles": [
+		"png"
+	],
+	"ignoredFolders": [
+		"sample"
+	],
+	"includedFolders": [
+		"notes"
+	],
+    "folders": [
+        {
+            "inputFolder": "C:/test",
+            "outputFolder": "C:/test/out"
+        }
+    ],
+    "groupByRegex":"([.2018.])",
+    "keepFolder": false,
+    "keepFolderStructure": false,
+    "recursive": true
+}
