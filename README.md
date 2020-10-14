@@ -11,16 +11,22 @@ suddenly be introduced.
 **CopyExtractor can**:
 
 -   extraxt rar files up to RAR 4
+
 -   copy any files based on the configured file types
+
 -   ignore folders and files user does not want copied or extracted
+
 -   include files or folders that user want to have copied or extracted to the
     same place
 
 **CopyExtractor currently does not support**:
 
 -   copying only
+
 -   configuration via command line only
+
 -   RAR 5
+
 -   zip or anything that is not rar
 
 ## Install
@@ -83,12 +89,19 @@ The configuration file is written in JSON format.
 **Key description:**
 
 -   **copyFiles** List of Strings, Example: `["jpg", "png"]`. File types to scan for and copy.
+
 -   **ignoredFolders** List of Strings, Example: `["sample"]`. Folders or files that will be ignored.
+
 -   **includedFolders** List of Strings, Example: `["info", "description"]`. Folders that will be included and is not considered a normal folder to copy or extract from.
+
 -   **folders** List of Objects, Example `[{"inputFolder":"C:/input", "outputFolder":"C:/output"}]`. List of objects containing keys inputFolder and outputFolder.
+
 -   **groupByRegex** String, Example: `"(?<=[0-9]{4}).*"`. GroupByRegex is a regex that when detected will put multiple found items in the same directory. The example `"(?<=[0-9]{4}).*"` would group all items based on the year and name before year.
+
 -   **keepFolder** boolean, Example: `true`. If **true** files extracted or copied from a folder will be copied or extracted to a folder with the same name. If **false** files will be copied or extracted directly to **outputFolder**.
+
 -   **keepFolderStructure** boolean, Example: `false`. Only affected if recursive is **true**. If **true** files will be extracted and copied to the same structure as the inputFolder has, if **false** files will be copied to outputFolder unless groupByRegex groups the files.
+
 -   **recursive** boolean, Example: `true`. If **false** only files and folders directly in inputFolder will be scanned and folders inside folders will be ignored, unless in includedFolders list. If **true** each folder with multiple folders inside them that contains files that can be copied or unrared is considered an inputFolder.
 
 ```JSON
