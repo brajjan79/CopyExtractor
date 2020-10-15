@@ -43,7 +43,7 @@ public class DirHandler {
         }
 
         final String dirName = dir.getName().toLowerCase();
-        return config.getIncludedFolders().stream().anyMatch(include -> dirName.contains(include));
+        return config.getIncludeFolders().stream().anyMatch(include -> dirName.contains(include));
     }
 
     public String getBaseDir(final File file) {

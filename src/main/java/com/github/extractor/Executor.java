@@ -21,6 +21,7 @@ public class Executor {
 
     public Executor(final Configuration config) {
         this.config = config;
+        System.out.println(config.toString());
     }
 
     public void run() {
@@ -53,7 +54,13 @@ public class Executor {
             count++;
 
             printProcess("Processing folder:", candidate);
-            final boolean success = copyAndUnrarCandidate(candidate);
+            boolean success;
+            if (!config.isDryRun()){
+                success = copyAndUnrarCandidate(candidate);
+            } else {
+                success = true;
+                printDryRun(candidate);
+            }
             if (!success) {
                 errorCount++;
             }
@@ -101,5 +108,14 @@ public class Executor {
                 + " out of " + itemsToProcess + " failed!\n"
                 + "### Please look at the log for more details.";
         System.out.println(message);
+    }
+
+    private void printDryRun(final Candidate candidate) {
+        for (final File file : candidate.filesToUnrar) {
+            System.out.println(String.format("Should have extracted '%s' to folder '%s'", file.getAbsolutePath(), candidate.targetDir));
+        }
+        for (final File file : candidate.filesToCopy) {
+            System.out.println(String.format("Should have copied '%s' to folder '%s'", file.getAbsolutePath(), candidate.targetDir));
+        }
     }
 }

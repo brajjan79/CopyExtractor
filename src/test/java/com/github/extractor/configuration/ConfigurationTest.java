@@ -29,9 +29,9 @@ public class ConfigurationTest {
     public void testDefaults() throws Throwable {
         final Configuration config = new Configuration(null, null, null, folders, null, false, false, false);
 
-        assertTrue("Default fileEndings should be empty.", config.getCopyFiles().isEmpty());
-        assertTrue("Default ignoreList should be empty.", config.getIgnoredFolders().isEmpty());
-        assertTrue("Default includedDirs should be empty.", config.getIncludedFolders().isEmpty());
+        assertTrue("Default fileEndings should be empty.", config.getFileTypes().isEmpty());
+        assertTrue("Default ignoreList should be empty.", config.getIgnored().isEmpty());
+        assertTrue("Default includedDirs should be empty.", config.getIncludeFolders().isEmpty());
 
         assertEquals(folder.toString(), config.getFolders().get(0).toString());
         assertEquals(DEFAULT_GROUP_BY_REGEX, config.getGroupByRegex());
@@ -51,9 +51,9 @@ public class ConfigurationTest {
         includes.add("info");
         final Configuration config = new Configuration(files, ignores, includes, folders, null, false, false, false);
 
-        assertEquals("jpg", config.getCopyFiles().get(0));
-        assertEquals("ignore", config.getIgnoredFolders().get(0));
-        assertEquals("info", config.getIncludedFolders().get(0));
+        assertEquals("jpg", config.getFileTypes().get(0));
+        assertEquals("ignore", config.getIgnored().get(0));
+        assertEquals("info", config.getIncludeFolders().get(0));
     }
 
 

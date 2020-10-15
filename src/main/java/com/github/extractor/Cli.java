@@ -26,7 +26,13 @@ public class Cli {
      * @throws HelpGivenException
      */
     public static JsonObject parseArgs(final String[] args) throws HelpGivenException {
-        final Options options = addOptions();
+        boolean isInputFoldersRequired = false;
+        boolean isConfigRequired = true;
+        if (args.length > 2) {
+            isInputFoldersRequired = true;
+            isConfigRequired = false;
+        }
+        final Options options = addOptions(isConfigRequired, isInputFoldersRequired);
         final CommandLine commandLine = parseInputToCommandLine(args, options);
         final JsonObject inputConfig = parseCommandLineInputToJson(commandLine);
         return inputConfig;
@@ -51,35 +57,54 @@ public class Cli {
         return key;
     }
 
-    private static Options addOptions() {
+    private static Options addOptions(final boolean isConfigRequired, final boolean isInputFoldersRequired) {
         final Options options = new Options();
         final Option configFilePathOption = new Option("f", "config-file-path", VALUE_REQUIRED, "Local path to configuration file.");
-        configFilePathOption.setRequired(false);
+        configFilePathOption.setRequired(isConfigRequired);
         configFilePathOption.setArgName("Config");
         options.addOption(configFilePathOption);
 
         final Option sourceFolderOption = new Option("s", "source-folder", VALUE_REQUIRED, "Folder to extract from.");
-        sourceFolderOption.setRequired(false);
+        sourceFolderOption.setRequired(isInputFoldersRequired);
         sourceFolderOption.setArgName("Source");
         options.addOption(sourceFolderOption);
 
         final Option targetFolderOption = new Option("t", "target-folder", VALUE_REQUIRED, "Folder to extract to.");
-        targetFolderOption.setRequired(false);
+        targetFolderOption.setRequired(isInputFoldersRequired);
         targetFolderOption.setArgName("Target");
         options.addOption(targetFolderOption);
+
+        final Option ignoreOption = new Option("i", "ignore", VALUE_REQUIRED, "Files and or folders to ignore.");
+        ignoreOption.setRequired(false);
+        ignoreOption.setArgName("Ignore");
+        options.addOption(ignoreOption);
+
+        final Option includeOption = new Option("if", "includeFolders", VALUE_REQUIRED, "Folders to include.");
+        includeOption.setRequired(false);
+        includeOption.setArgName("Ignore");
+        options.addOption(includeOption);
 
         final Option recursiceOption = new Option("R", "recursive", VALUE_NOT_REQUIRED, "Extract recursively.");
         recursiceOption.setRequired(false);
         recursiceOption.setArgName("Recursive");
         options.addOption(recursiceOption);
 
-        final Option keepFolderStructureOption = new Option("k", "keep-folder-structure", VALUE_NOT_REQUIRED, "Target dirs will keep the same folder structure as source.");
+        final Option keepFolderOption = new Option("kf", "keep-folder", VALUE_NOT_REQUIRED, "Source folder will be kept.");
+        keepFolderOption.setRequired(false);
+        keepFolderOption.setArgName("Keep folder");
+        options.addOption(keepFolderOption);
+
+        final Option keepFolderStructureOption = new Option("ks", "keep-folder-structure", VALUE_NOT_REQUIRED, "Target dirs will keep the same folder structure as source.");
         keepFolderStructureOption.setRequired(false);
-        keepFolderStructureOption.setArgName("Keep Structure");
+        keepFolderStructureOption.setArgName("Keep folder structure");
         options.addOption(keepFolderStructureOption);
 
-        final Option helpOption = new Option("h", "help", VALUE_NOT_REQUIRED,
-                                             "Prints this Help Text");
+        final Option dryRunOption = new Option("d", "dry-run", VALUE_NOT_REQUIRED, "Will not copy or extract, only log.");
+        dryRunOption.setRequired(false);
+        dryRunOption.setArgName("Dry Run");
+        options.addOption(dryRunOption);
+
+        final Option helpOption = new Option("h", "help", VALUE_NOT_REQUIRED, "Prints this Help Text");
         helpOption.setRequired(false);
         options.addOption(helpOption);
 

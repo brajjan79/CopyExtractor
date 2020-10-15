@@ -1,11 +1,11 @@
 {
-	"copyFiles": [
+	"fileTypes": [
 		"png"
 	],
-	"ignoredFolders": [
+	"ignore": [
 		"sample"
 	],
-	"includedFolders": [
+	"includeFolders": [
 		"notes"
 	],
     "folders": [
@@ -17,5 +17,6 @@
     "groupByRegex":"([.2018.])",
     "keepFolder": false,
     "keepFolderStructure": false,
-    "recursive": true
+    "recursive": true,
+    "dryRun": false
 }
