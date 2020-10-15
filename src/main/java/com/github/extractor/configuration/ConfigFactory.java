@@ -9,8 +9,8 @@ public class ConfigFactory {
     public static Configuration createFromInputArgs(final JsonObject cliOptions) {
         if (cliOptions.has("config-file-path")) {
             final Configuration option = createFromConfigFilePath(cliOptions.get("config-file-path").getAsString());
-            if (cliOptions.has("dry-run") && cliOptions.get("dry-run").getAsBoolean() == true) {
-                option.setDryRun(true);
+            if (cliOptions.has("dry-run")) {
+                option.setDryRun(cliOptions.get("dry-run").getAsBoolean());
             }
             return option;
         }
