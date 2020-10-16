@@ -51,9 +51,9 @@ public class ConfigFactoryTest {
         final Configuration config = ConfigFactory.createFromInputArgs(inputArgs);
 
         assertEquals(1, config.getFolders().size());
-        assertEquals(2, config.getCopyFiles().size());
-        assertEquals(3, config.getIgnoredFolders().size());
-        assertEquals(4, config.getIncludedFolders().size());
+        assertEquals(2, config.getFileTypes().size());
+        assertEquals(3, config.getIgnored().size());
+        assertEquals(4, config.getIncludeFolders().size());
         assertEquals("2012", config.getGroupByRegex());
         assertTrue(config.isKeepFolder());
         assertTrue(config.isKeepFolderStructure());
@@ -73,20 +73,20 @@ public class ConfigFactoryTest {
         final JsonArray fileEndings = new JsonArray();
         fileEndings.add("jpg");
         fileEndings.add("gif");
-        jsonConfig.add("copyFiles", fileEndings);
+        jsonConfig.add("fileTypes", fileEndings);
 
         final JsonArray ignoreList = new JsonArray();
         ignoreList.add("PNG");
         ignoreList.add("tif");
         ignoreList.add("zip");
-        jsonConfig.add("ignoredFolders", ignoreList);
+        jsonConfig.add("ignore", ignoreList);
 
         final JsonArray includedDirs = new JsonArray();
         includedDirs.add("thumbs");
         includedDirs.add("thimpnails");
         includedDirs.add("mini");
         includedDirs.add("miniatyres");
-        jsonConfig.add("includedFolders", includedDirs);
+        jsonConfig.add("includeFolders", includedDirs);
 
         jsonConfig.addProperty("groupByRegex", "2012");
         jsonConfig.addProperty("keepFolder", true);

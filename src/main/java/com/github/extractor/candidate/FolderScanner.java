@@ -66,6 +66,7 @@ public class FolderScanner {
     private void scanFolderForPossibleCandidates(final File dir, final File outputDir) throws FolderException {
         if (dirHandler.folderHasMultipleFoldersToScan(dir)) {
             handleGroupedDirs(dir, outputDir);
+            createAndAddCandidate(dir, outputDir);
         } else {
             final File targetDir = new File(outputDir, dirHandler.getDirName(dir));
             createAndAddCandidate(dir, targetDir);
@@ -77,10 +78,10 @@ public class FolderScanner {
             if (config.isKeepFolderStructure()) {
                 final File childOutputDir = new File(outputDir, dir.getName());
                 System.out.println("Keep structure! new output == [" + childOutputDir.getAbsolutePath() + "]");
-                scanFolders(dir, childOutputDir);
+                scanSubDirectories(dir, childOutputDir);
             } else {
                 System.out.println("Dont keep structure");
-                scanFolders(dir, outputDir);
+                scanSubDirectories(dir, outputDir);
             }
         }
     }

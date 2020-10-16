@@ -10,63 +10,64 @@ public class Configuration {
 
     private static final String DEFAULT_GROUP_BY_REGEX = "(?!x)x";
 
-    private final List<String> copyFiles;
-    private final List<String> ignoredFolders;
-    private final List<String> includedFolders;
+    private final List<String> fileTypes;
+    private final List<String> ignore;
+    private final List<String> includeFolders;
     private final List<ConfigFolder> folders;
 
-    private final String groupByRegex; // Regex that cannot match anything, ever.
+    private final String groupByRegex;
 
     private final boolean keepFolder;
     private final boolean keepFolderStructure;
     private final boolean recursive;
+    private boolean dryRun = false;
 
     /**
      *
-     * @param copyFiles           :: List of FolderItem  File types to copy
-     * @param ignoredFolders      :: List of String  Folders that should not be scanned.
-     * @param includedFolders     :: List of String  Folders to include (extra folders not normally scanned)
+     * @param fileTypes           :: List of FolderItem  File types to copy
+     * @param ignore              :: List of String  Folders that should not be scanned.
+     * @param includeFolders      :: List of String  Folders to include (extra folders not normally scanned)
      * @param folders             :: List of String  Folders to scan and copy to
      * @param groupByRegex        :: String  If item can be grouped, copy exstract items to a folder with the
-     *                            grouped name.
+     *                               grouped name.
      * @param keepFolder          :: boolean If file is in folder, keep the folder
      * @param keepFolderStructure :: boolean When scanning recursively keep the structure
      * @param recursive           :: boolean Folders should be scanned recursively
      * @throws ConfigurationException
      */
-    public Configuration(final List<String> copyFiles, final List<String> ignoredFolders,
-        final List<String> includedFolders, final List<ConfigFolder> folders,
-        final String groupByRegex, final boolean keepFolder, final boolean keepFolderStructure,
-        final boolean recursive) throws ConfigurationException {
+    public Configuration(final List<String> fileTypes, final List<String> ignore,
+            final List<String> includeFolders, final List<ConfigFolder> folders,
+            final String groupByRegex, final boolean keepFolder, final boolean keepFolderStructure,
+            final boolean recursive) throws ConfigurationException {
         this.folders = folders;
-        this.copyFiles = copyFiles;
-        this.ignoredFolders = ignoredFolders;
-        this.includedFolders = includedFolders;
+        this.fileTypes = fileTypes;
+        this.ignore = ignore;
+        this.includeFolders = includeFolders;
         this.groupByRegex = groupByRegex;
         this.keepFolder = keepFolder;
         this.keepFolderStructure = keepFolderStructure;
         this.recursive = recursive;
     }
 
-    public List<String> getCopyFiles() {
-        if (copyFiles == null)
+    public List<String> getFileTypes() {
+        if (fileTypes == null)
             return new ArrayList<>();
 
-        return copyFiles;
+        return fileTypes;
     }
 
-    public List<String> getIgnoredFolders() {
-        if (ignoredFolders == null)
+    public List<String> getIgnored() {
+        if (ignore == null)
             return new ArrayList<>();
 
-        return ignoredFolders;
+        return ignore;
     }
 
-    public List<String> getIncludedFolders() {
-        if (includedFolders == null)
+    public List<String> getIncludeFolders() {
+        if (includeFolders == null)
             return new ArrayList<>();
 
-        return includedFolders;
+        return includeFolders;
     }
 
     public List<ConfigFolder> getFolders() {
@@ -81,6 +82,14 @@ public class Configuration {
             return DEFAULT_GROUP_BY_REGEX;
 
         return groupByRegex;
+    }
+
+    public boolean isDryRun() {
+        return dryRun;
+    }
+
+    public void setDryRun(final boolean dryRun) {
+        this.dryRun = dryRun;
     }
 
     public boolean isKeepFolder() {
@@ -100,7 +109,7 @@ public class Configuration {
         return String.format(
             "Configuration:\nfolders: %s\nfileEndingsToCopy: %s\nincludedeFolders: %s\n" +
                 "ignoreList: %s\ngroupBy: '%s'\nkeepFolder: %s\nkeepFolderStructure: %s\nrecursive: %s",
-            getFolders(), getCopyFiles(), getIncludedFolders(), getIgnoredFolders(), getGroupByRegex(),
+            getFolders(), getFileTypes(), getIncludeFolders(), getIgnored(), getGroupByRegex(),
             isKeepFolder(), isKeepFolderStructure(), isRecursive());
     }
 

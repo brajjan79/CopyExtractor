@@ -39,7 +39,7 @@ public class DirHandlerTest {
     @Test
     public void testDirToBeIncluded() throws Throwable {
         final List<String> includeList = new ArrayList<>(Arrays.asList("with"));
-        when(config.getIncludedFolders()).thenReturn(includeList);
+        when(config.getIncludeFolders()).thenReturn(includeList);
         final File dir = new File("src/test/resources/folder_structure/folder_with_file");
         final boolean result = dirHandler.directoryIncluded(dir);
         assertTrue("Expected directory " + dir.getName() + " to be included.", result);

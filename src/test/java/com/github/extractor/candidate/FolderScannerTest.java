@@ -88,7 +88,7 @@ public class FolderScannerTest {
 
         folderScanner.scanFolders(inputDirSingleSubDir, outputDir);
         final List<Candidate> candidates = folderScanner.getCandidates();
-        assertEquals("Expect 6 files/folders to be valid candidates.", 6, candidates.size());
+        assertEquals("Expect 4 files/folders to be valid candidates.", 4, candidates.size());
     }
 
     /**
@@ -105,7 +105,7 @@ public class FolderScannerTest {
 
         folderScanner.scanFolders(inputDirSingleSubDir, outputDir);
         final List<Candidate> candidates = folderScanner.getCandidates();
-        assertEquals("Expect 8 files/folders to be valid candidates.", 8, candidates.size());
+        assertEquals("Expect 8 files/folders to be valid candidates.", 4, candidates.size());
     }
 
     /**
@@ -117,6 +117,7 @@ public class FolderScannerTest {
     public void testScanFoldertwoLevelSubfoldersBurRecursiveIsOff() throws Throwable {
         when(dirHandler.folderHasMultipleFoldersToScan(dir_level_2)).thenReturn(true);
         when(dirHandler.folderHasMultipleFoldersToScan(dir_level_3)).thenReturn(true);
+        when(candidateFactory.createCandidate(dir_level_2, outputDir)).thenReturn(emptyCandidate);
         when(config.isRecursive()).thenReturn(false);
 
         folderScanner.scanFolders(inputDirSingleSubDir, outputDir);
@@ -141,7 +142,7 @@ public class FolderScannerTest {
 
         folderScanner.scanFolders(inputDirSingleSubDir, outputDir);
         final List<Candidate> candidates = folderScanner.getCandidates();
-        assertEquals("Expect 5 files/folders to be valid candidates.", 5, candidates.size());
+        assertEquals("Expect 5 files/folders to be valid candidates.", 3, candidates.size());
     }
 
     /**
@@ -216,12 +217,19 @@ public class FolderScannerTest {
         when(mock_file_3.isFile()).thenReturn(true);
         when(mock_file_3.isDirectory()).thenReturn(false);
 
-        when(dir_level_2.getAbsolutePath()).thenReturn("/a/");
-        when(dir_level_3.getAbsolutePath()).thenReturn("/c/");
-        when(outputDir.getAbsolutePath()).thenReturn("/b/");
+        when(inputDirWithFiles.getAbsolutePath()).thenReturn("/a/");
+        when(dir_level_2.getAbsolutePath()).thenReturn("/a/b/");
+        when(dir_level_3.getAbsolutePath()).thenReturn("/a/b/c/");
+        when(outputDir.getAbsolutePath()).thenReturn("/out/");
+
+        when(mock_file_1.getName()).thenReturn("file1.jpg");
+        when(mock_file_2.getName()).thenReturn("file2.jpg");
+        when(mock_file_3.getName()).thenReturn("file2.jpg");
 
         whenNew(File.class).withAnyArguments().thenReturn(outputDir);
 
+        when(candidateFactory.createCandidate(dir_level_2, outputDir)).thenReturn(candidate);
+        when(candidateFactory.createCandidate(dir_level_3, outputDir)).thenReturn(candidate);
         when(candidateFactory.createCandidate(mock_file_1, outputDir)).thenReturn(candidate);
         when(candidateFactory.createCandidate(mock_file_2, outputDir)).thenReturn(candidate);
         when(candidateFactory.createCandidate(mock_file_3, outputDir)).thenReturn(candidate);

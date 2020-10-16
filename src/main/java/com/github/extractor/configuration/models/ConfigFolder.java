@@ -1,5 +1,7 @@
 package com.github.extractor.configuration.models;
 
+import com.github.extractor.exceptions.ConfigurationException;
+
 public class ConfigFolder {
 
 	private final String inputFolder;
@@ -11,10 +13,14 @@ public class ConfigFolder {
     }
 
     public String getInputFolder() {
+        if (inputFolder == null)
+            throw new ConfigurationException("No inputFolder configuration provided.");
         return inputFolder;
     }
 
     public String getOutputFolder() {
+        if (outputFolder == null)
+            throw new ConfigurationException("No outputFolder configuration provided.");
         return outputFolder;
     }
 

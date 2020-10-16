@@ -12,6 +12,15 @@ import com.github.junrar.exception.RarException;
 
 public class RarHandler {
 
+    /*
+     * TODO: extract using existing unrar application to support RAR5
+     *
+     * Windows: WinRAR/UnRAR.exe x /path/to/rar /path/to/target/dir/
+     * Linux:
+     * Mac:
+     *
+     */
+
     /**
      * Extract rar-files in a candidate if any.
      * Currently does not support RAR5.

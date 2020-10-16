@@ -14,11 +14,11 @@ public class FileHandler {
 
     public boolean isIncludedFileType(final File file) {
         final String fileName = file.getName().toLowerCase();
-        return config.getCopyFiles().stream().anyMatch(fileEnding -> fileName.endsWith(fileEnding));
+        return config.getFileTypes().stream().anyMatch(fileEnding -> fileName.endsWith(fileEnding));
     }
 
     public boolean isIgnored(final File file) {
         final String fileName = file.getName().toLowerCase();
-        return config.getIgnoredFolders().stream().anyMatch(ignore -> fileName.contains(ignore));
+        return config.getIgnored().stream().anyMatch(ignore -> fileName.contains(ignore));
     }
 }

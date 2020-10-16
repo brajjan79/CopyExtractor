@@ -34,7 +34,7 @@ public class FileHandlerTest {
     @Test
     public void testFileEndingIncluded() throws Throwable {
         final List<String> copyFiles = new ArrayList<>(Arrays.asList("png"));
-        when(config.getCopyFiles()).thenReturn(copyFiles);
+        when(config.getFileTypes()).thenReturn(copyFiles);
         final File file = new File("src/test/resources/folder_structure/folder_with_file/picture.png");
         final boolean result = fileHandler.isIncludedFileType(file);
         assertTrue("Expected file " + file.getName() + " to end with .png", result);
@@ -51,7 +51,7 @@ public class FileHandlerTest {
     @Test
     public void testFileToBeIgnored() throws Throwable {
         final List<String> ignoderFiles = new ArrayList<>(Arrays.asList("picture"));
-        when(config.getIgnoredFolders()).thenReturn(ignoderFiles);
+        when(config.getIgnored()).thenReturn(ignoderFiles);
         final File file = new File("src/test/resources/folder_structure/folder_with_file/picture.png");
         final boolean result = fileHandler.isIgnored(file);
         assertTrue("Expected file " + file.getName() + " to be ignored.", result);

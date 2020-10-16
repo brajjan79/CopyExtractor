@@ -8,7 +8,11 @@ public class ConfigFactory {
 
     public static Configuration createFromInputArgs(final JsonObject cliOptions) {
         if (cliOptions.has("config-file-path")) {
-            return createFromConfigFilePath(cliOptions.get("config-file-path").getAsString());
+            final Configuration option = createFromConfigFilePath(cliOptions.get("config-file-path").getAsString());
+            if (cliOptions.has("dry-run")) {
+                option.setDryRun(cliOptions.get("dry-run").getAsBoolean());
+            }
+            return option;
         }
         throw new ConfigurationException("Missing provided configuration.");
     }

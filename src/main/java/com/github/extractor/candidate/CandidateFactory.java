@@ -63,7 +63,6 @@ public class CandidateFactory {
             }
 
             if (dirHandler.directoryIncluded(file)) {
-                System.out.println("Found included directory, scanning directory for included files.");
                 files_to_unrar.addAll(getFilesToUnrar(file));
             }
         }
@@ -80,7 +79,6 @@ public class CandidateFactory {
             }
 
             if (dirHandler.directoryIncluded(file)) {
-                System.out.println("Found included directory, scanning directory for included files.");
                 files_to_copy.addAll(getFilesToCopy(file));
             }
         }
