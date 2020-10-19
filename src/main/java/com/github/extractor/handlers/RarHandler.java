@@ -2,13 +2,13 @@ package com.github.extractor.handlers;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import com.github.extractor.candidate.models.Candidate;
 import com.github.filesize.FileSize;
-import com.github.junrar.ContentDescription;
+import com.github.junrar.Archive;
 import com.github.junrar.Junrar;
 import com.github.junrar.exception.RarException;
+import com.github.junrar.rarfile.FileHeader;
 
 public class RarHandler {
 
@@ -92,17 +92,24 @@ public class RarHandler {
         }
     }
 
-    private static boolean canExtract(final File file, final File targetDir) throws RarException, IOException {
-        final List<ContentDescription> descriptions = Junrar.getContentsDescription(file);
-        for (final ContentDescription description : descriptions) {
-            final File targetFile = new File(targetDir, description.path);
-            if (targetFile.exists() && FileSize.size(targetFile).getBytes() > 10000) {
-                System.out.println(
-                    "All files in the archive " + file.getName() +
-                    " exists in the target dir " + targetDir.getAbsolutePath());
-                return false;
+    private static boolean canExtract(final File file, final File targetDir) throws IOException, RarException {
+        try (final Archive archive = new Archive(file)) {
+            for (final FileHeader fileHeader : archive) {
+                final File targetFile = new File(targetDir, fileHeader.getFileName());
+                if (targetFile.exists()) {
+                    final long existingFileSize = (long) FileSize.size(targetFile).getBytes();
+                    if (existingFileSize < fileHeader.getFullUnpackSize()) {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
             }
         }
-        return true;
+
+        System.out.println(
+            "All files in the archive " + file.getName() +
+            " exists in the target dir " + targetDir.getAbsolutePath());
+        return false;
     }
 }
