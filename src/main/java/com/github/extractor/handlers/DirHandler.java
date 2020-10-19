@@ -52,7 +52,10 @@ public class DirHandler {
 
     public String getDirName(final File dir) {
         final String baseDir = Dirs.getBaseDirName(dir, config.getGroupByRegex());
-        return Dirs.getTargetDirName(dir, baseDir);
+        if (config.isKeepFolder()) {
+            return Dirs.getTargetDirName(dir, baseDir);
+        }
+        return baseDir;
     }
 
     private int numberOfFoldersOfInterest(final File pathToScan) {
