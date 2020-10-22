@@ -1,4 +1,4 @@
-package com.github.extractor;
+package com.github.extractor.configuration;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -8,7 +8,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.github.extractor.configuration.CliKeys;
 import com.github.extractor.exceptions.HelpGivenException;
 import com.github.extractor.exceptions.InputException;
 import com.google.gson.JsonObject;

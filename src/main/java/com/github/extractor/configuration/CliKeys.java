@@ -56,12 +56,11 @@ public enum CliKeys {
      * @return
      */
     public boolean isRequired(final boolean isConfigFileRequired) {
-        if (isConfigFileRequired && this.equals(CONFIG_FILE_PATH)) {
-            return true;
-        }
-        if (!isConfigFileRequired && (this.equals(TARGET_FOLDER) || this.equals(SOURCE_FOLDER))) {
-            return true;
-        }
-        return false;
+        final boolean configFileOptionRequired = isConfigFileRequired && this.equals(CONFIG_FILE_PATH);
+        final boolean inpudFolderAndOutputFolderRequired = (
+            !isConfigFileRequired && (this.equals(TARGET_FOLDER) || this.equals(SOURCE_FOLDER))
+            );
+
+        return configFileOptionRequired || inpudFolderAndOutputFolderRequired;
     }
 }

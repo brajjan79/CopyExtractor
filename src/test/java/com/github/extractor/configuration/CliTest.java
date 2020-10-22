@@ -1,9 +1,11 @@
-package com.github.extractor;
+package com.github.extractor.configuration;
 
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
+import com.github.extractor.configuration.Cli;
 import com.github.extractor.configuration.CliKeys;
 import com.github.extractor.exceptions.HelpGivenException;
 import com.github.extractor.exceptions.InputException;
@@ -17,7 +19,11 @@ public class CliTest {
 
     @Test
     public void testConstructor() {
-        new Cli();
+        try {
+            new Cli();
+        } catch (final Exception e) {
+            fail("Failed to initiate Cli");
+        }
     }
 
     @Test(expected=HelpGivenException.class)
