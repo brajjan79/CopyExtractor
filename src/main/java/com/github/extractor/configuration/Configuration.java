@@ -106,11 +106,25 @@ public class Configuration {
 
     @Override
     public String toString() {
-        return String.format(
-            "Configuration:\nfolders: %s\nfileEndingsToCopy: %s\nincludedeFolders: %s\n" +
-                "ignoreList: %s\ngroupBy: '%s'\nkeepFolder: %s\nkeepFolderStructure: %s\nrecursive: %s",
-            getFolders(), getFileTypes(), getIncludeFolders(), getIgnored(), getGroupByRegex(),
-            isKeepFolder(), isKeepFolderStructure(), isRecursive());
+        return String.format("Configuration:\n"
+            + "folders: %s\n"
+            + "fileEndingsToCopy: %s\n"
+            + "includedeFolders: %s\n"
+            + "ignoreList: %s\n"
+            + "groupBy: '%s'\n"
+            + "keepFolder: %s\n"
+            + "keepFolderStructure: %s\n"
+            + "recursive: %s\n"
+            + "dryRun: %s",
+            getFolders(),
+            getFileTypes(),
+            getIncludeFolders(),
+            getIgnored(),
+            getGroupByRegex(),
+            isKeepFolder(),
+            isKeepFolderStructure(),
+            isRecursive(),
+            isDryRun());
     }
 
 }

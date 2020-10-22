@@ -29,16 +29,18 @@ public class ConfigurationTest {
     public void testDefaults() throws Throwable {
         final Configuration config = new Configuration(null, null, null, folders, null, false, false, false);
 
-        assertTrue("Default fileEndings should be empty.", config.getFileTypes().isEmpty());
-        assertTrue("Default ignoreList should be empty.", config.getIgnored().isEmpty());
-        assertTrue("Default includedDirs should be empty.", config.getIncludeFolders().isEmpty());
+        assertTrue(config.getFileTypes().isEmpty());
+        assertTrue(config.getIgnored().isEmpty());
+        assertTrue(config.getIncludeFolders().isEmpty());
 
         assertEquals(folder.toString(), config.getFolders().get(0).toString());
         assertEquals(DEFAULT_GROUP_BY_REGEX, config.getGroupByRegex());
 
-        assertFalse("Default keepFolder should be true.", config.isKeepFolder());
-        assertFalse("Default keepFolderStructure should be true.", config.isKeepFolderStructure());
-        assertFalse("Default recursive should be true.", config.isRecursive());
+        assertFalse(config.isKeepFolder());
+        assertFalse(config.isKeepFolderStructure());
+        assertFalse(config.isRecursive());
+        assertFalse(config.isRecursive());
+        assertFalse(config.isDryRun());
     }
 
     @Test
@@ -56,6 +58,30 @@ public class ConfigurationTest {
         assertEquals("info", config.getIncludeFolders().get(0));
     }
 
+    @Test
+    public void testToString() throws Throwable {
+        final String expectedString = "Configuration:\n" +
+            "folders: [{inputFolder: /input, outputFolder: /output}]\n" +
+            "fileEndingsToCopy: [jpg]\n" +
+            "includedeFolders: [info]\n" +
+            "ignoreList: [ignore]\n" +
+            "groupBy: 'regex'\n" +
+            "keepFolder: true\n" +
+            "keepFolderStructure: true\n" +
+            "recursive: true\n" +
+            "dryRun: true";
+
+        final List<String> ignores = new ArrayList<>();
+        ignores.add("ignore");
+        final List<String> files = new ArrayList<>();
+        files.add("jpg");
+        final List<String> includes = new ArrayList<>();
+        includes.add("info");
+        final Configuration config = new Configuration(files, ignores, includes, folders, "regex", true, true, true);
+        config.setDryRun(true);
+
+        assertEquals(expectedString, config.toString());
+    }
 
     @Test(expected=RuntimeException.class)
     public void testNoFoldersThrowsException() throws Throwable {

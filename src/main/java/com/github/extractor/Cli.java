@@ -8,6 +8,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+import com.github.extractor.configuration.CliKeys;
 import com.github.extractor.exceptions.HelpGivenException;
 import com.github.extractor.exceptions.InputException;
 import com.google.gson.JsonObject;
@@ -26,87 +27,35 @@ public class Cli {
      * @throws HelpGivenException
      */
     public static JsonObject parseArgs(final String[] args) throws HelpGivenException {
-        boolean isInputFoldersRequired = false;
-        boolean isConfigRequired = true;
-        if (args.length > 2) {
-            isInputFoldersRequired = true;
-            isConfigRequired = false;
-        }
-        final Options options = addOptions(isConfigRequired, isInputFoldersRequired);
+        final Options options = addOptions(isConfigFileRequired(args));
         final CommandLine commandLine = parseInputToCommandLine(args, options);
         final JsonObject inputConfig = parseCommandLineInputToJson(commandLine);
         return inputConfig;
+    }
+
+    private static boolean isConfigFileRequired(final String[] args) {
+        return args.length <= 3;
     }
 
     private static JsonObject parseCommandLineInputToJson(final CommandLine commandLine) {
         final JsonObject inputConfig = new JsonObject();
 
         for (final Option option : commandLine.getOptions()) {
-            final String key = insertKeyValuedToJsonStructure(option);
+            final String key = option.getLongOpt();
             final String value = option.getValue();
             inputConfig.addProperty(key, value);
         }
         return inputConfig;
     }
 
-    private static String insertKeyValuedToJsonStructure(final Option option) {
-        String key = option.getOpt();
-        if (option.hasLongOpt()) {
-            key = option.getLongOpt();
-        }
-        return key;
-    }
-
-    private static Options addOptions(final boolean isConfigRequired, final boolean isInputFoldersRequired) {
+    private static Options addOptions(final boolean isConfigFileRequired) {
         final Options options = new Options();
-        final Option configFilePathOption = new Option("f", "config-file-path", VALUE_REQUIRED, "Local path to configuration file.");
-        configFilePathOption.setRequired(isConfigRequired);
-        configFilePathOption.setArgName("Config");
-        options.addOption(configFilePathOption);
-
-        final Option sourceFolderOption = new Option("s", "source-folder", VALUE_REQUIRED, "Folder to extract from.");
-        sourceFolderOption.setRequired(isInputFoldersRequired);
-        sourceFolderOption.setArgName("Source");
-        options.addOption(sourceFolderOption);
-
-        final Option targetFolderOption = new Option("t", "target-folder", VALUE_REQUIRED, "Folder to extract to.");
-        targetFolderOption.setRequired(isInputFoldersRequired);
-        targetFolderOption.setArgName("Target");
-        options.addOption(targetFolderOption);
-
-        final Option ignoreOption = new Option("i", "ignore", VALUE_REQUIRED, "Files and or folders to ignore.");
-        ignoreOption.setRequired(false);
-        ignoreOption.setArgName("Ignore");
-        options.addOption(ignoreOption);
-
-        final Option includeOption = new Option("if", "includeFolders", VALUE_REQUIRED, "Folders to include.");
-        includeOption.setRequired(false);
-        includeOption.setArgName("Ignore");
-        options.addOption(includeOption);
-
-        final Option recursiceOption = new Option("R", "recursive", VALUE_NOT_REQUIRED, "Extract recursively.");
-        recursiceOption.setRequired(false);
-        recursiceOption.setArgName("Recursive");
-        options.addOption(recursiceOption);
-
-        final Option keepFolderOption = new Option("kf", "keep-folder", VALUE_NOT_REQUIRED, "Source folder will be kept.");
-        keepFolderOption.setRequired(false);
-        keepFolderOption.setArgName("Keep folder");
-        options.addOption(keepFolderOption);
-
-        final Option keepFolderStructureOption = new Option("ks", "keep-folder-structure", VALUE_NOT_REQUIRED, "Target dirs will keep the same folder structure as source.");
-        keepFolderStructureOption.setRequired(false);
-        keepFolderStructureOption.setArgName("Keep folder structure");
-        options.addOption(keepFolderStructureOption);
-
-        final Option dryRunOption = new Option("d", "dry-run", VALUE_NOT_REQUIRED, "Will not copy or extract, only log.");
-        dryRunOption.setRequired(false);
-        dryRunOption.setArgName("Dry Run");
-        options.addOption(dryRunOption);
-
-        final Option helpOption = new Option("h", "help", VALUE_NOT_REQUIRED, "Prints this Help Text");
-        helpOption.setRequired(false);
-        options.addOption(helpOption);
+        for (final CliKeys key : CliKeys.values()) {
+            final Option option = new Option(key.shortName, key.name, key.hasArgs, key.description);
+            option.setRequired(key.isRequired(isConfigFileRequired));
+            option.setArgName(key.argumentName);
+            options.addOption(option);
+        }
 
         return options;
     }
@@ -116,9 +65,6 @@ public class Cli {
         try {
             final CommandLineParser parser = new DefaultParser();
             final CommandLine commandLine = parser.parse(options, args);
-            if (commandLine.getOptions().length < 1) {
-                throw new ParseException("Missing required options!");
-            }
             return commandLine;
         } catch (final ParseException e) {
             System.out.println(e.getMessage());
@@ -139,6 +85,7 @@ public class Cli {
 
     private static void writeHelp(final Options options) {
         final HelpFormatter formatter = new HelpFormatter();
+        formatter.setOptionComparator(null);
         final String usageExample = String.format("java --jar %s %s [options value]", JAR_FILE_NAME,
                                                   "");
         formatter.printHelp(100, usageExample, "\nOptions:\n", options, null);
