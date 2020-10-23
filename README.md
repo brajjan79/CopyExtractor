@@ -1,12 +1,8 @@
-[![Build Status](https://travis-ci.com/brajjan79/CopyExtractor.svg?branch=main)](https://travis-ci.com/brajjan79/CopyExtractor) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f3aae20186f04dc0984c5b3c74211411)](https://app.codacy.com/gh/brajjan79/CopyExtractor?utm_source=github.com&utm_medium=referral&utm_content=brajjan79/CopyExtractor&utm_campaign=Badge_Grade) [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/074f22e39d4c4bbaa99c7fc660ef2e8c)](https://www.codacy.com/gh/brajjan79/CopyExtractor/dashboard?utm_source=github.com&utm_medium=referral&utm_content=brajjan79/CopyExtractor&utm_campaign=Badge_Coverage)
-
 # CopyExtractor
+[![Build Status](https://travis-ci.com/brajjan79/CopyExtractor.svg?branch=main)](https://travis-ci.com/brajjan79/CopyExtractor) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/f3aae20186f04dc0984c5b3c74211411)](https://app.codacy.com/gh/brajjan79/CopyExtractor?utm_source=github.com&utm_medium=referral&utm_content=brajjan79/CopyExtractor&utm_campaign=Badge_Grade) [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/074f22e39d4c4bbaa99c7fc660ef2e8c)](https://www.codacy.com/gh/brajjan79/CopyExtractor/dashboard?utm_source=github.com&utm_medium=referral&utm_content=brajjan79/CopyExtractor&utm_campaign=Badge_Coverage)
 
 CopyExtractor scans a given folder for files to unrar or copy depending on the
 given configuration.
-
-**NOTE:** Application is work in progress, it is possible to use but changes may
-suddenly be introduced.
 
 **CopyExtractor can**:
 
@@ -48,7 +44,7 @@ mvn package -DskipTests
 ```
 
 maven will package the source files into a .jar file located in ./target
-with the name CopyExtractor-\\&lt;version>.jar where \\<version> is the current
+with the name CopyExtractor-\<version>.jar where \<version> is the current
 version on main branch.
 
 ## Usage
@@ -68,15 +64,21 @@ java -jar \<some path\> CopyExtractor-\<version\>.jar -f path/to/config_file.jso
 Currently the command line interface is under construction and will be updated.
 
 ```java
-usage: java --jar FileRenamer.jar  [options value]
+usage: java --jar CopyExtractor.jar  [options value]
 
 Options:
- -f,--config-file-path <Config>   Local path to configuration file.
- -h,--help                        Prints this Help Text
- <Not Working> -k,--keep-folder-structure       Target dirs will keep the same folder structure as source.
- <Not Working> -R,--recursive                   Extract recursively.
- <Not Working> -s,--source-folder <Source>      Folder to extract from.
- <Not Working> -t,--target-folder <Target>      Folder to extract to.
+ -f,--config-file-path <path>   Local path to configuration file.
+ -s,--source-folder <path>      Folder to extract from.
+ -t,--target-folder <path>      Folder to extract to.
+ -i,--ignore <list>             Files and or folders to ignore Example: 'sample, proof'.
+ -ft,--file-types <list>        File types to copy. Example: 'jpg, bmp'
+ -if,--include-folders <list>   Folders to include. Example: 'thumbs'
+ -rx,--group-by-regex <str>     Regex to group files or folders.
+ -R,--recursive                 Extract recursively.
+ -kf,--keep-folder              Source folder will be kept.
+ -kfs,--keep-folder-structure   Target dirs will keep the same folder structure as source.
+ -d,--dry-run                   Will not copy or extract, only log.
+ -h,--help                      Prints this Help Text
 ```
 
 ### Configuration file
@@ -88,11 +90,11 @@ The configuration file is written in JSON format.
 
 **Key description:**
 
--   **copyFiles** List of Strings, Example: `["jpg", "png"]`. File types to scan for and copy.
+-   **fileTypes** List of Strings, Example: `["jpg", "png"]`. File types to scan for and copy.
 
--   **ignoredFolders** List of Strings, Example: `["sample"]`. Folders or files that will be ignored.
+-   **ignore** List of Strings, Example: `["sample"]`. Folders or files that will be ignored.
 
--   **includedFolders** List of Strings, Example: `["info", "description"]`. Folders that will be included and is not considered a normal folder to copy or extract from.
+-   **includeFolders** List of Strings, Example: `["info", "description"]`. Folders that will be included and is not considered a normal folder to copy or extract from.
 
 -   **folders** List of Objects, Example `[{"inputFolder":"C:/input", "outputFolder":"C:/output"}]`. List of objects containing keys inputFolder and outputFolder.
 
@@ -100,14 +102,16 @@ The configuration file is written in JSON format.
 
 -   **keepFolder** boolean, Example: `true`. If **true** files extracted or copied from a folder will be copied or extracted to a folder with the same name. If **false** files will be copied or extracted directly to **outputFolder**.
 
--   **keepFolderStructure** boolean, Example: `false`. Only affected if recursive is **true**. If **true** files will be extracted and copied to the same structure as the inputFolder has, if **false** files will be copied to outputFolder unless groupByRegex groups the files.
+-   **keepFolderStructure** boolean, Example: `false`. only affected if recursive is **true**. If **true** files will be extracted and copied to the same structure as the inputFolder has, if **false** files will be copied to outputFolder unless groupByRegex groups the files.
 
 -   **recursive** boolean, Example: `true`. If **false** only files and folders directly in inputFolder will be scanned and folders inside folders will be ignored, unless in includedFolders list. If **true** each folder with multiple folders inside them that contains files that can be copied or unrared is considered an inputFolder.
+
+-   **dryRun** boolean, Example: `true`. If **true** will only log action but none will be taken.
 
 ```JSON
 # Note: Only folders are mandatory.
 {
-    "copyFiles": [
+    "fileTypes": [
         "jpg",
         "png",
         "PNG",
@@ -115,10 +119,10 @@ The configuration file is written in JSON format.
         "mp4",
         "mkv"
     ],
-    "ignoredFolders": [
+    "ignore": [
         "sample"
     ],
-    "includedFolders": [
+    "includeFolders": [
         "notes"
     ],
     "folders": [
@@ -130,6 +134,7 @@ The configuration file is written in JSON format.
     "groupByRegex":"([.2018.])",
     "keepFolder": false,
     "keepFolderStructure": false,
-    "recursive": true
+    "recursive": true,
+    "dryRun": false
 }
 ```

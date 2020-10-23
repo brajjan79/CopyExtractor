@@ -1,7 +1,6 @@
 package com.github.extractor.configuration;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
@@ -12,7 +11,6 @@ import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.github.extractor.exceptions.ConfigurationException;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -29,14 +27,29 @@ public class ConfigFactoryTest {
         }
     }
 
-    /**
-     * Creating config from input arguments is currently not available.
-     * @throws Throwable
-     */
-    @Test(expected=ConfigurationException.class)
+    @Test
     public void testCreateFromInputargs() throws Throwable {
         final JsonObject inputArgs = new JsonObject();
-        assertNull(ConfigFactory.createFromInputArgs(inputArgs));
+        inputArgs.addProperty(CliKeys.SOURCE_FOLDER.name, "/some/path");
+        inputArgs.addProperty(CliKeys.TARGET_FOLDER.name, "/some/other/path");
+        inputArgs.addProperty(CliKeys.FILE_TYPES.name, "jpg,png");
+        inputArgs.addProperty(CliKeys.INCLUDE_FOLDERS.name, "n**es, ,,,test");
+        inputArgs.addProperty(CliKeys.GROUP_BY_REGEX.name, "abc");
+        inputArgs.add(CliKeys.RECURSIVE.name, null);
+        inputArgs.add(CliKeys.KEEP_FOLDER.name, null);
+        inputArgs.add(CliKeys.KEEP_FOLDER_STRUCTURE.name, null);
+        inputArgs.add(CliKeys.DRY_RUN.name, null);
+
+        final Configuration config = ConfigFactory.createFromInputArgs(inputArgs);
+
+        assertEquals(1, config.getFolders().size());
+        assertEquals(2, config.getFileTypes().size());
+        assertEquals(0, config.getIgnored().size());
+        assertEquals(2, config.getIncludeFolders().size());
+        assertEquals("abc", config.getGroupByRegex());
+        assertTrue(config.isKeepFolder());
+        assertTrue(config.isKeepFolderStructure());
+        assertTrue(config.isRecursive());
     }
 
     @Test
@@ -48,6 +61,7 @@ public class ConfigFactoryTest {
 
         final JsonObject inputArgs = new JsonObject();
         inputArgs.addProperty("config-file-path", "mocked");
+        inputArgs.add("dry-run", null);
         final Configuration config = ConfigFactory.createFromInputArgs(inputArgs);
 
         assertEquals(1, config.getFolders().size());
