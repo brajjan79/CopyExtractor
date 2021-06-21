@@ -1,21 +1,17 @@
 package com.github.extractor.configuration;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.powermock.api.mockito.PowerMockito.doReturn;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ ConfigFactory.class, ConfigFileUtil.class })
 public class ConfigFactoryTest {
 
     @Test
@@ -47,31 +43,74 @@ public class ConfigFactoryTest {
         assertEquals(0, config.getIgnored().size());
         assertEquals(2, config.getIncludeFolders().size());
         assertEquals("abc", config.getGroupByRegex());
+        assertTrue(config.isDryRun());
         assertTrue(config.isKeepFolder());
         assertTrue(config.isKeepFolderStructure());
         assertTrue(config.isRecursive());
     }
 
     @Test
-    public void testCreateConfigFromFileAllParams() throws Throwable {
-        mockStatic(ConfigFileUtil.class);
-        final JsonObject jsonConfig = createJsonConfig();
-
-        doReturn(jsonConfig).when(ConfigFileUtil.class, "readConfigurationFile", "mocked");
-
+    public void testCreateFromInputargsMinimalArgsProvided() throws Throwable {
         final JsonObject inputArgs = new JsonObject();
-        inputArgs.addProperty("config-file-path", "mocked");
-        inputArgs.add("dry-run", null);
+        inputArgs.addProperty(CliKeys.SOURCE_FOLDER.name, "/some/path");
+        inputArgs.addProperty(CliKeys.TARGET_FOLDER.name, "/some/other/path");
+
         final Configuration config = ConfigFactory.createFromInputArgs(inputArgs);
 
         assertEquals(1, config.getFolders().size());
-        assertEquals(2, config.getFileTypes().size());
-        assertEquals(3, config.getIgnored().size());
-        assertEquals(4, config.getIncludeFolders().size());
-        assertEquals("2012", config.getGroupByRegex());
-        assertTrue(config.isKeepFolder());
-        assertTrue(config.isKeepFolderStructure());
-        assertTrue(config.isRecursive());
+        assertEquals(0, config.getFileTypes().size());
+        assertEquals(0, config.getIgnored().size());
+        assertEquals(0, config.getIncludeFolders().size());
+        assertEquals("(?!x)x", config.getGroupByRegex());
+        assertFalse(config.isDryRun());
+        assertFalse(config.isKeepFolder());
+        assertFalse(config.isKeepFolderStructure());
+        assertFalse(config.isRecursive());
+    }
+
+    @Test
+    public void testCreateConfigFromFileAllParams() throws Throwable {
+        try (MockedStatic<ConfigFileUtil> configFileUtil = Mockito.mockStatic(ConfigFileUtil.class)) {
+            final JsonObject jsonConfig = createJsonConfig();
+            configFileUtil.when(() -> ConfigFileUtil.readConfigurationFile("mocked")).thenReturn(jsonConfig);
+
+            final JsonObject inputArgs = new JsonObject();
+            inputArgs.addProperty("config-file-path", "mocked");
+            final Configuration config = ConfigFactory.createFromInputArgs(inputArgs);
+
+            assertEquals(1, config.getFolders().size());
+            assertEquals(2, config.getFileTypes().size());
+            assertEquals(3, config.getIgnored().size());
+            assertEquals(4, config.getIncludeFolders().size());
+            assertEquals("2012", config.getGroupByRegex());
+            assertFalse(config.isDryRun());
+            assertTrue(config.isKeepFolder());
+            assertTrue(config.isKeepFolderStructure());
+            assertTrue(config.isRecursive());
+        }
+    }
+
+    @Test
+    public void testCreateConfigFromFileAllParamsWithDryRun() throws Throwable {
+        try (MockedStatic<ConfigFileUtil> configFileUtil = Mockito.mockStatic(ConfigFileUtil.class)) {
+            final JsonObject jsonConfig = createJsonConfig();
+            configFileUtil.when(() -> ConfigFileUtil.readConfigurationFile("mocked")).thenReturn(jsonConfig);
+
+            final JsonObject inputArgs = new JsonObject();
+            inputArgs.addProperty("config-file-path", "mocked");
+            inputArgs.add("dry-run", null);
+            final Configuration config = ConfigFactory.createFromInputArgs(inputArgs);
+
+            assertEquals(1, config.getFolders().size());
+            assertEquals(2, config.getFileTypes().size());
+            assertEquals(3, config.getIgnored().size());
+            assertEquals(4, config.getIncludeFolders().size());
+            assertEquals("2012", config.getGroupByRegex());
+            assertTrue(config.isDryRun());
+            assertTrue(config.isKeepFolder());
+            assertTrue(config.isKeepFolderStructure());
+            assertTrue(config.isRecursive());
+        }
     }
 
     private JsonObject createJsonConfig() {

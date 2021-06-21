@@ -12,6 +12,7 @@ import com.github.extractor.configuration.models.ConfigFolder;
 import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.CopyHandler;
 import com.github.extractor.handlers.RarHandler;
+import com.github.extractor.models.State;
 import com.github.extractor.utils.Dirs;
 
 public class Executor {
@@ -34,7 +35,7 @@ public class Executor {
         for (final ConfigFolder folderItem : config.getFolders()) {
             try {
                 folderScanner.scanFolders(new File(folderItem.getInputFolder()),
-                                          new File(folderItem.getOutputFolder()));
+                        new File(folderItem.getOutputFolder()));
             } catch (final FolderException e) {
                 e.printStackTrace();
             }
@@ -45,48 +46,23 @@ public class Executor {
 
     public void copyAndUnrarCandidates() {
 
-        int count = 1;
-        int errorCount = 0;
-        final int itemsToProcess = candidates.size();
         for (final Candidate candidate : candidates) {
-            System.out.println("\nHandling item " + String.valueOf(count) + "\\"
-                    + String.valueOf(itemsToProcess));
-            count++;
-
-            printProcess("Processing folder:", candidate);
-            boolean success;
-            if (!config.isDryRun()){
-                success = copyAndUnrarCandidate(candidate);
-            } else {
-                success = true;
-                printDryRun(candidate);
-            }
-            if (!success) {
-                errorCount++;
-            }
-            printProcess("Finished folder:", candidate);
+            printProcess("Processing folder: ", candidate);
+            copyAndUnrarCandidate(candidate);
         }
 
-        if (errorCount > 0) {
-            printErrorCount(itemsToProcess, errorCount);
-        }
+        printStateReport();
     }
 
-    private boolean copyAndUnrarCandidate(final Candidate candidate) {
-        boolean success = true;
+    private void copyAndUnrarCandidate(final Candidate candidate) {
         try {
             Dirs.createDirs(candidate.targetDir);
-            final boolean copyOk = CopyHandler.copyFiles(candidate);
-            final boolean unrarOk = RarHandler.unrarFiles(candidate);
-
-            if (!copyOk || !unrarOk) {
-                success = false;
-            }
+            CopyHandler.copyFiles(candidate, config.isDryRun());
+            RarHandler.unrarFiles(candidate, config.isDryRun());
         } catch (final IOException e) {
             System.out.println("Failed to process folder: " + candidate.name);
             e.printStackTrace();
         }
-        return success;
     }
 
     private void printProcess(final String message, final Candidate candidate) {
@@ -103,19 +79,10 @@ public class Executor {
         return stars;
     }
 
-    private void printErrorCount(final int itemsToProcess, final int errorCount) {
-        final String message = "######################\n" + "### Summary \n" + "### " + errorCount
-                + " out of " + itemsToProcess + " failed!\n"
-                + "### Please look at the log for more details.";
+    private void printStateReport() {
+        final String message = String.format(
+                "Files processed:....%s\nFiles successfull:...%s\nFiles ignored:......%s\nFiles failed:........%s",
+                State.getTotal(), State.getSuccessfull(), State.getAlreadyExists(), State.getFailures());
         System.out.println(message);
-    }
-
-    private void printDryRun(final Candidate candidate) {
-        for (final File file : candidate.filesToUnrar) {
-            System.out.println(String.format("Should have extracted '%s' to folder '%s'", file.getAbsolutePath(), candidate.targetDir));
-        }
-        for (final File file : candidate.filesToCopy) {
-            System.out.println(String.format("Should have copied '%s' to folder '%s'", file.getAbsolutePath(), candidate.targetDir));
-        }
     }
 }

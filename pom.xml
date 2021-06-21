@@ -13,8 +13,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>16</maven.compiler.target>
+		<maven.compiler.source>16</maven.compiler.source>
 		<fully.qualified.main.class>com.github.extractor.App</fully.qualified.main.class>
 	</properties>
 
@@ -37,14 +37,14 @@
 			<version>2.8.7</version>
 		</dependency>
 		<dependency>
-	    	<groupId>com.github.brajjan79</groupId>
-	    	<artifactId>FileSize</artifactId>
-	    	<version>1.1.0</version>
+			<groupId>com.github.brajjan79</groupId>
+			<artifactId>FileSize</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
-	    	<groupId>com.github.brajjan79</groupId>
-	    	<artifactId>string-reformat</artifactId>
-	    	<version>1.1.0</version>
+			<groupId>com.github.brajjan79</groupId>
+			<artifactId>string-reformat</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
@@ -57,27 +57,53 @@
 			<version>2.10.0</version>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.13.2</version>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>23.0</version>
+		</dependency>
+		<dependency>
+			<groupId>me.tongfei</groupId>
+			<artifactId>progressbar</artifactId>
+			<version>0.9.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-simple</artifactId>
+			<version>1.7.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+			<version>5.7.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-		  <groupId>com.github.stefanbirkner</groupId>
-		  <artifactId>system-rules</artifactId>
-		  <version>1.19.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-module-junit4</artifactId>
-			<version>2.0.9</version>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>3.11.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.powermock</groupId>
-			<artifactId>powermock-api-mockito2</artifactId>
-			<version>2.0.9</version>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>3.11.1</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-inline</artifactId>
+			<version>3.11.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.stefanbirkner</groupId>
+			<artifactId>system-rules</artifactId>
+			<version>1.19.0</version>
 		</dependency>
 	</dependencies>
 
@@ -86,8 +112,8 @@
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
+					<source>${maven.compiler.target}</source>
+					<target>${maven.compiler.target}</target>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -98,7 +124,6 @@
 					<mainClass>${fully.qualified.main.class}</mainClass>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -122,41 +147,25 @@
 				</executions>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>cobertura-maven-plugin</artifactId>
-				<version>2.7</version>
-				<configuration>
-					<formats>
-						<format>html</format>
-						<format>xml</format>
-					</formats>
-					<instrumentation>
-						<excludes>
-							<exclude>**/Gui*</exclude>
-						</excludes>
-					</instrumentation>
-				</configuration>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.7</version>
+				<executions>
+					<execution>
+						<id>jacoco-initialize</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>jacoco-site</id>
+						<phase>package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.7</version>
-                <executions>
-                    <execution>
-                        <id>jacoco-initialize</id>
-                        <goals>
-                            <goal>prepare-agent</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>jacoco-site</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
 		</plugins>
 	</build>
 </project>

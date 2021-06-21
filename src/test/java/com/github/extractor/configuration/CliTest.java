@@ -5,8 +5,6 @@ import static org.junit.Assert.fail;
 
 import org.junit.Test;
 
-import com.github.extractor.configuration.Cli;
-import com.github.extractor.configuration.CliKeys;
 import com.github.extractor.exceptions.HelpGivenException;
 import com.github.extractor.exceptions.InputException;
 import com.google.gson.JsonObject;

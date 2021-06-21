@@ -3,16 +3,13 @@ package com.github.extractor;
 import static org.junit.Assert.fail;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import com.github.extractor.configuration.Cli;
 import com.github.extractor.configuration.ConfigFactory;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ App.class, Cli.class, ConfigFactory.class })
 public class AppTest {
 
     @Test
@@ -45,28 +42,26 @@ public class AppTest {
 
     @Test(expected=RuntimeException.class)
     public void systemExitWithExecutorError() throws Throwable {
-        final Executor mockExecutor = createMockExecutor();
-        PowerMockito.doThrow(new RuntimeException()).when(mockExecutor, "run");
-        App.main(new String[] {});
+        try (MockedStatic<Cli> cli = Mockito.mockStatic(Cli.class);
+                MockedStatic<ConfigFactory> configFactory = Mockito.mockStatic(ConfigFactory.class);
+                MockedConstruction<Executor> mockExecutor = Mockito.mockConstruction(Executor.class,
+                        (mock, context) -> {
+                            Mockito.doThrow(new RuntimeException()).when(mock).run();
+                        })) {
+
+            App.main(new String[] {});
+        }
     }
 
     @Test
     public void systemExitWithAllWell() throws Throwable {
-        final Executor mockExecutor = createMockExecutor();
-        PowerMockito.doNothing().when(mockExecutor, "run");
-        try {
+        try (MockedStatic<Cli> cli = Mockito.mockStatic(Cli.class);
+                MockedStatic<ConfigFactory> configFactory = Mockito.mockStatic(ConfigFactory.class);
+                MockedConstruction<Executor> mockExecutor = Mockito.mockConstruction(Executor.class)) {
             App.main(new String[] {});
         } catch (final Exception e) {
             fail("Unexpected exception.");
         }
     }
 
-    private Executor createMockExecutor() throws Exception {
-        PowerMockito.mockStatic(Cli.class);
-        PowerMockito.mockStatic(ConfigFactory.class);
-
-        final Executor mockExecutor = PowerMockito.mock(Executor.class);
-        PowerMockito.whenNew(Executor.class).withAnyArguments().thenReturn(mockExecutor);
-        return mockExecutor;
-    }
 }

@@ -46,16 +46,65 @@ public class DirHandler {
         return config.getIncludeFolders().stream().anyMatch(include -> dirName.contains(include));
     }
 
-    public String getBaseDir(final File file) {
-        return Dirs.getBaseDirName(file, config.getGroupByRegex());
+    public boolean isValidSubfolder(File dir, File outputDir) {
+        if (!dir.isDirectory()) {
+            return false;
+        }
+
+        if (dir.equals(outputDir)) {
+            System.out.println("Ignoring output folder");
+            return false;
+        }
+        return true;
     }
 
-    public String getDirName(final File dir) {
-        final String baseDir = Dirs.getBaseDirName(dir, config.getGroupByRegex());
+    /**
+     * Builds a File based on the dir and the name of the provided file.
+     *
+     * @param dir
+     * @param file
+     * @return File
+     */
+    public File buildFile(File dir, File file) {
+        return new File(dir, file.getName());
+    }
+
+    /**
+     * Buils a File based on the dir and the name of the provided file and the
+     * directory name the file is in. This file will be grouped if groupBy regex is
+     * provided.
+     *
+     * @param dir
+     * @param file
+     * @return File
+     */
+    public File buildTargetSubdirFile(File dir, File file) {
+        final String dirName = getDirName(file);
+        return new File(dir, dirName);
+    }
+
+    /**
+     * Buils a File based on the dir and the name of the provided file. This file
+     * will be grouped if groupBy regex is provided.
+     *
+     * @param dir
+     * @param file
+     * @return File
+     */
+    public File buildTargetBaseDirFile(File dir, File file) {
+        return new File(dir, getBaseDir(file));
+    }
+
+    private String getDirName(final File file) {
+        final String baseDir = Dirs.getBaseDirName(file, config.getGroupByRegex());
         if (config.isKeepFolder()) {
-            return Dirs.getTargetDirName(dir, baseDir);
+            return Dirs.getTargetDirName(file, baseDir);
         }
         return baseDir;
+    }
+
+    private String getBaseDir(final File file) {
+        return Dirs.getBaseDirName(file, config.getGroupByRegex());
     }
 
     private int numberOfFoldersOfInterest(final File pathToScan) {
@@ -66,11 +115,7 @@ public class DirHandler {
         }
 
         for (final File dir : directories) {
-            if (!dir.isDirectory()) {
-                continue;
-            }
-
-            if (fileHandler.isIgnored(dir) || directoryIncluded(dir)) {
+            if (!dir.isDirectory() || fileHandler.isIgnored(dir) || directoryIncluded(dir)) {
                 continue;
             }
 
@@ -82,4 +127,5 @@ public class DirHandler {
         }
         return count;
     }
+
 }
