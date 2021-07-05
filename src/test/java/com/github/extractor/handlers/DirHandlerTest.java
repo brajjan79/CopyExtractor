@@ -172,7 +172,7 @@ public class DirHandlerTest {
         final File file = new File("source/file_folder/");
 
         final File resultingFile = dirHandler.buildFile(dir, file);
-        assertEquals("\\target", resultingFile.getParent());
+        assertEquals(System.getProperty("file.separator") + "target", resultingFile.getParent());
         assertEquals("file_folder", resultingFile.getName());
     }
 
@@ -193,7 +193,9 @@ public class DirHandlerTest {
             }).thenReturn("file/file_folder");
 
             final File resultingFile = dirHandler.buildTargetSubdirFile(dir, file);
-            assertEquals("\\target\\file", resultingFile.getParent());
+            assertEquals(
+                    System.getProperty("file.separator") + "target" + System.getProperty("file.separator") + "file",
+                    resultingFile.getParent());
             assertEquals("file_folder", resultingFile.getName());
         }
     }
@@ -215,7 +217,7 @@ public class DirHandlerTest {
             }).thenReturn("file/file_folder");
 
             final File resultingFile = dirHandler.buildTargetSubdirFile(dir, file);
-            assertEquals("\\target", resultingFile.getParent());
+            assertEquals(System.getProperty("file.separator") + "target", resultingFile.getParent());
             assertEquals("file", resultingFile.getName());
         }
     }
@@ -233,7 +235,7 @@ public class DirHandlerTest {
             }).thenReturn("file");
 
             final File resultingFile = dirHandler.buildTargetBaseDirFile(dir, file);
-            assertEquals("\\target", resultingFile.getParent());
+            assertEquals(System.getProperty("file.separator") + "target", resultingFile.getParent());
             assertEquals("file", resultingFile.getName());
         }
     }
