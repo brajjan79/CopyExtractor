@@ -13,14 +13,9 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import com.github.extractor.App;
-import com.github.extractor.Executor;
-import com.github.extractor.configuration.Cli;
-import com.github.extractor.configuration.ConfigFactory;
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.utils.Dirs;
 

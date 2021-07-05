@@ -1,6 +1,6 @@
 package com.github.extractor.models;
 
-public class State {
+public class StateConstants {
 
 	private static int successfull = 0;
 	private static int alreadyExists = 0;

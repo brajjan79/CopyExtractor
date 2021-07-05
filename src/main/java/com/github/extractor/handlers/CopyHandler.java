@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.github.extractor.candidate.models.Candidate;
-import com.github.extractor.models.State;
+import com.github.extractor.models.StateConstants;
 import com.github.filesize.FileSize;
 
 public class CopyHandler {
@@ -20,7 +20,7 @@ public class CopyHandler {
                 success = performFileCopy(file, targetFile, isDryrun);
             } else {
                 System.out.println("File already exist: " + targetFile.getAbsolutePath());
-                State.addAlreadyExists();
+                StateConstants.addAlreadyExists();
                 success = false;
             }
 
@@ -55,11 +55,11 @@ public class CopyHandler {
                 System.out.println(
                         "Should have copied " + file.getAbsolutePath() + " to " + targetFile.getAbsolutePath());
             }
-            State.addSuccess();
+            StateConstants.addSuccess();
             return true;
         } catch (final IOException | InterruptedException e) {
             e.printStackTrace();
-            State.addFailure();
+            StateConstants.addFailure();
             pt.cancel();
             return false;
         }

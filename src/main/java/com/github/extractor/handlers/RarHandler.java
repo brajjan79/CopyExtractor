@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import com.github.extractor.candidate.models.Candidate;
-import com.github.extractor.models.State;
+import com.github.extractor.models.StateConstants;
 import com.github.filesize.FileSize;
 import com.github.junrar.Archive;
 import com.github.junrar.exception.RarException;
@@ -76,10 +76,10 @@ public class RarHandler {
                 final File targetFile = new File(targetDir, fileHeader.getFileName());
                 if (targetFile.exists()) {
                     final long existingFileSize = (long) FileSize.size(targetFile).getBytes();
-                    if (!(existingFileSize < fileHeader.getFullUnpackSize())) {
+                    if (existingFileSize >= fileHeader.getFullUnpackSize()) {
                         System.out.println("The file " + fileHeader.getFileName() + " already"
                                 + " exists in the target dir " + targetDir.getAbsolutePath());
-                        State.addAlreadyExists();
+                        StateConstants.addAlreadyExists();
                         continue;
                     }
                 }
@@ -89,12 +89,12 @@ public class RarHandler {
                     System.out.println("Should have extracted " + fileHeader.getFileName() + " to "
                             + targetFile.getAbsolutePath());
                 }
-                State.addSuccess();
+                StateConstants.addSuccess();
             }
 
         } catch (IOException | RarException e) {
             System.out.println("Failed to extract files: " + file.getName());
-            State.addFailure();
+            StateConstants.addFailure();
             e.printStackTrace();
         }
     }

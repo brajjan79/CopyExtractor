@@ -12,7 +12,7 @@ import com.github.extractor.configuration.models.ConfigFolder;
 import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.CopyHandler;
 import com.github.extractor.handlers.RarHandler;
-import com.github.extractor.models.State;
+import com.github.extractor.models.StateConstants;
 import com.github.extractor.utils.Dirs;
 
 public class Executor {
@@ -82,7 +82,7 @@ public class Executor {
     private void printStateReport() {
         final String message = String.format(
                 "Files processed:....%s\nFiles successfull:...%s\nFiles ignored:......%s\nFiles failed:........%s",
-                State.getTotal(), State.getSuccessfull(), State.getAlreadyExists(), State.getFailures());
+                StateConstants.getTotal(), StateConstants.getSuccessfull(), StateConstants.getAlreadyExists(), StateConstants.getFailures());
         System.out.println(message);
     }
 }
