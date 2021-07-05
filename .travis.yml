@@ -2,6 +2,9 @@ os: linux
 dist: xenial
 language: java
 
+jdk:
+  - openjdk16
+
 # Run before every job
 before_install:
   #- sudo apt-get update
