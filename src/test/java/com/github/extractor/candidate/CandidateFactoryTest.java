@@ -2,17 +2,15 @@ package com.github.extractor.candidate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.handlers.DirHandler;
@@ -20,8 +18,6 @@ import com.github.extractor.handlers.FileHandler;
 import com.github.extractor.handlers.RarHandler;
 import com.github.extractor.utils.Dirs;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ CandidateFactory.class, RarHandler.class, Dirs.class })
 public class CandidateFactoryTest {
 
     private static final int LAST_MODIFIED_WAIT_TIME = 10000;
@@ -40,9 +36,8 @@ public class CandidateFactoryTest {
 
     @Before
     public void init() throws Exception {
-        fileHandler = PowerMockito.mock(FileHandler.class);
-        dirHandler = PowerMockito.mock(DirHandler.class);
-        setupMockFolderFolders();
+        fileHandler = mock(FileHandler.class);
+        dirHandler = mock(DirHandler.class);
         candidateFactory = new CandidateFactory(fileHandler, dirHandler);
     }
 
@@ -52,144 +47,116 @@ public class CandidateFactoryTest {
 
     @Test
     public void testCreateCandidateWithRarFilesNoSubdirectories() throws Throwable {
-        when(dirHandler.directoryIncluded(Mockito.any())).thenReturn(false);
+        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+                MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
+            setupMockFolderFolders(rarHandler, dirs);
+            when(dirHandler.directoryIncluded(Mockito.any())).thenReturn(false);
 
-        final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
-        assertEquals("Number of rar files should be 2.", 2, candidate.filesToUnrar.size());
-        assertEquals("Compare rarfile name.", rarFile_1.getName(),
-            candidate.filesToUnrar.get(0).getName());
-        assertEquals("Compare rarfile name.", rarFile_2.getName(),
-            candidate.filesToUnrar.get(1).getName());
-        assertTrue(candidate.filesToCopy.isEmpty());
+            final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
+            assertEquals("Number of rar files should be 2.", 2, candidate.filesToUnrar.size());
+            assertEquals("Compare rarfile name.", rarFile_1.getName(), candidate.filesToUnrar.get(0).getName());
+            assertEquals("Compare rarfile name.", rarFile_2.getName(), candidate.filesToUnrar.get(1).getName());
+            assertTrue(candidate.filesToCopy.isEmpty());
+        }
     }
 
     @Test
     public void testCreateCandidateWithRarFilesWithSubdirectories() throws Throwable {
-        PowerMockito.doReturn(true).when(dirHandler, "directoryIncluded", subFolder);
+        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+                MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
+            setupMockFolderFolders(rarHandler, dirs);
+            when(dirHandler.directoryIncluded(subFolder)).thenReturn(true);
 
-        final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
-        assertEquals("Number of rar files should be 3.", 3, candidate.filesToUnrar.size());
-        assertEquals("Compare rarfile name.", rarFile_1.getName(),
-            candidate.filesToUnrar.get(0).getName());
-        assertEquals("Compare rarfile name.", rarFile_2.getName(),
-            candidate.filesToUnrar.get(1).getName());
-        assertEquals("Compare rarfile name.", rarFile_3.getName(),
-            candidate.filesToUnrar.get(2).getName());
-        assertTrue(candidate.filesToCopy.isEmpty());
+            final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
+            assertEquals("Number of rar files should be 3.", 3, candidate.filesToUnrar.size());
+            assertEquals("Compare rarfile name.", rarFile_1.getName(), candidate.filesToUnrar.get(0).getName());
+            assertEquals("Compare rarfile name.", rarFile_2.getName(), candidate.filesToUnrar.get(1).getName());
+            assertEquals("Compare rarfile name.", rarFile_3.getName(), candidate.filesToUnrar.get(2).getName());
+            assertTrue(candidate.filesToCopy.isEmpty());
+        }
     }
 
     @Test
     public void testRarsFilesIgnored() throws Throwable {
-        PowerMockito.doReturn(true).when(dirHandler, "directoryIncluded", subFolder);
-        when(fileHandler.isIgnored(Mockito.any())).thenReturn(true);
+        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+                MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
+            setupMockFolderFolders(rarHandler, dirs);
+            when(dirHandler.directoryIncluded(subFolder)).thenReturn(true);
+            when(fileHandler.isIgnored(Mockito.any())).thenReturn(true);
 
-        final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
-        assertTrue("Candidate.isEmpty() should be true when there is no content.", candidate.isEmpty());
+            final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
+            assertTrue("Candidate.isEmpty() should be true when there is no content.", candidate.isEmpty());
+        }
     }
 
     @Test
     public void testCreateCandidateWithFilesNoSubdirectories() throws Throwable {
-        when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
-        when(dirHandler.directoryIncluded(Mockito.any())).thenReturn(false);
-        PowerMockito.doReturn(false).when(dirHandler, "directoryIncluded", subFolder);
-        addPngFileTypeIncluded();
+        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+                MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
+            setupMockFolderFolders(rarHandler, dirs);
+            when(dirHandler.directoryIncluded(Mockito.any())).thenReturn(false);
+            when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
 
-        final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
-        assertEquals("Number of .png files should be 2.", 2, candidate.filesToCopy.size());
+            when(fileHandler.isIncludedFileType(photoFile_1)).thenReturn(true);
+            when(fileHandler.isIncludedFileType(photoFile_2)).thenReturn(true);
+
+            final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
+            assertEquals("Number of .png files should be 2.", 2, candidate.filesToCopy.size());
+        }
     }
 
     @Test
     public void testCreateCandidateWithFilesWithSubdirectories() throws Throwable {
-        when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
-        when(dirHandler.directoryIncluded(Mockito.any())).thenReturn(false);
-        PowerMockito.doReturn(true).when(dirHandler, "directoryIncluded", subFolder);
-        addPngFileTypeIncluded();
+        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+                MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
+            setupMockFolderFolders(rarHandler, dirs);
+            when(dirHandler.directoryIncluded(subFolder)).thenReturn(true);
+            when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
 
-        final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
-        assertEquals("Number of .png files should be 3.", 3, candidate.filesToCopy.size());
+            when(fileHandler.isIncludedFileType(photoFile_1)).thenReturn(true);
+            when(fileHandler.isIncludedFileType(photoFile_2)).thenReturn(true);
+            when(fileHandler.isIncludedFileType(photoFile_3)).thenReturn(true);
+
+            final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
+            assertEquals("Number of .png files should be 3.", 3, candidate.filesToCopy.size());
+        }
     }
 
     @Test
     public void testNoRarsAllFilesIgnored() throws Throwable {
-        final File[] folderList = new File[] { photoFile_1, photoFile_2 };
-        when(sourceDir.listFiles()).thenReturn(folderList);
-        when(fileHandler.isIgnored(Mockito.any())).thenReturn(true);
-        when(fileHandler.isIncludedFileType(Mockito.any())).thenReturn(true);
-        when(dirHandler.directoryIncluded(Mockito.any())).thenReturn(false);
+        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+                MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
+            setupMockFolderFolders(rarHandler, dirs);
+            when(fileHandler.isIgnored(Mockito.any())).thenReturn(true);
+            when(fileHandler.isIncludedFileType(Mockito.any())).thenReturn(true);
+            when(dirHandler.directoryIncluded(Mockito.any())).thenReturn(false);
 
-        final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
-        assertTrue("Candidate.isEmpty() should be true when there is no content.", candidate.isEmpty());
+            final File[] folderList = new File[] { photoFile_1, photoFile_2 };
+            when(sourceDir.listFiles()).thenReturn(folderList);
+
+            final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
+            assertTrue("Candidate.isEmpty() should be true when there is no content.", candidate.isEmpty());
+        }
+
     }
 
     @Test
     public void testSubdirRecentlyModified() throws Throwable {
-        PowerMockito.doReturn(true).when(Dirs.class, "lastModifiedLessThen", sourceDir, 10000);
-        final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
-        assertTrue("Candidate.isEmpty() should be true when there is no content.", candidate.isEmpty());
+        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+                MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
+            setupMockFolderFolders(rarHandler, dirs);
+            dirs.when(() -> {
+                Dirs.lastModifiedLessThen(sourceDir, 10000);
+            }).thenReturn(true);
+            final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
+            assertTrue("Candidate.isEmpty() should be true when there is no content.", candidate.isEmpty());
+        }
     }
 
-    /*
-     * create createSingleFileCandidate
-     */
-
-    @Test
-    public void testCreateSingleFileCandidateSubdirRecentlyModified() throws Throwable {
-        PowerMockito.doReturn(true).when(Dirs.class, "lastModifiedLessThen", rarFile_1, 10000);
-        final Candidate candidate = candidateFactory.createCandidate(rarFile_1, targetDir);
-        assertTrue("Candidate.isEmpty() should be true when there is no content.", candidate.isEmpty());
-    }
-
-    @Test
-    public void testCreateSingleFileCandidateRarFile() throws Throwable {
-        final File file = PowerMockito.mock(File.class);
-        when(file.isFile()).thenReturn(true);
-        when(file.getName()).thenReturn("Test_file.rar");
-        PowerMockito.doReturn(true).when(RarHandler.class, "fileIsUnrarable", file);
-
-        when(fileHandler.isIgnored(file)).thenReturn(false);
-        when(fileHandler.isIncludedFileType(file)).thenReturn(false);
-        PowerMockito.doReturn(false).when(Dirs.class, "lastModifiedLessThen", file, LAST_MODIFIED_WAIT_TIME);
-
-        final Candidate candidate = candidateFactory.createCandidate(file, targetDir);
-        assertEquals("Compare rarfile name.", file.getName(), candidate.filesToUnrar.get(0).getName());
-    }
-
-    @Test
-    public void testCreateSingleFileCandidatePngFile() throws Throwable {
-        final File file = PowerMockito.mock(File.class);
-        when(file.isFile()).thenReturn(true);
-        when(file.getName()).thenReturn("Test_file.png");
-        PowerMockito.doReturn(false).when(RarHandler.class, "fileIsUnrarable", file);
-
-        when(fileHandler.isIgnored(file)).thenReturn(false);
-        when(fileHandler.isIncludedFileType(file)).thenReturn(true);
-        PowerMockito.doReturn(false).when(Dirs.class, "lastModifiedLessThen", file, LAST_MODIFIED_WAIT_TIME);
-
-        final Candidate candidate = candidateFactory.createCandidate(file, targetDir);
-        assertEquals("Compare rarfile name.", file.getName(), candidate.filesToCopy.get(0).getName());
-    }
-
-    @Test
-    public void testCreateSingleFileCandidateFileIsIgnored() throws Throwable {
-        final File file = PowerMockito.mock(File.class);
-        when(file.isFile()).thenReturn(true);
-        when(file.getName()).thenReturn("Test_file.png");
-        PowerMockito.doReturn(true).when(RarHandler.class, "fileIsUnrarable", file);
-
-        when(fileHandler.isIgnored(file)).thenReturn(true);
-        when(fileHandler.isIncludedFileType(file)).thenReturn(true);
-        PowerMockito.doReturn(false).when(Dirs.class, "lastModifiedLessThen", file, LAST_MODIFIED_WAIT_TIME);
-
-        final Candidate candidate = candidateFactory.createCandidate(file, targetDir);
-        assertTrue("Candidate.isEmpty() should be true when there is no content.", candidate.isEmpty());
-    }
-
-    private void setupMockFolderFolders() throws Exception {
-        PowerMockito.mockStatic(RarHandler.class);
-        PowerMockito.mockStatic(Dirs.class);
-        subFolder = PowerMockito.mock(File.class);
-        sourceDir = PowerMockito.mock(File.class);
-        targetDir = PowerMockito.mock(File.class);
+    private void setupMockFolderFolders(MockedStatic<RarHandler> rarHandler, MockedStatic<Dirs> dirs) throws Exception {
+        subFolder = mock(File.class);
+        sourceDir = mock(File.class);
+        targetDir = mock(File.class);
 
         rarFile_1 = new File("/some_folder/rar1.rar");
         rarFile_2 = new File("/some_folder/rar2.rar");
@@ -202,20 +169,30 @@ public class CandidateFactoryTest {
         final File[] rarFolderList = new File[] { rarFile_1, rarFile_2, subFolder, photoFile_1, photoFile_2 };
 
         when(sourceDir.listFiles()).thenReturn(rarFolderList);
+        when(subFolder.getPath()).thenReturn("/some_folder/subFolder/");
         when(subFolder.listFiles()).thenReturn(subFolderList);
 
-        PowerMockito.doReturn(true).when(RarHandler.class, "fileIsUnrarable", rarFile_1);
-        PowerMockito.doReturn(true).when(RarHandler.class, "fileIsUnrarable", rarFile_2);
-        PowerMockito.doReturn(true).when(RarHandler.class, "fileIsUnrarable", rarFile_3);
-        PowerMockito.doReturn(false).when(RarHandler.class, "fileIsUnrarable", subFolder);
+        rarHandler.when(() -> RarHandler.fileIsUnrarable(subFolder)).thenReturn(false);
+        rarHandler.when(() -> RarHandler.fileIsUnrarable(sourceDir)).thenReturn(false);
 
-        PowerMockito.doReturn(false).when(Dirs.class, "lastModifiedLessThen", sourceDir, LAST_MODIFIED_WAIT_TIME);
+        rarHandler.when(() -> RarHandler.fileIsUnrarable(photoFile_1)).thenReturn(false);
+        rarHandler.when(() -> RarHandler.fileIsUnrarable(photoFile_2)).thenReturn(false);
+        rarHandler.when(() -> RarHandler.fileIsUnrarable(photoFile_3)).thenReturn(false);
+
+        rarHandler.when(() -> RarHandler.fileIsUnrarable(rarFile_1)).thenReturn(true);
+        rarHandler.when(() -> RarHandler.fileIsUnrarable(rarFile_2)).thenReturn(true);
+        rarHandler.when(() -> RarHandler.fileIsUnrarable(rarFile_3)).thenReturn(true);
+
+        dirs.when(() -> Dirs.lastModifiedLessThen(sourceDir, LAST_MODIFIED_WAIT_TIME)).thenReturn(false);
+        rarHandler.when(() -> {
+            RarHandler.fileIsUnrarable(rarFile_1);
+        }).thenReturn(true);
+        rarHandler.when(() -> {
+            RarHandler.fileIsUnrarable(rarFile_2);
+        }).thenReturn(true);
+        rarHandler.when(() -> {
+            RarHandler.fileIsUnrarable(rarFile_3);
+        }).thenReturn(true);
     }
 
-    private void addPngFileTypeIncluded() throws Exception {
-        PowerMockito.doReturn(true).when(fileHandler, "isIncludedFileType", photoFile_1);
-        PowerMockito.doReturn(true).when(fileHandler, "isIncludedFileType", photoFile_2);
-        PowerMockito.doReturn(true).when(fileHandler, "isIncludedFileType", photoFile_3);
-        PowerMockito.doReturn(false).when(fileHandler, "isIncludedFileType", subFolder);
-    }
 }

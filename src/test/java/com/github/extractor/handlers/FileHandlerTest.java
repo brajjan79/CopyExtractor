@@ -2,7 +2,8 @@ package com.github.extractor.handlers;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,14 +13,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.github.extractor.configuration.Configuration;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(fullyQualifiedNames = "com.github.extractor.handlers.*")
 public class FileHandlerTest {
 
     private Configuration config;
@@ -27,7 +23,7 @@ public class FileHandlerTest {
 
     @Before
     public void init() {
-        config = PowerMockito.mock(Configuration.class);
+        config = mock(Configuration.class);
         fileHandler = new FileHandler(config);
     }
 

@@ -13,15 +13,20 @@ import com.github.extractor.handlers.FileHandler;
 public class FolderScanner {
 
     private final Configuration config;
-    private final List<Candidate> candidates = new ArrayList<Candidate>();
-    private final CandidateFactory candidateFactory;
-    private final DirHandler dirHandler;
+    private final List<Candidate> candidates = new ArrayList<>();
+    private CandidateFactory candidateFactory;
+    private DirHandler dirHandler;
 
     public FolderScanner(final Configuration config) {
         final FileHandler fileHandler = new FileHandler(config);
         this.dirHandler = new DirHandler(fileHandler, config);
         this.candidateFactory = new CandidateFactory(fileHandler, dirHandler);
         this.config = config;
+    }
+
+    public void setvariablesForTest(CandidateFactory candidateFactory, DirHandler dirHandler) {
+        this.candidateFactory = candidateFactory;
+        this.dirHandler = dirHandler;
     }
 
     public List<Candidate> getCandidates() {
@@ -38,28 +43,16 @@ public class FolderScanner {
     }
 
     private void createAndAddInputDirCandidate(final File dir, final File outputDir) {
-        final File[] fileList = dir.listFiles();
-        for (final File file : fileList) {
-            if (file.isFile()) {
-                final File targetDir = new File(outputDir, dirHandler.getBaseDir(file));
-                createAndAddCandidate(file, targetDir);
-            }
-        }
+        final File targetDir = dirHandler.buildTargetBaseDirFile(outputDir, dir);
+        createAndAddCandidate(dir, targetDir);
     }
 
     private void scanSubDirectories(final File inputDir, final File outputDir) throws FolderException {
         final File[] directories = inputDir.listFiles();
         for (final File dir : directories) {
-            if (!dir.isDirectory()) {
-                continue;
+            if (dirHandler.isValidSubfolder(dir, outputDir)) {
+                scanFolderForPossibleCandidates(dir, outputDir);
             }
-
-            if (dir.equals(outputDir)) {
-                System.out.println("Ignoring output folder");
-                continue;
-            }
-
-            scanFolderForPossibleCandidates(dir, outputDir);
         }
     }
 
@@ -68,7 +61,7 @@ public class FolderScanner {
             handleGroupedDirs(dir, outputDir);
             createAndAddCandidate(dir, outputDir);
         } else {
-            final File targetDir = new File(outputDir, dirHandler.getDirName(dir));
+            final File targetDir = dirHandler.buildTargetSubdirFile(outputDir, dir);
             createAndAddCandidate(dir, targetDir);
         }
     }
@@ -76,7 +69,7 @@ public class FolderScanner {
     private void handleGroupedDirs(final File dir, final File outputDir) throws FolderException {
         if (config.isRecursive()) {
             if (config.isKeepFolderStructure()) {
-                final File childOutputDir = new File(outputDir, dir.getName());
+                final File childOutputDir = dirHandler.buildFile(outputDir, dir);
                 System.out.println("Keep structure! new output == [" + childOutputDir.getAbsolutePath() + "]");
                 scanSubDirectories(dir, childOutputDir);
             } else {

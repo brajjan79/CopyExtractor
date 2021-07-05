@@ -1,33 +1,26 @@
 package com.github.extractor.handlers;
 
+import com.google.common.io.Files;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
 import com.github.extractor.candidate.models.Candidate;
+import com.github.extractor.models.StateConstants;
 import com.github.filesize.FileSize;
 
 public class CopyHandler {
 
-    public static boolean copyFiles(final Candidate candidate) {
+    public static boolean copyFiles(final Candidate candidate, boolean isDryrun) {
         boolean success = true;
+
         for (final File file : candidate.filesToCopy) {
             final File targetFile = new File(candidate.targetDir, file.getName());
             if (canCopy(file, targetFile)) {
-                try {
-                    performFileCopy(file, targetFile);
-                    System.out.println("SUCCESSFULLY COPIED FILE: " + file.getName());
-                } catch (final IOException e) {
-                    System.out.println("");
-                    System.out.println("Failed to copy file: " + file.getName());
-                    e.printStackTrace();
-                    success = false;
-                }
+                success = performFileCopy(file, targetFile, isDryrun);
             } else {
-                System.out.println(
-                    "Failure: File already exist: " + targetFile.getAbsolutePath());
+                System.out.println("File already exist: " + targetFile.getAbsolutePath());
+                StateConstants.addAlreadyExists();
                 success = false;
             }
 
@@ -48,10 +41,28 @@ public class CopyHandler {
         return true;
     }
 
-    private static void performFileCopy(final File file, final File targetFile) throws IOException {
-        System.out.print("Copying file: " + file.getName() + " ---> " + targetFile.getAbsolutePath());
-        Files.copy(file.toPath(), targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        System.out.println("   Done!!!");
+    private static boolean performFileCopy(final File file, final File targetFile, boolean isDryrun) {
+        final PrograssBar pt = new PrograssBar();
+        try {
+            if (!isDryrun) {
+                final double sourceFileSize = FileSize.size(file).getBytes();
+                pt.init(sourceFileSize, targetFile, "Copying......");
+                pt.start();
+
+                Files.copy(file, targetFile);
+                Thread.sleep(10); // Let progress bar to finish.
+            } else {
+                System.out.println(
+                        "Should have copied " + file.getAbsolutePath() + " to " + targetFile.getAbsolutePath());
+            }
+            StateConstants.addSuccess();
+            return true;
+        } catch (final IOException | InterruptedException e) {
+            e.printStackTrace();
+            StateConstants.addFailure();
+            pt.cancel();
+            return false;
+        }
 
     }
 
