@@ -11,7 +11,6 @@ public class App {
         try {
             final JsonObject cliOptions = Cli.parseArgs(args);
             final Configuration config = ConfigFactory.createFromInputArgs(cliOptions);
-            System.out.println("Class in file: " + String.valueOf(new Executor(config)));
             new Executor(config).run();
         } catch (final HelpGivenException e) {
             System.out.println(e.getMessage());
