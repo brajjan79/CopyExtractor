@@ -1,2 +1,4 @@
 exclude_paths:
-  - '/test/**/*'
+  - "CODE_OF_CONDUCT.md"
+  - "LICENSE"
+  - ".github/**/*"

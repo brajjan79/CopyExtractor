@@ -22,7 +22,6 @@ public class Executor {
 
     public Executor(final Configuration config) {
         this.config = config;
-        System.out.println(config.toString());
     }
 
     public void run() {
