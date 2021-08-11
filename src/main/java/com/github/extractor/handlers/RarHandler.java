@@ -65,9 +65,10 @@ public class RarHandler {
             return false;
         }
 
+        final boolean fileNameContainParts = fileName.matches(".*part[0-9][0-9].*");
         final boolean fileIsFirstOfParts = fileName.contains(".part001.") || fileName.contains(".part01.");
 
-        return !fileName.contains(".part") || fileIsFirstOfParts;
+        return !fileNameContainParts || fileIsFirstOfParts;
     }
 
     private static void scanAndExtractArchive(final File file, final File targetDir, boolean isDryRun) {
