@@ -27,6 +27,9 @@ jobs:
         - java --version
         - jdk_switcher use oraclejdk8
         - java --version
+        - which java
+        - ECHO $PATH
+        - ECHO $JAVA_HOME
     - stage: report_coverage
       name: report_coverage
       # Generating test coverage report and publishing to Codacy
