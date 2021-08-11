@@ -25,7 +25,7 @@ jobs:
       script:
         #- mvn test
         - java --version
-        - jdk_switcher use openjdk8
+        - jdk_switcher use oraclejdk8
         - java --version
     - stage: report_coverage
       name: report_coverage
@@ -33,5 +33,5 @@ jobs:
       script:
         - mvn clean test jacoco:report
         - curl -Ls -o codacy-coverage-reporter-assembly.jar https://github.com/codacy/codacy-coverage-reporter/releases/download/12.2.0/codacy-coverage-reporter-assembly.jar
-        - jdk_switcher use openjdk8
+        - jdk_switcher use oraclejdk8
         - java -jar codacy-coverage-reporter-assembly.jar report -l Java -r target/site/jacoco/jacoco.xml
