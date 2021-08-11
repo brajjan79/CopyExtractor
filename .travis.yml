@@ -4,7 +4,6 @@ language: java
 
 jdk:
   - openjdk16
-  - openjdk8
 
 # Run before every job
 before_install:
@@ -25,6 +24,7 @@ jobs:
       name: UnitTests
       script:
         - mvn test
+        - jdk_switcher use openjdk8
     - stage: report_coverage
       name: report_coverage
       # Generating test coverage report and publishing to Codacy
