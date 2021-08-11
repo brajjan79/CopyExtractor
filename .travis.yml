@@ -24,13 +24,10 @@ jobs:
       name: UnitTests
       script:
         #- mvn test
-        - java --version
-        - jdk_switcher use oraclejdk8
-        - java --version
-        - which java
-        - echo $PATH
-        - echo $JAVA_HOME
-        - /usr/lib/jvm/java-8-oracle --version
+        - /usr/lib/jvm/java-8-oracle/java --version
+        - cd /usr/lib/jvm/java-8-oracle 
+        - ls -la
+        - /usr/lib/jvm/java-8-oracle/java --version
     - stage: report_coverage
       name: report_coverage
       # Generating test coverage report and publishing to Codacy
