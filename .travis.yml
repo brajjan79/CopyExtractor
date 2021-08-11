@@ -24,9 +24,9 @@ jobs:
       name: UnitTests
       script:
         #- mvn test
-        - /usr/lib/jvm/java-8-oracle/bin/java --version
         - cd /usr/lib/jvm/ 
         - ls -la
+        - jdk_switcher use oraclejdk8
         - /usr/lib/jvm/java-8-oracle/bin/java --version
     - stage: report_coverage
       name: report_coverage
