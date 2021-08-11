@@ -26,8 +26,8 @@ jobs:
         #- mvn test
         - cd /usr/lib/jvm/ 
         - ls -la
-        - jdk_switcher use oraclejdk8
-        - /usr/lib/jvm/java-8-oracle/bin/java --version
+        #- jdk_switcher use oraclejdk8
+        - /usr/lib/jvm/java-8-oracle/bin/java -version
     - stage: report_coverage
       name: report_coverage
       # Generating test coverage report and publishing to Codacy
