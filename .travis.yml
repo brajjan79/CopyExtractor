@@ -4,6 +4,7 @@ language: java
 
 jdk:
   - openjdk16
+  - openjdk8
 
 # Run before every job
 before_install:
