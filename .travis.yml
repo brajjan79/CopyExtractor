@@ -30,6 +30,7 @@ jobs:
         - which java
         - echo $PATH
         - echo $JAVA_HOME
+        - /usr/lib/jvm/java-8-oracle --version
     - stage: report_coverage
       name: report_coverage
       # Generating test coverage report and publishing to Codacy
