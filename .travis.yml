@@ -23,8 +23,10 @@ jobs:
     - stage: test
       name: UnitTests
       script:
-        - mvn test
+        #- mvn test
+        - java --version
         - jdk_switcher use openjdk8
+        - java --version
     - stage: report_coverage
       name: report_coverage
       # Generating test coverage report and publishing to Codacy
