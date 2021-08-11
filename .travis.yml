@@ -30,4 +30,5 @@ jobs:
       script:
         - mvn clean test jacoco:report
         - curl -Ls -o codacy-coverage-reporter-assembly.jar https://github.com/codacy/codacy-coverage-reporter/releases/download/12.2.0/codacy-coverage-reporter-assembly.jar
+        - jdk_switcher use openjdk8
         - java -jar codacy-coverage-reporter-assembly.jar report -l Java -r target/site/jacoco/jacoco.xml
