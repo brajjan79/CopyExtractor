@@ -19,8 +19,6 @@ given configuration.
 
 -   copying only
 
--   configuration via command line only
-
 -   RAR 5
 
 -   zip or anything that is not rar
@@ -47,9 +45,11 @@ maven will package the source files into a .jar file located in ./target
 with the name CopyExtractor-\<version>.jar where \<version> is the current
 version on main branch.
 
-## Usage
+## JAVA compatabilities
 
-Ensure you have at least JAVA 8 installed.
+Supported JAVA versions: 8 (probably), 16 (tested) 
+
+## Usage
 
 ```java
 # Display help text.
@@ -60,8 +60,6 @@ java -jar \<some path\> CopyExtractor-\<version\>.jar -f path/to/config_file.jso
 ```
 
 ### CLI
-
-Currently the command line interface is under construction and will be updated.
 
 ```java
 usage: java --jar CopyExtractor.jar  [options value]
@@ -83,9 +81,7 @@ Options:
 
 ### Configuration file
 
-The easiest way to use the CopyExtractor is to provide a configuration file.
-This is currently the only way since no GUI or command lines work.
-
+Maybe the easiest way to use the CopyExtractor is to provide a configuration file.
 The configuration file is written in JSON format.
 
 **Key description:**
