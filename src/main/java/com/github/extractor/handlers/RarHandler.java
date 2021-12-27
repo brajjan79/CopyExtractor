@@ -101,16 +101,16 @@ public class RarHandler {
     }
 
     private static void extractFileHeader(final Archive archive, final FileHeader fileHeader, final File targetFile) {
-        final PrograssBar pt = new PrograssBar();
-        pt.init(fileHeader.getFullUnpackSize(), targetFile, "Extracting...");
-        pt.start();
+        final PrograssBar progressBar = new PrograssBar();
+        progressBar.init(fileHeader.getFullUnpackSize(), targetFile, "Extracting...");
+        progressBar.start();
 
         try {
             final FileOutputStream os = new FileOutputStream(targetFile);
             archive.extractFile(fileHeader, os);
             Thread.sleep(10); // Let progress bar to finish.
         } catch (IOException | RarException | InterruptedException e) {
-            pt.cancel();
+            progressBar.cancel();
             System.out.println("Failed to extract files: " + fileHeader.getFileName());
             e.printStackTrace();
         }

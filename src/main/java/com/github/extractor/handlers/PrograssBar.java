@@ -19,7 +19,7 @@ class PrograssBar extends Thread {
     public void run() {
         final int startFrom = 1;
         final int initialMax = 100;
-        final int maxRenderedLength = 100;
+        final int maxRenderedLength = 160;
 
         final ProgressBarBuilder pbb = new ProgressBarBuilder()
                 .setStyle(ProgressBarStyle.ASCII).setInitialMax(initialMax).setTaskName(targetFile.getName())
