@@ -42,12 +42,12 @@ public class CopyHandler {
     }
 
     private static boolean performFileCopy(final File file, final File targetFile, boolean isDryrun) {
-        final PrograssBar pt = new PrograssBar();
+        final PrograssBar progressBar = new PrograssBar();
         try {
             if (!isDryrun) {
                 final double sourceFileSize = FileSize.size(file).getBytes();
-                pt.init(sourceFileSize, targetFile, "Copying......");
-                pt.start();
+                progressBar.init(sourceFileSize, targetFile, "Copying......");
+                progressBar.start();
 
                 Files.copy(file, targetFile);
                 Thread.sleep(10); // Let progress bar to finish.
@@ -60,7 +60,7 @@ public class CopyHandler {
         } catch (final IOException | InterruptedException e) {
             e.printStackTrace();
             StateConstants.addFailure();
-            pt.cancel();
+            progressBar.cancel();
             return false;
         }
 
