@@ -13,7 +13,8 @@ before_install:
 
 # Only running report_coverage (after merge) to master branch
 stages:
-  - test
+  - name: test
+    if: branch = main
   - name: report_coverage
     if: branch = main AND type != pull_request
 
