@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.github.extractor.configuration.models.ConfigFolder;
-import com.github.extractor.exceptions.HelpGivenException;
 
 public class ConfigurationTest {
 

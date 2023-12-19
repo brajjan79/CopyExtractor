@@ -10,8 +10,6 @@ import org.mockito.Mockito;
 
 import com.github.extractor.configuration.Cli;
 import com.github.extractor.configuration.ConfigFactory;
-import com.github.extractor.configuration.models.ConfigFolder;
-import com.github.extractor.exceptions.ConfigurationException;
 
 public class AppTest {
 

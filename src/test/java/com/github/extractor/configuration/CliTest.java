@@ -6,7 +6,6 @@ import static org.junit.Assert.fail;
 
 import org.junit.jupiter.api.Test;
 
-import com.github.extractor.App;
 import com.github.extractor.exceptions.HelpGivenException;
 import com.github.extractor.exceptions.InputException;
 import com.google.gson.JsonObject;

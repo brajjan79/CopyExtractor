@@ -1,7 +1,6 @@
 package com.github.extractor.handlers;
 
 import java.io.File;
-import java.util.List;
 
 import com.github.extractor.configuration.Configuration;
 
