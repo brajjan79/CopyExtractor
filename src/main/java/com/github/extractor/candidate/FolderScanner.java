@@ -42,7 +42,7 @@ public class FolderScanner {
 
     private void createAndAddInputDirCandidate(final File dir, final File outputDir) {
         final File targetDir = dirHandler.buildTargetBaseDirFile(outputDir, dir);
-        createAndAddCandidate(dir, targetDir, true);
+        createAndAddCandidate(dir, targetDir);
     }
 
     private void scanSubDirectories(final File inputDir, final File outputDir) throws FolderException {
@@ -57,10 +57,10 @@ public class FolderScanner {
     private void scanFolderForPossibleCandidates(final File dir, final File outputDir) throws FolderException {
         if (dirHandler.folderHasMultipleFoldersToScan(dir)) {
             handleGroupedDirs(dir, outputDir);
-            createAndAddCandidate(dir, outputDir, false);
+            createAndAddCandidate(dir, outputDir);
         } else {
             final File targetDir = dirHandler.buildTargetSubdirFile(outputDir, dir);
-            createAndAddCandidate(dir, targetDir, false);
+            createAndAddCandidate(dir, targetDir);
         }
     }
 
@@ -77,7 +77,7 @@ public class FolderScanner {
         }
     }
 
-    private void createAndAddCandidate(final File file, final File targetDir, boolean isBaseDir) {
+    private void createAndAddCandidate(final File file, final File targetDir) {
         final Candidate candidate = candidateFactory.createCandidate(file, targetDir);
         if (!candidate.isEmpty()) {
             candidates.add(candidate);
