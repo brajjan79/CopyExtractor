@@ -10,16 +10,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.extractor.configuration.Configuration;
 
 public class FileHandlerTest {
 
     private Configuration config;
+    private FileHandler fileHandler;
 
-    @Before
+    @BeforeEach
     public void init() {
         config = mock(Configuration.class);
 
@@ -28,20 +29,20 @@ public class FileHandlerTest {
         when(config.getIgnored()).thenReturn(ignoderFiles);
         when(config.getFileTypes()).thenReturn(copyFiles);
 
-        Configuration.setInstance(config);
+        fileHandler = new FileHandler(config);
     }
 
     @Test
     public void testFileEndingIncluded() throws Throwable {
         final File file = new File("src/test/resources/folder_structure/folder_with_file/picture.included");
-        final boolean result = FileHandler.isIncludedFileType(file);
+        final boolean result = fileHandler.isIncludedFileType(file);
         assertTrue("Expected file " + file.getName() + " to end with .png", result);
     }
 
     @Test
     public void testFileEndingNotIncluded() throws Throwable {
         final File file = new File("src/test/resources/folder_structure/folder_with_file/picture.not");
-        final boolean result = FileHandler.isIncludedFileType(file);
+        final boolean result = fileHandler.isIncludedFileType(file);
         assertFalse("Expected file " + file.getName() + " ending with .png to be excluded.",
                 result);
     }
@@ -49,14 +50,14 @@ public class FileHandlerTest {
     @Test
     public void testFileToBeIgnored() throws Throwable {
         final File file = new File("src/test/resources/folder_structure/folder_with_file/ignored.png");
-        final boolean result = FileHandler.isIgnored(file);
+        final boolean result = fileHandler.isIgnored(file);
         assertTrue("Expected file " + file.getName() + " to be ignored.", result);
     }
 
     @Test
     public void testFileNotToBeIgnored() throws Throwable {
         final File file = new File("src/test/resources/folder_structure/folder_with_file/isOk.png");
-        final boolean result = FileHandler.isIgnored(file);
+        final boolean result = fileHandler.isIgnored(file);
         assertFalse("Expected file " + file.getName() + " ending with .png to be excluded.",
                 result);
     }

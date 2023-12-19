@@ -1,9 +1,10 @@
 package com.github.extractor.configuration;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.extractor.exceptions.HelpGivenException;
 import com.github.extractor.exceptions.InputException;
@@ -24,28 +25,37 @@ public class CliTest {
         }
     }
 
-    @Test(expected=HelpGivenException.class)
+    @Test
     public void testHelpOptionProvided() throws Throwable {
         final String[] args = {FULL_NAME_DASHES + CliKeys.HELP.name};
-        Cli.parseArgs(args);
+        assertThrows(HelpGivenException.class, () -> {
+            Cli.parseArgs(args);
+        });
     }
 
-    @Test(expected=HelpGivenException.class)
+    @Test
     public void testShortHelpOptionProvided() throws Throwable {
         final String[] args = {SHORT_NAME_DASHES + CliKeys.HELP.shortName};
-        Cli.parseArgs(args);
+        assertThrows(HelpGivenException.class, () -> {
+            Cli.parseArgs(args);
+        });
     }
 
-    @Test(expected=InputException.class)
+    @Test
     public void testNoArgsProvided() throws Throwable {
         final String[] args = {};
-        Cli.parseArgs(args);
+        assertThrows(InputException.class, () -> {
+            Cli.parseArgs(args);
+        });
     }
 
-    @Test(expected=InputException.class)
+    @Test
     public void testInvalidArgsProvided() throws Throwable {
         final String[] args = {"--invalid"};
-        Cli.parseArgs(args);
+        assertThrows(InputException.class, () -> {
+            Cli.parseArgs(args);
+        });
+
     }
 
     @Test
@@ -95,7 +105,7 @@ public class CliTest {
                 FULL_NAME_DASHES + CliKeys.KEEP_FOLDER.name,
                 FULL_NAME_DASHES + CliKeys.KEEP_FOLDER_STRUCTURE.name,
                 FULL_NAME_DASHES + CliKeys.DRY_RUN.name
-                };
+        };
         final JsonObject inputConfig = Cli.parseArgs(args);
 
         assertTrue(expectedJson.equals(inputConfig));
@@ -127,7 +137,7 @@ public class CliTest {
                 SHORT_NAME_DASHES + CliKeys.KEEP_FOLDER.shortName,
                 SHORT_NAME_DASHES + CliKeys.KEEP_FOLDER_STRUCTURE.shortName,
                 SHORT_NAME_DASHES + CliKeys.DRY_RUN.shortName
-                };
+        };
         final JsonObject inputConfig = Cli.parseArgs(args);
 
         assertTrue(expectedJson.equals(inputConfig));

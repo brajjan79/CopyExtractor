@@ -1,8 +1,9 @@
 package com.github.extractor;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -30,27 +31,33 @@ public class AppTest {
         }
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test
     public void systemExitWithInvalidArgs() {
-        App.main(new String[] {"--extract-path", "path"});
+        assertThrows(RuntimeException.class, () -> {
+            App.main(new String[] { "--extract-path", "path" });
+        });
+
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test
     public void systemExitWithNoArgs() {
-        App.main(new String[] {});
+        assertThrows(RuntimeException.class, () -> {
+            App.main(new String[] {});
+        });
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test
     public void systemExitWithExecutorError() throws Throwable {
-        try (MockedStatic<Cli> cli = Mockito.mockStatic(Cli.class);
-                MockedStatic<ConfigFactory> configFactory = Mockito.mockStatic(ConfigFactory.class);
-                MockedConstruction<Executor> mockExecutor = Mockito.mockConstruction(Executor.class,
-                        (mock, context) -> {
-                            Mockito.doThrow(new RuntimeException()).when(mock).run();
-                        })) {
+        assertThrows(RuntimeException.class, () -> {
+            try (MockedStatic<Cli> cli = Mockito.mockStatic(Cli.class);
+                    MockedStatic<ConfigFactory> configFactory = Mockito.mockStatic(ConfigFactory.class);
+                    MockedConstruction<Executor> mockExecutor = Mockito.mockConstruction(Executor.class, (mock, context) -> {
+                        Mockito.doThrow(new RuntimeException()).when(mock).run();
+                    })) {
 
-            App.main(new String[] {});
-        }
+                App.main(new String[] {});
+            }
+        });
     }
 
     @Test

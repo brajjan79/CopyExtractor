@@ -14,8 +14,18 @@ import com.github.extractor.utils.Dirs;
 
 public class Executor {
 
-    private final Configuration config = Configuration.getInstance();
-    private final FolderScanner folderScanner = new FolderScanner();
+    private Configuration config;
+    private FolderScanner folderScanner;
+
+    public Executor() {
+        config = Configuration.getInstance();
+        folderScanner = new FolderScanner();
+    }
+
+    public Executor(Configuration config, FolderScanner folderScanner) {
+        this.config = config;
+        this.folderScanner = folderScanner;
+    }
 
     public void run() {
         scanForCandidates();

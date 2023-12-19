@@ -1,25 +1,28 @@
 package com.github.extractor.configuration.models;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import java.io.File;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.extractor.exceptions.ConfigurationException;
 
 public class ConfigFolderTest {
 
-    @Test(expected=ConfigurationException.class)
+    @Test
     public void testConfigFolderNoInputFolder() {
-        final ConfigFolder configFolder = new ConfigFolder(null, null);
-        configFolder.getInputFolder();
+        assertThrows(ConfigurationException.class, () -> {
+            new ConfigFolder(null, "outputfolder");
+        });
     }
 
-    @Test(expected=ConfigurationException.class)
+    @Test
     public void testConfigFolderNoOutPutFolder() {
-        final ConfigFolder configFolder = new ConfigFolder(null, null);
-        configFolder.getOutputFolder();
+        assertThrows(ConfigurationException.class, () -> {
+            new ConfigFolder("inputfolder", null);
+        });
     }
 
     @Test
