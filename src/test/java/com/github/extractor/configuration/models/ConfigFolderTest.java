@@ -23,13 +23,13 @@ public class ConfigFolderTest {
     @Test
     public void testConfig() {
         final ConfigFolder configFolder = new ConfigFolder("/some/path", "/some/other/path");
-        assertEquals("/some/path", configFolder.getInputFolder());
-        assertEquals("/some/other/path", configFolder.getOutputFolder());
+        assertEquals("\\some\\path", configFolder.getInputFolder().getPath());
+        assertEquals("\\some\\other\\path", configFolder.getOutputFolder().getPath());
     }
 
     @Test
     public void testConfigToString() {
         final ConfigFolder configFolder = new ConfigFolder("/some/path", "/some/other/path");
-        assertEquals("{inputFolder: /some/path, outputFolder: /some/other/path}", configFolder.toString());
+        assertEquals("{inputFolder: \\some\\path, outputFolder: \\some\\other\\path}", configFolder.toString());
     }
 }

@@ -7,13 +7,7 @@ import com.github.extractor.utils.Dirs;
 
 public class DirHandler {
 
-    private final Configuration config;
-    private final FileHandler fileHandler;
-
-    public DirHandler(final FileHandler fileHandler, final Configuration config) {
-        this.fileHandler = fileHandler;
-        this.config = config;
-    }
+    private final Configuration config = Configuration.getInstance();
 
     public boolean folderHasMultipleFoldersToScan(final File source) {
         final int count = numberOfFoldersOfInterest(source);
@@ -29,7 +23,7 @@ public class DirHandler {
     public boolean dirContainsIncludedFileTypes(final File folder) {
         final File[] fileItems = folder.listFiles();
         for (final File file : fileItems) {
-            if (fileHandler.isIncludedFileType(file) && !fileHandler.isIgnored(file)) {
+            if (FileHandler.isIncludedFileType(file) && !FileHandler.isIgnored(file)) {
                 return true;
             }
         }
@@ -97,7 +91,7 @@ public class DirHandler {
 
     private String getDirName(final File file) {
         final String baseDir = Dirs.getBaseDirName(file, config.getGroupByRegex());
-        if (config.isKeepFolder()) {
+        if (config.isKeepFolder() || config.noLooseFilesInTargetBaseDir()) {
             return Dirs.getTargetDirName(file, baseDir);
         }
         return baseDir;
@@ -115,7 +109,7 @@ public class DirHandler {
         }
 
         for (final File dir : directories) {
-            if (!dir.isDirectory() || fileHandler.isIgnored(dir) || directoryIncluded(dir)) {
+            if (!dir.isDirectory() || FileHandler.isIgnored(dir) || directoryIncluded(dir)) {
                 continue;
             }
 

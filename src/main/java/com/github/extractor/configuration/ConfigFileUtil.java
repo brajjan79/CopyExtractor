@@ -1,5 +1,6 @@
 package com.github.extractor.configuration;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.WriteAbortedException;
@@ -8,6 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import com.github.extractor.utils.FileTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
@@ -35,7 +37,9 @@ public class ConfigFileUtil {
 
     public static void saveConfigurationFile(final Configuration config, final String filePath)
             throws WriteAbortedException {
-        final Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        final Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(File.class, new FileTypeAdapter())
+                .create();
+
         try {
             final String jsonString = gson.toJson(config);
             try (FileWriter writer = new FileWriter(filePath)) {

@@ -40,7 +40,8 @@ public class FolderScannerTest {
         mockedEmptyCandidate = mock(Candidate.class);
         when(mockedEmptyCandidate.isEmpty()).thenReturn(true);
 
-        folderScanner = new FolderScanner(config);
+        Configuration.setInstance(config);
+        folderScanner = new FolderScanner();
         folderScanner.setvariablesForTest(candidateFactory, dirHandler);
         setupMockFolderFolders();
     }
@@ -54,7 +55,7 @@ public class FolderScannerTest {
     public void testScanFoldersRecursiveOff() throws Throwable {
         when(config.isRecursive()).thenReturn(false);
 
-        folderScanner.scanFolders(inputDir, outputDir);
+        folderScanner.scanFolders(null, inputDir, outputDir);
         final List<Candidate> candidates = folderScanner.getCandidates();
         assertEquals("Expect 3 folders to be valid candidates.", 3, candidates.size());
     }
@@ -69,7 +70,7 @@ public class FolderScannerTest {
         when(config.isRecursive()).thenReturn(true);
         when(config.isKeepFolderStructure()).thenReturn(false);
 
-        folderScanner.scanFolders(inputDir, outputDir);
+        folderScanner.scanFolders(null, inputDir, outputDir);
         final List<Candidate> candidates = folderScanner.getCandidates();
         assertEquals("Expect 3 folders to be valid candidates.", 6, candidates.size());
     }
@@ -84,7 +85,7 @@ public class FolderScannerTest {
         when(config.isRecursive()).thenReturn(true);
         when(config.isKeepFolderStructure()).thenReturn(true);
 
-        folderScanner.scanFolders(inputDir, outputDir);
+        folderScanner.scanFolders(null, inputDir, outputDir);
         final List<Candidate> candidates = folderScanner.getCandidates();
         assertEquals("Expect 3 folders to be valid candidates.", 6, candidates.size());
     }
@@ -99,7 +100,7 @@ public class FolderScannerTest {
         final File mockedFile = mock(File.class);
         when(mockedFile.isFile()).thenReturn(true);
         when(mockedFile.isDirectory()).thenReturn(false);
-        folderScanner.scanFolders(mockedFile, outputDir);
+        folderScanner.scanFolders(null, mockedFile, outputDir);
     }
 
     private void setupMockFolderFolders() throws Exception {

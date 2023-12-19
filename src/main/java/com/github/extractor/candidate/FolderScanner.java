@@ -6,22 +6,20 @@ import java.util.List;
 
 import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.configuration.Configuration;
+import com.github.extractor.configuration.models.ConfigFolder;
 import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.DirHandler;
-import com.github.extractor.handlers.FileHandler;
 
 public class FolderScanner {
 
-    private final Configuration config;
+    private final Configuration config = Configuration.getInstance();
     private final List<Candidate> candidates = new ArrayList<>();
     private CandidateFactory candidateFactory;
     private DirHandler dirHandler;
 
-    public FolderScanner(final Configuration config) {
-        final FileHandler fileHandler = new FileHandler(config);
-        this.dirHandler = new DirHandler(fileHandler, config);
-        this.candidateFactory = new CandidateFactory(fileHandler, dirHandler);
-        this.config = config;
+    public FolderScanner() {
+        this.dirHandler = new DirHandler();
+        this.candidateFactory = new CandidateFactory(dirHandler);
     }
 
     public void setvariablesForTest(CandidateFactory candidateFactory, DirHandler dirHandler) {
@@ -33,7 +31,7 @@ public class FolderScanner {
         return candidates;
     }
 
-    public void scanFolders(final File inputDir, final File outputDir) throws FolderException {
+    public void scanFolders(ConfigFolder folderItem, final File inputDir, final File outputDir) throws FolderException {
         if (inputDir.isFile()) {
             throw new FolderException("Folder is not folder.");
         }
@@ -44,7 +42,7 @@ public class FolderScanner {
 
     private void createAndAddInputDirCandidate(final File dir, final File outputDir) {
         final File targetDir = dirHandler.buildTargetBaseDirFile(outputDir, dir);
-        createAndAddCandidate(dir, targetDir);
+        createAndAddCandidate(dir, targetDir, true);
     }
 
     private void scanSubDirectories(final File inputDir, final File outputDir) throws FolderException {
@@ -59,10 +57,10 @@ public class FolderScanner {
     private void scanFolderForPossibleCandidates(final File dir, final File outputDir) throws FolderException {
         if (dirHandler.folderHasMultipleFoldersToScan(dir)) {
             handleGroupedDirs(dir, outputDir);
-            createAndAddCandidate(dir, outputDir);
+            createAndAddCandidate(dir, outputDir, false);
         } else {
             final File targetDir = dirHandler.buildTargetSubdirFile(outputDir, dir);
-            createAndAddCandidate(dir, targetDir);
+            createAndAddCandidate(dir, targetDir, false);
         }
     }
 
@@ -79,7 +77,7 @@ public class FolderScanner {
         }
     }
 
-    private void createAndAddCandidate(final File file, final File targetDir) {
+    private void createAndAddCandidate(final File file, final File targetDir, boolean isBaseDir) {
         final Candidate candidate = candidateFactory.createCandidate(file, targetDir);
         if (!candidate.isEmpty()) {
             candidates.add(candidate);

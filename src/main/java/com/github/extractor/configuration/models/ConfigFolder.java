@@ -2,30 +2,34 @@ package com.github.extractor.configuration.models;
 
 import com.github.extractor.exceptions.ConfigurationException;
 
+import java.io.File;
+
 public class ConfigFolder {
 
-	private final String inputFolder;
-	private final String outputFolder;
+    protected final File inputFolder;
+    protected final File outputFolder;
 
-	public ConfigFolder(final String inputFolder, final String outputFolder) {
-        this.inputFolder = inputFolder;
-        this.outputFolder = outputFolder;
+    public ConfigFolder(final String inputFolder, final String outputFolder) {
+        if (inputFolder == null) {
+            throw new ConfigurationException("No inputFolder configuration provided.");
+        }
+        if (outputFolder == null) {
+            throw new ConfigurationException("No outputFolder configuration provided.");
+        }
+        this.inputFolder = new File(inputFolder);
+        this.outputFolder = new File(outputFolder);
     }
 
-    public String getInputFolder() {
-        if (inputFolder == null)
-            throw new ConfigurationException("No inputFolder configuration provided.");
+    public File getInputFolder() {
         return inputFolder;
     }
 
-    public String getOutputFolder() {
-        if (outputFolder == null)
-            throw new ConfigurationException("No outputFolder configuration provided.");
+    public File getOutputFolder() {
         return outputFolder;
     }
 
     @Override
     public String toString() {
-	    return String.format("{inputFolder: %s, outputFolder: %s}", inputFolder, outputFolder);
-	}
+        return String.format("{inputFolder: %s, outputFolder: %s}", inputFolder, outputFolder);
+    }
 }

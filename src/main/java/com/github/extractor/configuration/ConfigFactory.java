@@ -1,10 +1,13 @@
 package com.github.extractor.configuration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.github.extractor.configuration.models.ConfigFolder;
+import com.github.extractor.utils.FileTypeAdapter;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 public class ConfigFactory {
@@ -12,7 +15,7 @@ public class ConfigFactory {
     public static Configuration createFromInputArgs(final JsonObject cliOptions) {
         if (cliOptions.has(CliKeys.CONFIG_FILE_PATH.name)) {
             final Configuration config = createFromConfigFilePath(
-                cliOptions.get(CliKeys.CONFIG_FILE_PATH.name).getAsString());
+                    cliOptions.get(CliKeys.CONFIG_FILE_PATH.name).getAsString());
             if (cliOptions.has(CliKeys.DRY_RUN.name)) {
                 config.setDryRun(true);
             }
@@ -38,8 +41,8 @@ public class ConfigFactory {
         final boolean recursive = cliOptions.has(CliKeys.RECURSIVE.name);
 
         final Configuration config = new Configuration(
-            fileTypes, ignore, includeFolders, folders, groupByRegex, keepFolder,
-            keepFolderStructure, recursive);
+                fileTypes, ignore, includeFolders, folders, groupByRegex, keepFolder,
+                keepFolderStructure, recursive);
         config.setDryRun(cliOptions.has(CliKeys.DRY_RUN.name));
         return config;
     }
@@ -47,7 +50,7 @@ public class ConfigFactory {
     private static List<ConfigFolder> getConfigFolder(final JsonObject cliOptions) {
         final List<ConfigFolder> folders = new ArrayList<>();
         final ConfigFolder folder = new ConfigFolder(cliOptions.get(CliKeys.SOURCE_FOLDER.name).getAsString(),
-                                                     cliOptions.get(CliKeys.TARGET_FOLDER.name).getAsString());
+                cliOptions.get(CliKeys.TARGET_FOLDER.name).getAsString());
         folders.add(folder);
         return folders;
     }
@@ -73,7 +76,7 @@ public class ConfigFactory {
     }
 
     private static Configuration createConfiguration(final JsonObject jsonConfig) {
-        final Gson gson = new Gson();
+        final Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(File.class, new FileTypeAdapter()).create();
         final Configuration config = gson.fromJson(jsonConfig, Configuration.class);
         return config;
     }

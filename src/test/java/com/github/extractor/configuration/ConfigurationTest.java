@@ -61,15 +61,15 @@ public class ConfigurationTest {
     @Test
     public void testToString() throws Throwable {
         final String expectedString = "Configuration:\n" +
-            "folders: [{inputFolder: /input, outputFolder: /output}]\n" +
-            "fileEndingsToCopy: [jpg]\n" +
-            "includedeFolders: [info]\n" +
-            "ignoreList: [ignore]\n" +
-            "groupBy: 'regex'\n" +
-            "keepFolder: true\n" +
-            "keepFolderStructure: true\n" +
-            "recursive: true\n" +
-            "dryRun: true";
+                "folders: [{inputFolder: \\input, outputFolder: \\output}]\n" +
+                "fileEndingsToCopy: [jpg]\n" +
+                "includedeFolders: [info]\n" +
+                "ignoreList: [ignore]\n" +
+                "groupBy: 'regex'\n" +
+                "keepFolder: true\n" +
+                "keepFolderStructure: true\n" +
+                "recursive: true\n" +
+                "dryRun: true";
 
         final List<String> ignores = new ArrayList<>();
         ignores.add("ignore");
