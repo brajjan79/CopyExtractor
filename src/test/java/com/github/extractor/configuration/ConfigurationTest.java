@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,15 +62,19 @@ public class ConfigurationTest {
     @Test
     public void testToString() throws Throwable {
         final String expectedString = "Configuration:\n" +
-            "folders: [{inputFolder: /input, outputFolder: /output}]\n" +
-            "fileEndingsToCopy: [jpg]\n" +
-            "includedeFolders: [info]\n" +
-            "ignoreList: [ignore]\n" +
-            "groupBy: 'regex'\n" +
-            "keepFolder: true\n" +
-            "keepFolderStructure: true\n" +
-            "recursive: true\n" +
-            "dryRun: true";
+                "folders: [{inputFolder: " +
+                new File("/input").getPath() +
+                ", outputFolder: " +
+                new File("/output").getPath() +
+                "}]\n" +
+                "fileEndingsToCopy: [jpg]\n" +
+                "includedeFolders: [info]\n" +
+                "ignoreList: [ignore]\n" +
+                "groupBy: 'regex'\n" +
+                "keepFolder: true\n" +
+                "keepFolderStructure: true\n" +
+                "recursive: true\n" +
+                "dryRun: true";
 
         final List<String> ignores = new ArrayList<>();
         ignores.add("ignore");

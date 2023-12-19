@@ -10,6 +10,8 @@ public class Configuration {
 
     private static final String DEFAULT_GROUP_BY_REGEX = "(?!x)x";
 
+    private static Configuration instance;
+
     private final List<String> fileTypes;
     private final List<String> ignore;
     private final List<String> includeFolders;
@@ -49,37 +51,51 @@ public class Configuration {
         this.recursive = recursive;
     }
 
+    public static synchronized Configuration getInstance() {
+        return instance;
+    }
+
+    // Method to set a custom (mock) instance for testing
+    public static synchronized void setInstance(Configuration mockInstance) {
+        instance = mockInstance;
+    }
+
     public List<String> getFileTypes() {
-        if (fileTypes == null)
+        if (fileTypes == null) {
             return new ArrayList<>();
+        }
 
         return fileTypes;
     }
 
     public List<String> getIgnored() {
-        if (ignore == null)
+        if (ignore == null) {
             return new ArrayList<>();
+        }
 
         return ignore;
     }
 
     public List<String> getIncludeFolders() {
-        if (includeFolders == null)
+        if (includeFolders == null) {
             return new ArrayList<>();
+        }
 
         return includeFolders;
     }
 
     public List<ConfigFolder> getFolders() {
-        if (folders == null)
+        if (folders == null) {
             throw new ConfigurationException("No folder configuration provided.");
+        }
 
         return folders;
     }
 
     public String getGroupByRegex() {
-        if (groupByRegex == null)
+        if (groupByRegex == null) {
             return DEFAULT_GROUP_BY_REGEX;
+        }
 
         return groupByRegex;
     }
@@ -104,27 +120,31 @@ public class Configuration {
         return recursive;
     }
 
+    public boolean noLooseFilesInTargetBaseDir() {
+        return false;
+    }
+
     @Override
     public String toString() {
         return String.format("Configuration:\n"
-            + "folders: %s\n"
-            + "fileEndingsToCopy: %s\n"
-            + "includedeFolders: %s\n"
-            + "ignoreList: %s\n"
-            + "groupBy: '%s'\n"
-            + "keepFolder: %s\n"
-            + "keepFolderStructure: %s\n"
-            + "recursive: %s\n"
-            + "dryRun: %s",
-            getFolders(),
-            getFileTypes(),
-            getIncludeFolders(),
-            getIgnored(),
-            getGroupByRegex(),
-            isKeepFolder(),
-            isKeepFolderStructure(),
-            isRecursive(),
-            isDryRun());
+                + "folders: %s\n"
+                + "fileEndingsToCopy: %s\n"
+                + "includedeFolders: %s\n"
+                + "ignoreList: %s\n"
+                + "groupBy: '%s'\n"
+                + "keepFolder: %s\n"
+                + "keepFolderStructure: %s\n"
+                + "recursive: %s\n"
+                + "dryRun: %s",
+                getFolders(),
+                getFileTypes(),
+                getIncludeFolders(),
+                getIgnored(),
+                getGroupByRegex(),
+                isKeepFolder(),
+                isKeepFolderStructure(),
+                isRecursive(),
+                isDryRun());
     }
 
 }

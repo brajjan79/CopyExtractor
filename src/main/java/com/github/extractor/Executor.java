@@ -1,9 +1,6 @@
 package com.github.extractor;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import com.github.extractor.candidate.FolderScanner;
 import com.github.extractor.candidate.models.Candidate;
@@ -17,12 +14,8 @@ import com.github.extractor.utils.Dirs;
 
 public class Executor {
 
-    private final Configuration config;
-    private List<Candidate> candidates = new ArrayList<>();
-
-    public Executor(final Configuration config) {
-        this.config = config;
-    }
+    private final Configuration config = Configuration.getInstance();
+    private final FolderScanner folderScanner = new FolderScanner();
 
     public void run() {
         scanForCandidates();
@@ -30,22 +23,18 @@ public class Executor {
     }
 
     public void scanForCandidates() {
-        final FolderScanner folderScanner = new FolderScanner(config);
         for (final ConfigFolder folderItem : config.getFolders()) {
             try {
-                folderScanner.scanFolders(new File(folderItem.getInputFolder()),
-                        new File(folderItem.getOutputFolder()));
+                folderScanner.scanFolders(folderItem, folderItem.getInputFolder(), folderItem.getOutputFolder());
             } catch (final FolderException e) {
                 e.printStackTrace();
             }
         }
-        candidates = folderScanner.getCandidates();
-
     }
 
     public void copyAndUnrarCandidates() {
 
-        for (final Candidate candidate : candidates) {
+        for (final Candidate candidate : folderScanner.getCandidates()) {
             printProcess("Processing folder: ", candidate);
             copyAndUnrarCandidate(candidate);
         }

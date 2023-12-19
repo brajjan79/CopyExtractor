@@ -13,11 +13,9 @@ import com.github.extractor.utils.Dirs;
 public class CandidateFactory {
 
     private static final int LAST_MODIFIED_WAIT_TIME = 10000;
-    private final FileHandler fileHandler;
     private final DirHandler dirHandler;
 
-    public CandidateFactory(final FileHandler fileHandler, final DirHandler dirHandler) {
-        this.fileHandler = fileHandler;
+    public CandidateFactory(final DirHandler dirHandler) {
         this.dirHandler = dirHandler;
     }
 
@@ -56,7 +54,7 @@ public class CandidateFactory {
         final List<File> files_to_unrar = new ArrayList<>();
         final File[] files = sourceDir.listFiles();
         for (final File file : files) {
-            if (RarHandler.fileIsUnrarable(file) && !fileHandler.isIgnored(file)) {
+            if (RarHandler.fileIsUnrarable(file) && !FileHandler.isIgnored(file)) {
                 files_to_unrar.add(file);
                 continue;
             }
@@ -72,7 +70,7 @@ public class CandidateFactory {
         final List<File> files_to_copy = new ArrayList<>();
         final File[] files = sourceDir.listFiles();
         for (final File file : files) {
-            if (fileHandler.isIncludedFileType(file) && !fileHandler.isIgnored(file)) {
+            if (FileHandler.isIncludedFileType(file) && !FileHandler.isIgnored(file)) {
                 files_to_copy.add(file);
                 continue;
             }

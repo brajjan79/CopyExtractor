@@ -6,22 +6,20 @@ import java.util.List;
 
 import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.configuration.Configuration;
+import com.github.extractor.configuration.models.ConfigFolder;
 import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.DirHandler;
-import com.github.extractor.handlers.FileHandler;
 
 public class FolderScanner {
 
-    private final Configuration config;
+    private final Configuration config = Configuration.getInstance();
     private final List<Candidate> candidates = new ArrayList<>();
     private CandidateFactory candidateFactory;
     private DirHandler dirHandler;
 
-    public FolderScanner(final Configuration config) {
-        final FileHandler fileHandler = new FileHandler(config);
-        this.dirHandler = new DirHandler(fileHandler, config);
-        this.candidateFactory = new CandidateFactory(fileHandler, dirHandler);
-        this.config = config;
+    public FolderScanner() {
+        this.dirHandler = new DirHandler();
+        this.candidateFactory = new CandidateFactory(dirHandler);
     }
 
     public void setvariablesForTest(CandidateFactory candidateFactory, DirHandler dirHandler) {
@@ -33,7 +31,7 @@ public class FolderScanner {
         return candidates;
     }
 
-    public void scanFolders(final File inputDir, final File outputDir) throws FolderException {
+    public void scanFolders(ConfigFolder folderItem, final File inputDir, final File outputDir) throws FolderException {
         if (inputDir.isFile()) {
             throw new FolderException("Folder is not folder.");
         }
