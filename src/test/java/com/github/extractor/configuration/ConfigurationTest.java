@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +62,11 @@ public class ConfigurationTest {
     @Test
     public void testToString() throws Throwable {
         final String expectedString = "Configuration:\n" +
-                "folders: [{inputFolder: \\input, outputFolder: \\output}]\n" +
+                "folders: [{inputFolder: " +
+                new File("/input").getPath() +
+                ", outputFolder: " +
+                new File("/output").getPath() +
+                "}]\n" +
                 "fileEndingsToCopy: [jpg]\n" +
                 "includedeFolders: [info]\n" +
                 "ignoreList: [ignore]\n" +

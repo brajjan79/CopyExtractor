@@ -2,6 +2,8 @@ package com.github.extractor.configuration.models;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.File;
+
 import org.junit.Test;
 
 import com.github.extractor.exceptions.ConfigurationException;
@@ -23,13 +25,15 @@ public class ConfigFolderTest {
     @Test
     public void testConfig() {
         final ConfigFolder configFolder = new ConfigFolder("/some/path", "/some/other/path");
-        assertEquals("\\some\\path", configFolder.getInputFolder().getPath());
-        assertEquals("\\some\\other\\path", configFolder.getOutputFolder().getPath());
+        assertEquals(new File("/some/path").getPath(), configFolder.getInputFolder().getPath());
+        assertEquals(new File("/some/other/path").getPath(), configFolder.getOutputFolder().getPath());
     }
 
     @Test
     public void testConfigToString() {
         final ConfigFolder configFolder = new ConfigFolder("/some/path", "/some/other/path");
-        assertEquals("{inputFolder: \\some\\path, outputFolder: \\some\\other\\path}", configFolder.toString());
+        assertEquals(
+                "{inputFolder: " + new File("/some/path").getPath() + ", outputFolder: " + new File("/some/other/path").getPath() + "}",
+                configFolder.toString());
     }
 }
