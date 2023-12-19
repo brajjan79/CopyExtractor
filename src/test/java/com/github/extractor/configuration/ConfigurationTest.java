@@ -2,16 +2,18 @@ package com.github.extractor.configuration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.extractor.configuration.models.ConfigFolder;
+import com.github.extractor.exceptions.HelpGivenException;
 
 public class ConfigurationTest {
 
@@ -19,7 +21,7 @@ public class ConfigurationTest {
     private ConfigFolder folder;
     private List<ConfigFolder> folders;
 
-    @Before
+    @BeforeEach
     public void beforeTests() {
         folders = new ArrayList<>();
         folder = new ConfigFolder("/input", "/output");
@@ -88,9 +90,11 @@ public class ConfigurationTest {
         assertEquals(expectedString, config.toString());
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test
     public void testNoFoldersThrowsException() throws Throwable {
         final Configuration config = new Configuration(null, null, null, null, null, false, false, false);
-        config.getFolders();
+        assertThrows(RuntimeException.class, () -> {
+            config.getFolders();
+        });
     }
 }

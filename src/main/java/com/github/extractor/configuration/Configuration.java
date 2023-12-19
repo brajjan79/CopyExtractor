@@ -57,7 +57,7 @@ public class Configuration {
 
     // Method to set a custom (mock) instance for testing
     public static synchronized void setInstance(Configuration mockInstance) {
-        instance = mockInstance;
+        Configuration.instance = mockInstance;
     }
 
     public List<String> getFileTypes() {

@@ -12,14 +12,22 @@ import com.github.extractor.handlers.DirHandler;
 
 public class FolderScanner {
 
-    private final Configuration config = Configuration.getInstance();
     private final List<Candidate> candidates = new ArrayList<>();
+
+    private Configuration config;
     private CandidateFactory candidateFactory;
     private DirHandler dirHandler;
 
     public FolderScanner() {
+        this.config = Configuration.getInstance();
         this.dirHandler = new DirHandler();
-        this.candidateFactory = new CandidateFactory(dirHandler);
+        this.candidateFactory = new CandidateFactory();
+    }
+
+    public FolderScanner(Configuration config, DirHandler dirHandler, CandidateFactory candidateFactory) {
+        this.config = config;
+        this.dirHandler = dirHandler;
+        this.candidateFactory = candidateFactory;
     }
 
     public void setvariablesForTest(CandidateFactory candidateFactory, DirHandler dirHandler) {

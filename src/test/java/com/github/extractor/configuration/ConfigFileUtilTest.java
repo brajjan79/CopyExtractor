@@ -1,5 +1,6 @@
 package com.github.extractor.configuration;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doThrow;
@@ -10,9 +11,10 @@ import java.io.IOException;
 import java.io.WriteAbortedException;
 import java.nio.file.Files;
 
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.MockedConstruction;
 import org.mockito.MockedStatic;
@@ -29,17 +31,17 @@ import com.google.gson.JsonSyntaxException;
 
 public class ConfigFileUtilTest {
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
+    @TempDir
+    public File folder;
 
     private File configFilePath;
     private Gson gson;
 
     private Configuration configuration;
 
-    @Before
+    @BeforeEach
     public void init() throws Throwable {
-        configFilePath = folder.newFile("config_file_for_test.json");
+        configFilePath = new File(folder, "config_file_for_test.json");
         gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(File.class, new FileTypeAdapter()).create();
         configuration = new Configuration(null, null, null, null, null, false, false, false);
     }
@@ -64,43 +66,49 @@ public class ConfigFileUtilTest {
                 configFileJson.equals(expectedJson));
     }
 
-    @Test(expected = WriteAbortedException.class)
+    @Test
     public void testWriteThrowsJsonIOException() throws Throwable {
         try (MockedConstruction<FileWriter> mockExecutor = Mockito.mockConstruction(FileWriter.class,
                 (mock, context) -> {
                     doThrow(new JsonIOException("")).when(mock).write(Mockito.any(String.class));
                 })) {
-
-            ConfigFileUtil.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
+            assertThrows(WriteAbortedException.class, () -> {
+                ConfigFileUtil.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
+            });
         }
     }
 
-    @Test(expected = WriteAbortedException.class)
+    @Test
     public void testWriteThrowsIOException() throws Throwable {
         try (MockedConstruction<FileWriter> mockExecutor = Mockito.mockConstruction(FileWriter.class,
                 (mock, context) -> {
                     doThrow(new IOException("")).when(mock).write(Mockito.any(String.class));
                 })) {
-
-            ConfigFileUtil.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
+            assertThrows(WriteAbortedException.class, () -> {
+                ConfigFileUtil.saveConfigurationFile(configuration, configFilePath.getAbsolutePath());
+            });
         }
     }
 
-    @Test(expected = JsonParseException.class)
+    @Test
     public void testReadThrowsIOException() throws Throwable {
         try (MockedStatic<Files> mocked = Mockito.mockStatic(Files.class)) {
             mocked.when(() -> Files.readAllBytes(Mockito.any())).thenThrow(new IOException(""));
-            ConfigFileUtil.readConfigurationFile(configFilePath.getAbsolutePath());
+            assertThrows(JsonParseException.class, () -> {
+                ConfigFileUtil.readConfigurationFile(configFilePath.getAbsolutePath());
+            });
         }
     }
 
-    @Test(expected = JsonParseException.class)
+    @Test
     public void testReadThrowsJsonSyntaxException() throws Throwable {
         try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class);
                 MockedStatic<JsonParser> mockedJsonParser = Mockito.mockStatic(JsonParser.class)) {
             mockedFiles.when(() -> Files.readAllBytes(Mockito.any())).thenReturn("Some invalid json ' Yes ' in JSON!".getBytes());
             mockedJsonParser.when(() -> JsonParser.parseString(Mockito.any())).thenThrow(new JsonSyntaxException(""));
-            ConfigFileUtil.readConfigurationFile(configFilePath.getAbsolutePath());
+            assertThrows(JsonParseException.class, () -> {
+                ConfigFileUtil.readConfigurationFile(configFilePath.getAbsolutePath());
+            });
         }
     }
 }

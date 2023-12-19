@@ -1,14 +1,15 @@
 package com.github.extractor.candidate;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.github.extractor.candidate.models.Candidate;
@@ -29,7 +30,7 @@ public class FolderScannerTest {
     private DirHandler dirHandler;
     private Configuration config;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         dirHandler = mock(DirHandler.class);
         config = mock(Configuration.class);
@@ -95,12 +96,14 @@ public class FolderScannerTest {
      *
      * @throws Throwable
      */
-    @Test(expected = FolderException.class)
+    @Test
     public void testScanInvalidDir() throws Throwable {
         final File mockedFile = mock(File.class);
         when(mockedFile.isFile()).thenReturn(true);
         when(mockedFile.isDirectory()).thenReturn(false);
-        folderScanner.scanFolders(null, mockedFile, outputDir);
+        assertThrows(FolderException.class, () -> {
+            folderScanner.scanFolders(null, mockedFile, outputDir);
+        });
     }
 
     private void setupMockFolderFolders() throws Exception {

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -23,18 +23,19 @@ public class DirHandlerTest {
 
     private Configuration config;
     private DirHandler dirHandler;
+    private FileHandler fileHandler;
 
-    @Before
+    @BeforeEach
     public void init() {
         final List<String> includeList = new ArrayList<>(Arrays.asList("with", "include"));
         final List<String> ignore = new ArrayList<>(Arrays.asList("ignored_folder"));
 
+        fileHandler = mock(FileHandler.class);
         config = mock(Configuration.class);
         when(config.getIncludeFolders()).thenReturn(includeList);
         when(config.getIgnored()).thenReturn(ignore);
-        Configuration.setInstance(config);
 
-        dirHandler = new DirHandler();
+        dirHandler = new DirHandler(config, fileHandler);
     }
 
     @Test
@@ -65,70 +66,65 @@ public class DirHandlerTest {
 
     @Test
     public void testDirContainsIncludedFileTypes() {
-        try (MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class)) {
-            final File mockedDir = mock(File.class);
-            final File mockedSubDir = mock(File.class);
-            when(mockedDir.listFiles()).thenReturn(new File[] { mockedSubDir });
+        final File mockedDir = mock(File.class);
+        final File mockedSubDir = mock(File.class);
+        when(mockedDir.listFiles()).thenReturn(new File[] { mockedSubDir });
 
-            when(FileHandler.isIgnored(mockedSubDir)).thenReturn(false);
-            when(FileHandler.isIncludedFileType(mockedSubDir)).thenReturn(true);
+        when(fileHandler.isIgnored(mockedSubDir)).thenReturn(false);
+        when(fileHandler.isIncludedFileType(mockedSubDir)).thenReturn(true);
 
-            final boolean result = dirHandler.dirContainsIncludedFileTypes(mockedDir);
-            assertTrue("File should be included", result);
-        }
+        final boolean result = dirHandler.dirContainsIncludedFileTypes(mockedDir);
+        assertTrue("File should be included", result);
+
     }
 
     @Test
     public void testDirDoesNotContainsIncludedFileTypes() {
-        try (MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class)) {
-            final File mockedDir = mock(File.class);
-            final File mockedSubDir = mock(File.class);
-            when(mockedDir.listFiles()).thenReturn(new File[] { mockedSubDir });
+        final File mockedDir = mock(File.class);
+        final File mockedSubDir = mock(File.class);
+        when(mockedDir.listFiles()).thenReturn(new File[] { mockedSubDir });
 
-            when(FileHandler.isIgnored(mockedSubDir)).thenReturn(false);
-            when(FileHandler.isIncludedFileType(mockedSubDir)).thenReturn(false);
+        when(fileHandler.isIgnored(mockedSubDir)).thenReturn(false);
+        when(fileHandler.isIncludedFileType(mockedSubDir)).thenReturn(false);
 
-            final boolean result = dirHandler.dirContainsIncludedFileTypes(mockedDir);
-            assertFalse("File should not be included", result);
-        }
+        final boolean result = dirHandler.dirContainsIncludedFileTypes(mockedDir);
+        assertFalse("File should not be included", result);
+
     }
 
 
     @Test
     public void testDirContainsIncludedFileTypesButIsIgnored() {
-        try (MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class)) {
-            final File mockedDir = mock(File.class);
-            final File mockedSubDir = mock(File.class);
-            when(mockedDir.listFiles()).thenReturn(new File[] { mockedSubDir });
+        final File mockedDir = mock(File.class);
+        final File mockedSubDir = mock(File.class);
+        when(mockedDir.listFiles()).thenReturn(new File[] { mockedSubDir });
 
-            when(FileHandler.isIgnored(mockedSubDir)).thenReturn(true);
-            when(FileHandler.isIncludedFileType(mockedSubDir)).thenReturn(true);
+        when(fileHandler.isIgnored(mockedSubDir)).thenReturn(true);
+        when(fileHandler.isIncludedFileType(mockedSubDir)).thenReturn(true);
 
-            final boolean result = dirHandler.dirContainsIncludedFileTypes(mockedDir);
-            assertFalse("File should not be included", result);
-        }
+        final boolean result = dirHandler.dirContainsIncludedFileTypes(mockedDir);
+        assertFalse("File should not be included", result);
+
     }
 
     @Test
     public void testDirDoesNotContainsIncludedFileTypesAndIsIgnored() {
-        try (MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class)) {
-            final File mockedDir = mock(File.class);
-            final File mockedSubDir = mock(File.class);
-            when(mockedDir.listFiles()).thenReturn(new File[] { mockedSubDir });
+        final File mockedDir = mock(File.class);
+        final File mockedSubDir = mock(File.class);
+        when(mockedDir.listFiles()).thenReturn(new File[] { mockedSubDir });
 
-            when(FileHandler.isIgnored(mockedSubDir)).thenReturn(true);
-            when(FileHandler.isIncludedFileType(mockedSubDir)).thenReturn(false);
+        when(fileHandler.isIgnored(mockedSubDir)).thenReturn(true);
+        when(fileHandler.isIncludedFileType(mockedSubDir)).thenReturn(false);
 
-            final boolean result = dirHandler.dirContainsIncludedFileTypes(mockedDir);
-            assertFalse("File should not be included", result);
-        }
+        final boolean result = dirHandler.dirContainsIncludedFileTypes(mockedDir);
+        assertFalse("File should not be included", result);
+
     }
 
     @Test
     public void testFolderHasMultipleFoldersToScan() {
-        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
-                MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class)) {
-            final File folder = buildMockedFolderStructure(rarHandler, fileHandler);
+        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class)) {
+            final File folder = buildMockedFolderStructure(rarHandler);
             final boolean result = dirHandler.folderHasMultipleFoldersToScan(folder);
             assertTrue("Dir should have interesting folders", result);
 
@@ -243,7 +239,7 @@ public class DirHandlerTest {
         }
     }
 
-    private File buildMockedFolderStructure(MockedStatic<RarHandler> rarHandler, MockedStatic<FileHandler> fileHandler) {
+    private File buildMockedFolderStructure(MockedStatic<RarHandler> rarHandler) {
         final File startDir = mock(File.class);
 
         final File subDirA = mock(File.class);
@@ -267,28 +263,28 @@ public class DirHandlerTest {
         when(subDirA.getAbsolutePath()).thenReturn("/input_dir/sub_dir_a");
         when(subDirA.getName()).thenReturn("sub_dir_a");
         when(subDirA.listFiles()).thenReturn(subDirAFileList);
-        fileHandler.when(() -> FileHandler.isIgnored(subDirA)).thenReturn(false);
+        when(fileHandler.isIgnored(subDirA)).thenReturn(false);
         rarHandler.when(() -> RarHandler.dirContainsUnrarable(subDirA)).thenReturn(false);
 
         // subDirB setup
         when(subDirB.isDirectory()).thenReturn(true);
         when(subDirB.getAbsolutePath()).thenReturn("/input_dir/sub_dir_a/sub_dir_b");
         when(subDirB.getName()).thenReturn("sub_dir_b");
-        fileHandler.when(() -> FileHandler.isIgnored(subDirB)).thenReturn(false);
+        when(fileHandler.isIgnored(subDirB)).thenReturn(false);
         rarHandler.when(() -> RarHandler.dirContainsUnrarable(subDirB)).thenReturn(true);
 
         // ignoredSubdir setup
         when(ignoredSubDir.isDirectory()).thenReturn(true);
         when(ignoredSubDir.getAbsolutePath()).thenReturn("/input_dir/sub_dir_a/ignored_dir");
         when(ignoredSubDir.getName()).thenReturn("ignored_dir");
-        fileHandler.when(() -> FileHandler.isIgnored(ignoredSubDir)).thenReturn(true);
+        when(fileHandler.isIgnored(ignoredSubDir)).thenReturn(true);
         rarHandler.when(() -> RarHandler.dirContainsUnrarable(ignoredSubDir)).thenReturn(true);
 
         // includedSubDir setup
         when(ignoredSubDir.isDirectory()).thenReturn(true);
         when(ignoredSubDir.getAbsolutePath()).thenReturn("/input_dir/sub_dir_a/included_dir");
         when(ignoredSubDir.getName()).thenReturn("included_dir");
-        fileHandler.when(() -> FileHandler.isIgnored(ignoredSubDir)).thenReturn(false);
+        when(fileHandler.isIgnored(ignoredSubDir)).thenReturn(false);
         rarHandler.when(() -> RarHandler.dirContainsUnrarable(ignoredSubDir)).thenReturn(true);
 
         // mockedFile setup

@@ -7,8 +7,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -22,6 +22,7 @@ public class CandidateFactoryTest {
 
     private static final int LAST_MODIFIED_WAIT_TIME = 10000;
     private DirHandler dirHandler;
+    private FileHandler fileHandler;
     private CandidateFactory candidateFactory;
     private File rarFile_1;
     private File rarFile_2;
@@ -33,10 +34,11 @@ public class CandidateFactoryTest {
     private File photoFile_2;
     private File photoFile_3;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         dirHandler = mock(DirHandler.class);
-        candidateFactory = new CandidateFactory(dirHandler);
+        fileHandler = mock(FileHandler.class);
+        candidateFactory = new CandidateFactory(dirHandler, fileHandler);
     }
 
     /*
@@ -79,11 +81,10 @@ public class CandidateFactoryTest {
     @Test
     public void testRarsFilesIgnored() throws Throwable {
         try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
-                MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
             when(dirHandler.directoryIncluded(subFolder)).thenReturn(true);
-            fileHandler.when(() -> FileHandler.isIgnored(Mockito.any())).thenReturn(true);
+            when(fileHandler.isIgnored(Mockito.any())).thenReturn(true);
 
             final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
             assertTrue("Candidate.isEmpty() should be true when there is no content.", candidate.isEmpty());
@@ -93,14 +94,13 @@ public class CandidateFactoryTest {
     @Test
     public void testCreateCandidateWithFilesNoSubdirectories() throws Throwable {
         try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
-                MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
             when(dirHandler.directoryIncluded(Mockito.any())).thenReturn(false);
-            fileHandler.when(() -> FileHandler.isIgnored(Mockito.any())).thenReturn(false);
+            when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
 
-            fileHandler.when(() -> FileHandler.isIncludedFileType(photoFile_1)).thenReturn(true);
-            fileHandler.when(() -> FileHandler.isIncludedFileType(photoFile_2)).thenReturn(true);
+            when(fileHandler.isIncludedFileType(photoFile_1)).thenReturn(true);
+            when(fileHandler.isIncludedFileType(photoFile_2)).thenReturn(true);
 
             final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
             assertEquals("Number of .png files should be 2.", 2, candidate.filesToCopy.size());
@@ -110,15 +110,14 @@ public class CandidateFactoryTest {
     @Test
     public void testCreateCandidateWithFilesWithSubdirectories() throws Throwable {
         try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
-                MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
             when(dirHandler.directoryIncluded(subFolder)).thenReturn(true);
-            fileHandler.when(() -> FileHandler.isIgnored(Mockito.any())).thenReturn(false);
+            when(fileHandler.isIgnored(Mockito.any())).thenReturn(false);
 
-            fileHandler.when(() -> FileHandler.isIncludedFileType(photoFile_1)).thenReturn(true);
-            fileHandler.when(() -> FileHandler.isIncludedFileType(photoFile_2)).thenReturn(true);
-            fileHandler.when(() -> FileHandler.isIncludedFileType(photoFile_3)).thenReturn(true);
+            when(fileHandler.isIncludedFileType(photoFile_1)).thenReturn(true);
+            when(fileHandler.isIncludedFileType(photoFile_2)).thenReturn(true);
+            when(fileHandler.isIncludedFileType(photoFile_3)).thenReturn(true);
 
             final Candidate candidate = candidateFactory.createCandidate(sourceDir, targetDir);
             assertEquals("Number of .png files should be 3.", 3, candidate.filesToCopy.size());
@@ -128,11 +127,10 @@ public class CandidateFactoryTest {
     @Test
     public void testNoRarsAllFilesIgnored() throws Throwable {
         try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
-                MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
-            fileHandler.when(() -> FileHandler.isIgnored(Mockito.any())).thenReturn(true);
-            fileHandler.when(() -> FileHandler.isIncludedFileType(Mockito.any())).thenReturn(true);
+            when(fileHandler.isIgnored(Mockito.any())).thenReturn(true);
+            when(fileHandler.isIncludedFileType(Mockito.any())).thenReturn(true);
             when(dirHandler.directoryIncluded(Mockito.any())).thenReturn(false);
 
             final File[] folderList = new File[] { photoFile_1, photoFile_2 };
@@ -188,12 +186,6 @@ public class CandidateFactoryTest {
         rarHandler.when(() -> RarHandler.fileIsUnrarable(rarFile_3)).thenReturn(true);
 
         dirs.when(() -> Dirs.lastModifiedLessThen(sourceDir, LAST_MODIFIED_WAIT_TIME)).thenReturn(false);
-        // rarHandler.when(() ->
-        // {RarHandler.fileIsUnrarable(rarFile_1);}).thenReturn(true);
-        // rarHandler.when(() ->
-        // {RarHandler.fileIsUnrarable(rarFile_2);}).thenReturn(true);
-        // rarHandler.when(() ->
-        // {RarHandler.fileIsUnrarable(rarFile_3);}).thenReturn(true);
     }
 
 }

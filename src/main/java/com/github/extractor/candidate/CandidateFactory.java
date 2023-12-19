@@ -14,9 +14,16 @@ public class CandidateFactory {
 
     private static final int LAST_MODIFIED_WAIT_TIME = 10000;
     private final DirHandler dirHandler;
+    private final FileHandler fileHandler;
 
-    public CandidateFactory(final DirHandler dirHandler) {
+    public CandidateFactory() {
+        this.dirHandler = new DirHandler();
+        this.fileHandler = new FileHandler();
+    }
+
+    public CandidateFactory(final DirHandler dirHandler, FileHandler fileHandler) {
         this.dirHandler = dirHandler;
+        this.fileHandler = fileHandler;
     }
 
     public Candidate createCandidate(final File source, final File targetDir) {
@@ -54,7 +61,7 @@ public class CandidateFactory {
         final List<File> files_to_unrar = new ArrayList<>();
         final File[] files = sourceDir.listFiles();
         for (final File file : files) {
-            if (RarHandler.fileIsUnrarable(file) && !FileHandler.isIgnored(file)) {
+            if (RarHandler.fileIsUnrarable(file) && !fileHandler.isIgnored(file)) {
                 files_to_unrar.add(file);
                 continue;
             }
@@ -70,7 +77,7 @@ public class CandidateFactory {
         final List<File> files_to_copy = new ArrayList<>();
         final File[] files = sourceDir.listFiles();
         for (final File file : files) {
-            if (FileHandler.isIncludedFileType(file) && !FileHandler.isIgnored(file)) {
+            if (fileHandler.isIncludedFileType(file) && !fileHandler.isIgnored(file)) {
                 files_to_copy.add(file);
                 continue;
             }

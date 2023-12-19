@@ -2,6 +2,7 @@ package com.github.extractor.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
@@ -10,15 +11,17 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import com.github.extractor.App;
 
 public class DirsTest {
 
     private File mockedDir;
     private File mockedSecondaryDir;
 
-    @Before
+    @BeforeEach
     public void init() {
         mockedDir = mock(File.class);
         mockedSecondaryDir = mock(File.class);
@@ -129,11 +132,13 @@ public class DirsTest {
         assertTrue("Dirs already exist", success);
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testCreateDirAlreadyExistButIsNotDirectory() throws Throwable {
         when(mockedDir.exists()).thenReturn(true);
         when(mockedDir.isDirectory()).thenReturn(false);
-        Dirs.createDirs(mockedDir);
+        assertThrows(IOException.class, () -> {
+            Dirs.createDirs(mockedDir);
+        });
     }
 
     @Test
