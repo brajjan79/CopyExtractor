@@ -120,10 +120,6 @@ public class Configuration {
         return recursive;
     }
 
-    public boolean noLooseFilesInTargetBaseDir() {
-        return false;
-    }
-
     @Override
     public String toString() {
         return String.format("Configuration:\n"

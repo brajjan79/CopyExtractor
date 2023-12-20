@@ -102,7 +102,7 @@ public class DirHandler {
 
     private String getDirName(final File file) {
         final String baseDir = Dirs.getBaseDirName(file, config.getGroupByRegex());
-        if (config.isKeepFolder() || config.noLooseFilesInTargetBaseDir()) {
+        if (config.isKeepFolder()) {
             return Dirs.getTargetDirName(file, baseDir);
         }
         return baseDir;

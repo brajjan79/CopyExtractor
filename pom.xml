@@ -193,7 +193,6 @@
 										<exclude>com.github.extractor.handlers.CopyHandler</exclude>
 										<exclude>com.github.extractor.handlers.RarHandler</exclude>
 										<exclude>com.github.extractor.handlers.PrograssBar</exclude>
-										<exclude>com.github.extractor.utils.FileTypeAdapter</exclude>
 										<exclude>com.github.extractor.Executor</exclude>
 									</excludes>
 								</rule>
