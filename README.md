@@ -1,5 +1,5 @@
 # CopyExtractor
-[![Build Status](https://travis-ci.com/brajjan79/CopyExtractor.svg?branch=main)](https://travis-ci.com/brajjan79/CopyExtractor) 
+![Build Status](https://github.com/brajjan79/CopyExtractor/workflows/maven.yml/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/074f22e39d4c4bbaa99c7fc660ef2e8c)](https://app.codacy.com/gh/brajjan79/CopyExtractor/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Codacy Badge](https://app.codacy.com/project/badge/Coverage/074f22e39d4c4bbaa99c7fc660ef2e8c)](https://app.codacy.com/gh/brajjan79/CopyExtractor/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 
