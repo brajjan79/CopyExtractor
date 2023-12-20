@@ -1,7 +1,8 @@
-name: Maven CI with Coverage Reporting
+name: Maven CI with Coverage Testing
 
 on:
   pull_request:
+    branches: [ "main" ]
 
 jobs:
   test-coverage:
