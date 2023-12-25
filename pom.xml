@@ -114,7 +114,7 @@
 					<source>${maven.compiler.target}</source>
 					<target>${maven.compiler.target}</target>
 				</configuration>
-				<version>3.12.0</version>
+				<version>3.12.1</version>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
