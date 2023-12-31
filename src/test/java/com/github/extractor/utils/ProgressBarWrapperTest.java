@@ -17,7 +17,7 @@ import java.io.File;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-class PrograssBarTest {
+class PrograssBarWrapperTest {
 
     @Mock
     private File mockFile;
@@ -28,7 +28,7 @@ class PrograssBarTest {
     @Mock
     private ProgressBar mockProgressBar;
 
-    private PrograssBarWrapper progressBar;
+    private ProgressBarWrapper progressBar;
     private MockedStatic<FileSize> mockedFileSize;
 
     @BeforeEach
@@ -36,7 +36,7 @@ class PrograssBarTest {
         MockitoAnnotations.openMocks(this);
         mockedFileSize = Mockito.mockStatic(FileSize.class);
         when(mockFile.getName()).thenReturn("testFile.rar");
-        progressBar = new PrograssBarWrapper(1000, mockFile, "Extracting");
+        progressBar = new ProgressBarWrapper(1000, mockFile, "Extracting");
         progressBar.init(mockProgressBarBuilder);
         when(mockProgressBarBuilder.build()).thenReturn(mockProgressBar);
     }

@@ -7,7 +7,7 @@ import com.github.extractor.configuration.Configuration;
 import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
 import com.github.extractor.utils.JunrarWrapper;
-import com.github.extractor.utils.PrograssBarWrapper;
+import com.github.extractor.utils.ProgressBarWrapper;
 import com.github.extractor.utils.AutoCloseableIterator;
 import com.github.extractor.utils.FileHeaderWrapper;
 import com.github.filesize.FileSize;
@@ -17,6 +17,12 @@ public class UnrarHandler {
 
     private Configuration config;
 
+    /**
+     * TODO: extract using existing unrar application to support RAR5
+     *
+     * Windows: WinRAR/UnRAR.exe x /path/to/rar /path/to/target/dir/ Linux: Mac:
+     *
+     */
     public UnrarHandler() {
         this.config = Configuration.getInstance();
     }
@@ -24,13 +30,6 @@ public class UnrarHandler {
     public UnrarHandler(Configuration config) {
         this.config = config;
     }
-
-    /*
-     * TODO: extract using existing unrar application to support RAR5
-     *
-     * Windows: WinRAR/UnRAR.exe x /path/to/rar /path/to/target/dir/ Linux: Mac:
-     *
-     */
 
     /**
      * Extract rar-files in a candidate if any. Currently does not support RAR5.
@@ -83,7 +82,7 @@ public class UnrarHandler {
 
     private void extractFileHeader(final FileHeaderWrapper fileHeader, final File targetFile)
             throws InterruptedException, RarException, FileNotFoundException {
-        final PrograssBarWrapper progressBar = PrograssBarWrapper.prepare(fileHeader.getUnpackedSize(), targetFile, "Extracting...");
+        final ProgressBarWrapper progressBar = ProgressBarWrapper.prepare(fileHeader.getUnpackedSize(), targetFile, "Extracting...");
         progressBar.start();
 
         try {

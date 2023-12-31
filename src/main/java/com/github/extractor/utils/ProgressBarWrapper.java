@@ -8,7 +8,7 @@ import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
 
-public class PrograssBarWrapper extends Thread {
+public class ProgressBarWrapper extends Thread {
     private boolean isCancelled = false;
     private File targetFile;
     private double expectedSize;
@@ -18,14 +18,14 @@ public class PrograssBarWrapper extends Thread {
     private final int maxRenderedLength = 160;
     private ProgressBarBuilder pbb;
 
-    public PrograssBarWrapper(double sourceFileSize, File targetFile, String action) {
+    public ProgressBarWrapper(double sourceFileSize, File targetFile, String action) {
         this.expectedSize = sourceFileSize;
         this.targetFile = targetFile;
         this.action = action;
     }
 
-    public static PrograssBarWrapper prepare(double sourceFileSize, File targetFile, String action) {
-        final PrograssBarWrapper progresBarWrapper = new PrograssBarWrapper(sourceFileSize, targetFile, action);
+    public static ProgressBarWrapper prepare(double sourceFileSize, File targetFile, String action) {
+        final ProgressBarWrapper progresBarWrapper = new ProgressBarWrapper(sourceFileSize, targetFile, action);
         progresBarWrapper.init();
         return progresBarWrapper;
     }

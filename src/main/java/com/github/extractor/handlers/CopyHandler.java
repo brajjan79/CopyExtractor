@@ -7,7 +7,7 @@ import java.io.IOException;
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
-import com.github.extractor.utils.PrograssBarWrapper;
+import com.github.extractor.utils.ProgressBarWrapper;
 import com.github.filesize.FileSize;
 
 public class CopyHandler {
@@ -53,7 +53,7 @@ public class CopyHandler {
 
     private boolean performFileCopy(final File file, final File targetFile) {
         final double sourceFileSize = FileSize.getBytes(file);
-        final PrograssBarWrapper progressBar = PrograssBarWrapper.prepare(sourceFileSize, targetFile, "Copying......");
+        final ProgressBarWrapper progressBar = ProgressBarWrapper.prepare(sourceFileSize, targetFile, "Copying......");
         try {
             if (!config.isDryRun()) {
                 progressBar.start();
