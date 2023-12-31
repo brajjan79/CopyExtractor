@@ -8,7 +8,7 @@ import me.tongfei.progressbar.ProgressBar;
 import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
 
-public class ProgressBarWrapper extends Thread {
+public class ProgressBarWrapper extends Thread implements AutoCloseable {
     private boolean isCancelled = false;
     private File targetFile;
     private double expectedSize;
@@ -61,6 +61,11 @@ public class ProgressBarWrapper extends Thread {
     }
 
     public void cancel() {
+        isCancelled = true;
+    }
+
+    @Override
+    public void close() throws Exception {
         isCancelled = true;
     }
 }
