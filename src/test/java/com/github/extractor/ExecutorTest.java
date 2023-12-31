@@ -1,5 +1,6 @@
 package com.github.extractor;
 
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -50,9 +51,16 @@ public class ExecutorTest {
         executor = new Executor(mockConfig, mockFolderScanner, copyHandler, unrarHandler);
     }
 
+    /**
+     * Just for 100% test coverage.
+     */
     @Test
-    void testConstructor() {
-        new Executor();
+    public void testInit() {
+        try {
+            new Executor();
+        } catch (final Exception e) {
+            fail("Failed to initiate");
+        }
     }
 
     @Test
@@ -95,7 +103,7 @@ public class ExecutorTest {
     }
 
     @Test
-    void copyAndUnrarCandidatesShouldProcessEachCandidate() throws IOException {
+    void copyAndUnrarCandidatesShouldProcessEachCandidate() {
         final List<Candidate> candidates = Arrays.asList(new Candidate("candidate1", new File("targetDir1")),
                 new Candidate("candidate2", new File("targetDir2")));
         when(mockFolderScanner.getCandidates()).thenReturn(candidates);
@@ -110,6 +118,8 @@ public class ExecutorTest {
                 verify(unrarHandler).unrarFiles(candidate);
                 mockedDirs.verify(() -> Dirs.createDirs(candidate.targetDir), times(1));
             }
+        } catch (final Exception e) {
+            fail("Failed to handle IOException");
         }
     }
 
@@ -125,8 +135,6 @@ public class ExecutorTest {
             mockedDirs.when(() -> Dirs.createDirs(targetDir)).thenThrow(exception);
 
             executor.copyAndUnrarCandidates();
-
-            // Verify that exception is caught and handled (e.g., printed to System.out)
         }
     }
 

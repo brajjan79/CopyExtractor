@@ -17,7 +17,7 @@ class RarsTest {
         try {
             new Rars();
         } catch (final Exception e) {
-            fail("Failed to initiate Dirs");
+            fail("Failed to initiate");
         }
     }
 
