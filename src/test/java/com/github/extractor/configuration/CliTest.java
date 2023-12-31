@@ -82,17 +82,7 @@ public class CliTest {
 
     @Test
     public void testSourceAndTargetProvidedEtc() throws Throwable {
-        final JsonObject expectedJson = new JsonObject();
-        expectedJson.addProperty(CliKeys.SOURCE_FOLDER.name, "/some/path");
-        expectedJson.addProperty(CliKeys.TARGET_FOLDER.name, "/some/other/path");
-        expectedJson.addProperty(CliKeys.FILE_TYPES.name, "jpg,png");
-        expectedJson.addProperty(CliKeys.INCLUDE_FOLDERS.name, "n**es");
-        expectedJson.addProperty(CliKeys.IGNORE.name, "test");
-        expectedJson.addProperty(CliKeys.GROUP_BY_REGEX.name, "abc");
-        expectedJson.add(CliKeys.RECURSIVE.name, null);
-        expectedJson.add(CliKeys.KEEP_FOLDER.name, null);
-        expectedJson.add(CliKeys.KEEP_FOLDER_STRUCTURE.name, null);
-        expectedJson.add(CliKeys.DRY_RUN.name, null);
+        final JsonObject expectedJson = getExpectedJson();
 
         final String[] args = {
                 FULL_NAME_DASHES + CliKeys.SOURCE_FOLDER.name, "/some/path",
@@ -113,18 +103,7 @@ public class CliTest {
 
     @Test
     public void testSourceAndTargetProvidedEtcShortNames() throws Throwable {
-        final JsonObject expectedJson = new JsonObject();
-        expectedJson.addProperty(CliKeys.SOURCE_FOLDER.name, "/some/path");
-        expectedJson.addProperty(CliKeys.TARGET_FOLDER.name, "/some/other/path");
-        expectedJson.addProperty(CliKeys.FILE_TYPES.name, "jpg,png");
-        expectedJson.addProperty(CliKeys.INCLUDE_FOLDERS.name, "n**es");
-        expectedJson.addProperty(CliKeys.IGNORE.name, "test");
-        expectedJson.addProperty(CliKeys.GROUP_BY_REGEX.name, "abc");
-        expectedJson.add(CliKeys.RECURSIVE.name, null);
-        expectedJson.add(CliKeys.RECURSIVE.name, null);
-        expectedJson.add(CliKeys.KEEP_FOLDER.name, null);
-        expectedJson.add(CliKeys.KEEP_FOLDER_STRUCTURE.name, null);
-        expectedJson.add(CliKeys.DRY_RUN.name, null);
+        final JsonObject expectedJson = getExpectedJson();
 
         final String[] args = {
                 SHORT_NAME_DASHES + CliKeys.SOURCE_FOLDER.shortName, "/some/path",
@@ -141,6 +120,22 @@ public class CliTest {
         final JsonObject inputConfig = Cli.parseArgs(args);
 
         assertTrue(expectedJson.equals(inputConfig));
+    }
+
+    private JsonObject getExpectedJson() {
+        final JsonObject expectedJson = new JsonObject();
+        expectedJson.addProperty(CliKeys.SOURCE_FOLDER.name, "/some/path");
+        expectedJson.addProperty(CliKeys.TARGET_FOLDER.name, "/some/other/path");
+        expectedJson.addProperty(CliKeys.FILE_TYPES.name, "jpg,png");
+        expectedJson.addProperty(CliKeys.INCLUDE_FOLDERS.name, "n**es");
+        expectedJson.addProperty(CliKeys.IGNORE.name, "test");
+        expectedJson.addProperty(CliKeys.GROUP_BY_REGEX.name, "abc");
+        expectedJson.add(CliKeys.RECURSIVE.name, null);
+        expectedJson.add(CliKeys.RECURSIVE.name, null);
+        expectedJson.add(CliKeys.KEEP_FOLDER.name, null);
+        expectedJson.add(CliKeys.KEEP_FOLDER_STRUCTURE.name, null);
+        expectedJson.add(CliKeys.DRY_RUN.name, null);
+        return expectedJson;
     }
 
 }
