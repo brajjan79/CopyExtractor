@@ -17,12 +17,6 @@ public class UnrarHandler {
 
     private Configuration config;
 
-    /**
-     * TODO: extract using existing unrar application to support RAR5
-     *
-     * Windows: WinRAR/UnRAR.exe x /path/to/rar /path/to/target/dir/ Linux: Mac:
-     *
-     */
     public UnrarHandler() {
         this.config = Configuration.getInstance();
     }

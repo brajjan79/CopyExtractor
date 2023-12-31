@@ -12,7 +12,6 @@ import com.github.extractor.models.StateConstants;
 import com.github.filesize.FileSize;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import com.google.common.io.Files;
 
