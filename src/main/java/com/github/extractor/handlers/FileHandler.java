@@ -25,4 +25,8 @@ public class FileHandler {
         final String fileName = file.getName().toLowerCase();
         return config.getIgnored().stream().anyMatch(ignore -> fileName.contains(ignore));
     }
+
+    public File createFile(File path, String name) {
+        return new File(path, name);
+    }
 }

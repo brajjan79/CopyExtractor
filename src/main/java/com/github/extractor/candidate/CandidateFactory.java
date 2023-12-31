@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.handlers.DirHandler;
 import com.github.extractor.handlers.FileHandler;
-import com.github.extractor.handlers.RarHandler;
+import com.github.extractor.models.Candidate;
 import com.github.extractor.utils.Dirs;
+import com.github.extractor.utils.Rars;
 
 public class CandidateFactory {
 
@@ -61,7 +61,7 @@ public class CandidateFactory {
         final List<File> files_to_unrar = new ArrayList<>();
         final File[] files = sourceDir.listFiles();
         for (final File file : files) {
-            if (RarHandler.fileIsUnrarable(file) && !fileHandler.isIgnored(file)) {
+            if (Rars.fileIsUnrarable(file) && !fileHandler.isIgnored(file)) {
                 files_to_unrar.add(file);
                 continue;
             }

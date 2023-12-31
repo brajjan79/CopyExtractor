@@ -1,4 +1,4 @@
-package com.github.extractor.configuration.models;
+package com.github.extractor.models;
 
 import com.github.extractor.exceptions.ConfigurationException;
 

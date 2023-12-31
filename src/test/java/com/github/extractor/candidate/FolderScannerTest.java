@@ -12,10 +12,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.DirHandler;
+import com.github.extractor.models.Candidate;
 
 public class FolderScannerTest {
 

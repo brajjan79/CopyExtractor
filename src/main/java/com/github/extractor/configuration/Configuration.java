@@ -3,8 +3,8 @@ package com.github.extractor.configuration;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.extractor.configuration.models.ConfigFolder;
 import com.github.extractor.exceptions.ConfigurationException;
+import com.github.extractor.models.ConfigFolder;
 
 public class Configuration {
 
@@ -118,10 +118,6 @@ public class Configuration {
 
     public boolean isRecursive() {
         return recursive;
-    }
-
-    public boolean noLooseFilesInTargetBaseDir() {
-        return false;
     }
 
     @Override

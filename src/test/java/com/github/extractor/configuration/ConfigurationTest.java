@@ -12,7 +12,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.github.extractor.configuration.models.ConfigFolder;
+import com.github.extractor.models.ConfigFolder;
 
 public class ConfigurationTest {
 

@@ -1,4 +1,4 @@
-package com.github.extractor.candidate.models;
+package com.github.extractor.models;
 
 import java.io.File;
 import java.util.ArrayList;

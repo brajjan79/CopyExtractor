@@ -1,4 +1,4 @@
-package com.github.extractor.candidate.models;
+package com.github.extractor.models;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -6,6 +6,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 
 import org.junit.jupiter.api.Test;
+
+import com.github.extractor.models.Candidate;
 
 public class CandiateTest {
 

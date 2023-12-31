@@ -1,4 +1,4 @@
-package com.github.extractor.configuration.models;
+package com.github.extractor.models;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -8,6 +8,7 @@ import java.io.File;
 import org.junit.jupiter.api.Test;
 
 import com.github.extractor.exceptions.ConfigurationException;
+import com.github.extractor.models.ConfigFolder;
 
 public class ConfigFolderTest {
 

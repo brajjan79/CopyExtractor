@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.utils.Dirs;
+import com.github.extractor.utils.Rars;
 
 public class DirHandler {
 
@@ -102,7 +103,7 @@ public class DirHandler {
 
     private String getDirName(final File file) {
         final String baseDir = Dirs.getBaseDirName(file, config.getGroupByRegex());
-        if (config.isKeepFolder() || config.noLooseFilesInTargetBaseDir()) {
+        if (config.isKeepFolder()) {
             return Dirs.getTargetDirName(file, baseDir);
         }
         return baseDir;
@@ -124,7 +125,7 @@ public class DirHandler {
                 continue;
             }
 
-            if (RarHandler.dirContainsUnrarable(dir) || dirContainsIncludedFileTypes(dir)) {
+            if (Rars.dirContainsUnrarable(dir) || dirContainsIncludedFileTypes(dir)) {
                 count = count + 1;
                 continue;
             }
