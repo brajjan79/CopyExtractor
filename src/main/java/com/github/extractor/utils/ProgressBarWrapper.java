@@ -9,6 +9,7 @@ import me.tongfei.progressbar.ProgressBarBuilder;
 import me.tongfei.progressbar.ProgressBarStyle;
 
 public class ProgressBarWrapper extends Thread implements AutoCloseable {
+
     private boolean isCancelled = false;
     private File targetFile;
     private double expectedSize;
