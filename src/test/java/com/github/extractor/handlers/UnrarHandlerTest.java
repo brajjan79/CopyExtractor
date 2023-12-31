@@ -46,8 +46,8 @@ class UnrarHandlerTest {
 
     @Test
     void unrarFilesShouldExtractFiles() throws Exception {
-        try (MockedStatic<JunrarWrapper> mockedJunrarWrapper = Mockito.mockStatic(JunrarWrapper.class);
-                MockedStatic<FileSize> mockedFileSize = Mockito.mockStatic(FileSize.class)) {
+        try (MockedStatic<JunrarWrapper> mockedJunrarWrapper = mockStatic(JunrarWrapper.class);
+                MockedStatic<FileSize> mockedFileSize = mockStatic(FileSize.class)) {
 
             mockedJunrarWrapper.when(() -> JunrarWrapper.getFileHeaderIterator(any(File.class))).thenReturn(mockFileHeaderIterator);
             when(mockFileHeaderIterator.hasNext()).thenReturn(true, false);
@@ -67,8 +67,8 @@ class UnrarHandlerTest {
 
     @Test
     void unrarFilesShouldSkipExistingFiles() throws FileNotFoundException {
-        try (MockedStatic<JunrarWrapper> mockedJunrarWrapper = Mockito.mockStatic(JunrarWrapper.class);
-                MockedStatic<FileSize> mockedFileSize = Mockito.mockStatic(FileSize.class)) {
+        try (MockedStatic<JunrarWrapper> mockedJunrarWrapper = mockStatic(JunrarWrapper.class);
+                MockedStatic<FileSize> mockedFileSize = mockStatic(FileSize.class)) {
 
             mockedJunrarWrapper.when(() -> JunrarWrapper.getFileHeaderIterator(any(File.class))).thenReturn(mockFileHeaderIterator);
             when(mockFileHeaderIterator.hasNext()).thenReturn(true, false);
@@ -89,8 +89,8 @@ class UnrarHandlerTest {
 
     @Test
     void unrarFilesShouldHandleRarException() throws Exception {
-        try (final MockedStatic<JunrarWrapper> mockedJunrarWrapper = Mockito.mockStatic(JunrarWrapper.class);
-                final MockedStatic<FileSize> mockedFileSize = Mockito.mockStatic(FileSize.class)) {
+        try (final MockedStatic<JunrarWrapper> mockedJunrarWrapper = mockStatic(JunrarWrapper.class);
+                final MockedStatic<FileSize> mockedFileSize = mockStatic(FileSize.class)) {
 
             mockedJunrarWrapper.when(() -> JunrarWrapper.getFileHeaderIterator(any(File.class))).thenReturn(mockFileHeaderIterator);
             when(mockFileHeaderIterator.hasNext()).thenReturn(true, false);

@@ -118,8 +118,6 @@ public class ExecutorTest {
                 verify(unrarHandler).unrarFiles(candidate);
                 mockedDirs.verify(() -> Dirs.createDirs(candidate.targetDir), times(1));
             }
-        } catch (final Exception e) {
-            fail("Failed to handle IOException");
         }
     }
 
@@ -135,6 +133,8 @@ public class ExecutorTest {
             mockedDirs.when(() -> Dirs.createDirs(targetDir)).thenThrow(exception);
 
             executor.copyAndUnrarCandidates();
+        } catch (final Exception e) {
+            fail("Failed to handle IOException");
         }
     }
 

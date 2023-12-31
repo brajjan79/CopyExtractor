@@ -1,4 +1,4 @@
-package com.github.extractor.candidate.models;
+package com.github.extractor.models;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

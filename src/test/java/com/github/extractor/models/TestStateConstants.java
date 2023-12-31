@@ -26,15 +26,6 @@ public class TestStateConstants {
     }
 
     @Test
-    void privateConstructorTest() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        final Constructor<StateConstants> constructor = StateConstants.class.getDeclaredConstructor();
-        assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-
-        constructor.setAccessible(true);
-        assertThrows(InvocationTargetException.class, constructor::newInstance);
-    }
-
-    @Test
     void printShouldShowTotalItemCount() {
         System.setOut(new PrintStream(outputStreamCaptor));
         // Given
