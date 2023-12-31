@@ -2,86 +2,149 @@ package com.github.extractor.handlers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.MockedStatic;
-import org.mockito.Mockito;
 
-import com.github.extractor.candidate.models.Candidate;
+import com.github.extractor.configuration.Configuration;
+import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
+import com.github.filesize.FileSize;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.util.List;
-import com.github.filesize.FileSize;
+import com.google.common.io.Files;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CopyHandlerTest {
+class CopyHandlerTest {
+
+    @Mock
+    private Configuration mockConfig;
+    @Mock
+    private FileHandler mockFileHandler;
+    private CopyHandler copyHandler;
     private Candidate candidate;
-    private File sourceFile;
-    private File targetFile;
 
     @BeforeEach
     void setUp() {
-        sourceFile = new File("/path/to/source/file.txt");
-        targetFile = new File("/path/to/target/file.txt");
-        candidate = new Candidate("Name", new File("/path/to/target"));
-        candidate.filesToCopy.add(sourceFile);
+        MockitoAnnotations.openMocks(this);
+        copyHandler = new CopyHandler(mockConfig, mockFileHandler);
+
+        candidate = new Candidate("name", new File("targetDir"));
+        candidate.filesToCopy.add(new File("sourceFile1.txt"));
+        candidate.filesToCopy.add(new File("sourceFile2.txt"));
     }
 
     @Test
-    void copyFilesShouldCopyWhenCanCopy() throws IOException, InterruptedException {
-        try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class);
-                MockedStatic<FileSize> mockedFileSize = Mockito.mockStatic(FileSize.class);
-                MockedStatic<StateConstants> mockedStateConstants = Mockito.mockStatic(StateConstants.class)) {
+    void copyFilesShouldCopyFilesCorrectly() throws IOException, InterruptedException {
+        final File targetFile = mock(File.class);
+        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
+        when(targetFile.exists()).thenReturn(true);
 
-            mockedFileSize.when(() -> FileSize.size(any())).thenReturn(1000);
-            mockedFiles.when(() -> Files.copy(any(), any())).thenReturn(null);
+        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class);
+                MockedStatic<FileSize> mockedFileSize = mockStatic(FileSize.class);
+                MockedStatic<StateConstants> mockedStateConstants = mockStatic(StateConstants.class)) {
 
-            final boolean result = CopyHandler.copyFiles(candidate, false);
+            mockedFileSize.when(() -> FileSize.getBytes(any(File.class))).thenReturn(1000.0);
+            mockedFileSize.when(() -> FileSize.getBytes(targetFile)).thenReturn(900.0);
+            when(mockConfig.isDryRun()).thenReturn(false);
+
+            final boolean result = copyHandler.copyFiles(candidate);
 
             assertTrue(result);
-            // mockedFiles.verify(() -> Files.copy(eq(sourceFile), eq(targetFile)));
-            mockedStateConstants.verify(() -> StateConstants.addSuccess(), times(1));
+            verify(mockFileHandler, times(candidate.filesToCopy.size())).createFile(eq(candidate.targetDir), anyString());
+            mockedFiles.verify(() -> Files.copy(any(File.class), any(File.class)), times(candidate.filesToCopy.size()));
+            mockedStateConstants.verify(() -> StateConstants.addSuccess(), times(candidate.filesToCopy.size()));
         }
     }
 
     @Test
-    void copyFilesShouldSkipWhenTargetExistsAndIsLarger() {
-        try (MockedStatic<FileSize> mockedFileSize = Mockito.mockStatic(FileSize.class);
-                MockedStatic<StateConstants> mockedStateConstants = Mockito.mockStatic(StateConstants.class)) {
+    void copyFilesShouldCopyFilesCorrectlyTargetFileNoneExisting() throws IOException, InterruptedException {
+        final File targetFile = mock(File.class);
+        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
+        when(targetFile.exists()).thenReturn(false);
 
-            mockedFileSize.when(() -> FileSize.size(sourceFile).getBytes()).thenReturn(1000);
-            mockedFileSize.when(() -> FileSize.size(targetFile).getBytes()).thenReturn(2000);
+        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class);
+                MockedStatic<FileSize> mockedFileSize = mockStatic(FileSize.class);
+                MockedStatic<StateConstants> mockedStateConstants = mockStatic(StateConstants.class)) {
 
-            final boolean result = CopyHandler.copyFiles(candidate, false);
+            mockedFileSize.when(() -> FileSize.getBytes(any(File.class))).thenReturn(1000.0);
+            when(mockConfig.isDryRun()).thenReturn(false);
+
+            final boolean result = copyHandler.copyFiles(candidate);
+
+            assertTrue(result);
+            verify(mockFileHandler, times(candidate.filesToCopy.size())).createFile(eq(candidate.targetDir), anyString());
+            mockedFiles.verify(() -> Files.copy(any(File.class), any(File.class)), times(candidate.filesToCopy.size()));
+            mockedStateConstants.verify(() -> StateConstants.addSuccess(), times(candidate.filesToCopy.size()));
+        }
+    }
+
+    @Test
+    void copyFilesShouldCopyFilesCorrectlyButIsDryRun() throws IOException, InterruptedException {
+        final File targetFile = mock(File.class);
+        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
+        when(targetFile.exists()).thenReturn(false);
+
+        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class);
+                MockedStatic<FileSize> mockedFileSize = mockStatic(FileSize.class);
+                MockedStatic<StateConstants> mockedStateConstants = mockStatic(StateConstants.class)) {
+
+            mockedFileSize.when(() -> FileSize.getBytes(any(File.class))).thenReturn(1000.0);
+            when(mockConfig.isDryRun()).thenReturn(true);
+
+            final boolean result = copyHandler.copyFiles(candidate);
+
+            assertTrue(result);
+            verify(mockFileHandler, times(candidate.filesToCopy.size())).createFile(eq(candidate.targetDir), anyString());
+            mockedFiles.verify(() -> Files.copy(any(File.class), any(File.class)), times(0));
+            mockedStateConstants.verify(() -> StateConstants.addSuccess(), times(candidate.filesToCopy.size()));
+        }
+    }
+
+    @Test
+    void copyFilesShouldCopyFilesButThrowException() throws IOException, InterruptedException {
+        final File targetFile = mock(File.class);
+        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
+        when(targetFile.exists()).thenReturn(false);
+
+        try (MockedStatic<Files> mockedFiles = mockStatic(Files.class);
+                MockedStatic<FileSize> mockedFileSize = mockStatic(FileSize.class);
+                MockedStatic<StateConstants> mockedStateConstants = mockStatic(StateConstants.class)) {
+
+            mockedFileSize.when(() -> FileSize.getBytes(any(File.class))).thenReturn(1000.0);
+            mockedFiles.when(() -> Files.copy(any(File.class), any(File.class))).thenThrow(new IOException());
+            when(mockConfig.isDryRun()).thenReturn(false);
+
+            final boolean result = copyHandler.copyFiles(candidate);
 
             assertFalse(result);
-            mockedStateConstants.verify(() -> StateConstants.addAlreadyExists(), times(1));
+            verify(mockFileHandler, times(candidate.filesToCopy.size())).createFile(eq(candidate.targetDir), anyString());
+            mockedFiles.verify(() -> Files.copy(any(File.class), any(File.class)), times(candidate.filesToCopy.size()));
+            mockedStateConstants.verify(() -> StateConstants.addFailure(), times(candidate.filesToCopy.size()));
         }
     }
 
     @Test
-    void copyFilesShouldHandleIOException() throws IOException, InterruptedException {
-        try (MockedStatic<Files> mockedFiles = Mockito.mockStatic(Files.class);
-                MockedStatic<FileSize> mockedFileSize = Mockito.mockStatic(FileSize.class);
-                MockedStatic<StateConstants> mockedStateConstants = Mockito.mockStatic(StateConstants.class)) {
+    void copyFilesShouldHandleFileAlreadyExistsScenario() {
+        final File targetFile = mock(File.class);
+        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
+        when(targetFile.exists()).thenReturn(true);
 
-            mockedFileSize.when(() -> FileSize.size(any())).thenReturn(1000);
-            mockedFiles.when(() -> Files.copy(any(), any())).thenThrow(new IOException("Test Exception"));
+        try (MockedStatic<FileSize> mockedFileSize = mockStatic(FileSize.class);
+                MockedStatic<StateConstants> mockedStateConstants = mockStatic(StateConstants.class)) {
 
-            final boolean result = CopyHandler.copyFiles(candidate, false);
+            mockedFileSize.when(() -> FileSize.getBytes(any(File.class))).thenReturn(1000.0);
+
+            final boolean result = copyHandler.copyFiles(candidate);
 
             assertFalse(result);
-            mockedStateConstants.verify(() -> StateConstants.addFailure(), times(1));
+            mockedStateConstants.verify(() -> StateConstants.addAlreadyExists(), times(candidate.filesToCopy.size()));
         }
     }
 
-    @Test
-    void copyFilesShouldNotCopyInDryRun() {
-        final boolean result = CopyHandler.copyFiles(candidate, true);
-        assertTrue(result); // Assuming success in dry run mode
-    }
+    // Additional test methods for covering other scenarios like IOException, InterruptedException, etc.
 }

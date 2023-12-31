@@ -38,7 +38,7 @@
 		<dependency>
 			<groupId>com.github.brajjan79</groupId>
 			<artifactId>FileSize</artifactId>
-			<version>1.1.0</version>
+			<version>1.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.brajjan79</groupId>
@@ -116,11 +116,13 @@
 				</configuration>
 				<version>3.12.0</version>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.3</version>
 			</plugin>
+
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>exec-maven-plugin</artifactId>
@@ -129,6 +131,7 @@
 					<mainClass>${fully.qualified.main.class}</mainClass>
 				</configuration>
 			</plugin>
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -150,6 +153,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -161,6 +165,7 @@
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
+					
 					<execution>
 						<id>jacoco-site</id>
 						<phase>package</phase>
@@ -168,6 +173,7 @@
 							<goal>report</goal>
 						</goals>
 					</execution>
+
 					<execution>
 						<id>check</id>
 						<goals>
@@ -186,15 +192,9 @@
 										<limit>
 											<counter>BRANCH</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.80</minimum>
+											<minimum>0.70</minimum>
 										</limit>
 									</limits>
-									<excludes>
-										<exclude>com.github.extractor.handlers.CopyHandler</exclude>
-										<exclude>com.github.extractor.handlers.RarHandler</exclude>
-										<exclude>com.github.extractor.handlers.PrograssBar</exclude>
-										<exclude>com.github.extractor.Executor</exclude>
-									</excludes>
 								</rule>
 							</rules>
 						</configuration>

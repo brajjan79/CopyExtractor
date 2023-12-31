@@ -12,11 +12,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.handlers.DirHandler;
 import com.github.extractor.handlers.FileHandler;
-import com.github.extractor.handlers.RarHandler;
+import com.github.extractor.models.Candidate;
 import com.github.extractor.utils.Dirs;
+import com.github.extractor.utils.Rars;
 
 public class CandidateFactoryTest {
 
@@ -47,7 +47,7 @@ public class CandidateFactoryTest {
 
     @Test
     public void testCreateCandidateWithRarFilesNoSubdirectories() throws Throwable {
-        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+        try (MockedStatic<Rars> rarHandler = Mockito.mockStatic(Rars.class);
                 MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
@@ -63,7 +63,7 @@ public class CandidateFactoryTest {
 
     @Test
     public void testCreateCandidateWithRarFilesWithSubdirectories() throws Throwable {
-        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+        try (MockedStatic<Rars> rarHandler = Mockito.mockStatic(Rars.class);
                 MockedStatic<FileHandler> fileHandler = Mockito.mockStatic(FileHandler.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
@@ -80,7 +80,7 @@ public class CandidateFactoryTest {
 
     @Test
     public void testRarsFilesIgnored() throws Throwable {
-        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+        try (MockedStatic<Rars> rarHandler = Mockito.mockStatic(Rars.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
             when(dirHandler.directoryIncluded(subFolder)).thenReturn(true);
@@ -93,7 +93,7 @@ public class CandidateFactoryTest {
 
     @Test
     public void testCreateCandidateWithFilesNoSubdirectories() throws Throwable {
-        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+        try (MockedStatic<Rars> rarHandler = Mockito.mockStatic(Rars.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
             when(dirHandler.directoryIncluded(Mockito.any())).thenReturn(false);
@@ -109,7 +109,7 @@ public class CandidateFactoryTest {
 
     @Test
     public void testCreateCandidateWithFilesWithSubdirectories() throws Throwable {
-        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+        try (MockedStatic<Rars> rarHandler = Mockito.mockStatic(Rars.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
             when(dirHandler.directoryIncluded(subFolder)).thenReturn(true);
@@ -126,7 +126,7 @@ public class CandidateFactoryTest {
 
     @Test
     public void testNoRarsAllFilesIgnored() throws Throwable {
-        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+        try (MockedStatic<Rars> rarHandler = Mockito.mockStatic(Rars.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
             when(fileHandler.isIgnored(Mockito.any())).thenReturn(true);
@@ -144,7 +144,7 @@ public class CandidateFactoryTest {
 
     @Test
     public void testSubdirRecentlyModified() throws Throwable {
-        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class);
+        try (MockedStatic<Rars> rarHandler = Mockito.mockStatic(Rars.class);
                 MockedStatic<Dirs> dirs = Mockito.mockStatic(Dirs.class)) {
             setupMockFolderFolders(rarHandler, dirs);
             dirs.when(() -> {
@@ -155,7 +155,7 @@ public class CandidateFactoryTest {
         }
     }
 
-    private void setupMockFolderFolders(MockedStatic<RarHandler> rarHandler, MockedStatic<Dirs> dirs) throws Exception {
+    private void setupMockFolderFolders(MockedStatic<Rars> rarHandler, MockedStatic<Dirs> dirs) throws Exception {
         subFolder = mock(File.class);
         sourceDir = mock(File.class);
         targetDir = mock(File.class);
@@ -174,16 +174,16 @@ public class CandidateFactoryTest {
         when(subFolder.getPath()).thenReturn("/some_folder/subFolder/");
         when(subFolder.listFiles()).thenReturn(subFolderList);
 
-        rarHandler.when(() -> RarHandler.fileIsUnrarable(subFolder)).thenReturn(false);
-        rarHandler.when(() -> RarHandler.fileIsUnrarable(sourceDir)).thenReturn(false);
+        rarHandler.when(() -> Rars.fileIsUnrarable(subFolder)).thenReturn(false);
+        rarHandler.when(() -> Rars.fileIsUnrarable(sourceDir)).thenReturn(false);
 
-        rarHandler.when(() -> RarHandler.fileIsUnrarable(photoFile_1)).thenReturn(false);
-        rarHandler.when(() -> RarHandler.fileIsUnrarable(photoFile_2)).thenReturn(false);
-        rarHandler.when(() -> RarHandler.fileIsUnrarable(photoFile_3)).thenReturn(false);
+        rarHandler.when(() -> Rars.fileIsUnrarable(photoFile_1)).thenReturn(false);
+        rarHandler.when(() -> Rars.fileIsUnrarable(photoFile_2)).thenReturn(false);
+        rarHandler.when(() -> Rars.fileIsUnrarable(photoFile_3)).thenReturn(false);
 
-        rarHandler.when(() -> RarHandler.fileIsUnrarable(rarFile_1)).thenReturn(true);
-        rarHandler.when(() -> RarHandler.fileIsUnrarable(rarFile_2)).thenReturn(true);
-        rarHandler.when(() -> RarHandler.fileIsUnrarable(rarFile_3)).thenReturn(true);
+        rarHandler.when(() -> Rars.fileIsUnrarable(rarFile_1)).thenReturn(true);
+        rarHandler.when(() -> Rars.fileIsUnrarable(rarFile_2)).thenReturn(true);
+        rarHandler.when(() -> Rars.fileIsUnrarable(rarFile_3)).thenReturn(true);
 
         dirs.when(() -> Dirs.lastModifiedLessThen(sourceDir, LAST_MODIFIED_WAIT_TIME)).thenReturn(false);
     }

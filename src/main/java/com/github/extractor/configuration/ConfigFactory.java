@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.github.extractor.configuration.models.ConfigFolder;
+import com.github.extractor.models.ConfigFolder;
 import com.github.extractor.utils.FileTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

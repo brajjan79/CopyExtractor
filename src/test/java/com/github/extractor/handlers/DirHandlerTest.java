@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.utils.Dirs;
+import com.github.extractor.utils.Rars;
 
 public class DirHandlerTest {
 
@@ -123,7 +124,7 @@ public class DirHandlerTest {
 
     @Test
     public void testFolderHasMultipleFoldersToScan() {
-        try (MockedStatic<RarHandler> rarHandler = Mockito.mockStatic(RarHandler.class)) {
+        try (MockedStatic<Rars> rarHandler = Mockito.mockStatic(Rars.class)) {
             final File folder = buildMockedFolderStructure(rarHandler);
             final boolean result = dirHandler.folderHasMultipleFoldersToScan(folder);
             assertTrue("Dir should have interesting folders", result);
@@ -239,7 +240,7 @@ public class DirHandlerTest {
         }
     }
 
-    private File buildMockedFolderStructure(MockedStatic<RarHandler> rarHandler) {
+    private File buildMockedFolderStructure(MockedStatic<Rars> rarHandler) {
         final File startDir = mock(File.class);
 
         final File subDirA = mock(File.class);
@@ -264,28 +265,28 @@ public class DirHandlerTest {
         when(subDirA.getName()).thenReturn("sub_dir_a");
         when(subDirA.listFiles()).thenReturn(subDirAFileList);
         when(fileHandler.isIgnored(subDirA)).thenReturn(false);
-        rarHandler.when(() -> RarHandler.dirContainsUnrarable(subDirA)).thenReturn(false);
+        rarHandler.when(() -> Rars.dirContainsUnrarable(subDirA)).thenReturn(false);
 
         // subDirB setup
         when(subDirB.isDirectory()).thenReturn(true);
         when(subDirB.getAbsolutePath()).thenReturn("/input_dir/sub_dir_a/sub_dir_b");
         when(subDirB.getName()).thenReturn("sub_dir_b");
         when(fileHandler.isIgnored(subDirB)).thenReturn(false);
-        rarHandler.when(() -> RarHandler.dirContainsUnrarable(subDirB)).thenReturn(true);
+        rarHandler.when(() -> Rars.dirContainsUnrarable(subDirB)).thenReturn(true);
 
         // ignoredSubdir setup
         when(ignoredSubDir.isDirectory()).thenReturn(true);
         when(ignoredSubDir.getAbsolutePath()).thenReturn("/input_dir/sub_dir_a/ignored_dir");
         when(ignoredSubDir.getName()).thenReturn("ignored_dir");
         when(fileHandler.isIgnored(ignoredSubDir)).thenReturn(true);
-        rarHandler.when(() -> RarHandler.dirContainsUnrarable(ignoredSubDir)).thenReturn(true);
+        rarHandler.when(() -> Rars.dirContainsUnrarable(ignoredSubDir)).thenReturn(true);
 
         // includedSubDir setup
         when(ignoredSubDir.isDirectory()).thenReturn(true);
         when(ignoredSubDir.getAbsolutePath()).thenReturn("/input_dir/sub_dir_a/included_dir");
         when(ignoredSubDir.getName()).thenReturn("included_dir");
         when(fileHandler.isIgnored(ignoredSubDir)).thenReturn(false);
-        rarHandler.when(() -> RarHandler.dirContainsUnrarable(ignoredSubDir)).thenReturn(true);
+        rarHandler.when(() -> Rars.dirContainsUnrarable(ignoredSubDir)).thenReturn(true);
 
         // mockedFile setup
         when(mockedFile.isFile()).thenReturn(true);

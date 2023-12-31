@@ -2,22 +2,36 @@ package com.github.extractor.handlers;
 
 import com.google.common.io.Files;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import com.github.extractor.candidate.models.Candidate;
+import com.github.extractor.configuration.Configuration;
+import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
+import com.github.extractor.utils.PrograssBarWrapper;
 import com.github.filesize.FileSize;
 
 public class CopyHandler {
 
-    public static boolean copyFiles(final Candidate candidate, boolean isDryrun) {
+    private Configuration config;
+    private FileHandler fileHandler;
+
+    public CopyHandler() {
+        this.config = Configuration.getInstance();
+        this.fileHandler = new FileHandler();
+    }
+
+    public CopyHandler(Configuration config, FileHandler fileHandler) {
+        this.config = config;
+        this.fileHandler = fileHandler;
+    }
+
+    public boolean copyFiles(final Candidate candidate) {
         boolean success = true;
 
         for (final File file : candidate.filesToCopy) {
-            final File targetFile = new File(candidate.targetDir, file.getName());
+            final File targetFile = fileHandler.createFile(candidate.targetDir, file.getName());
             if (canCopy(file, targetFile)) {
-                success = performFileCopy(file, targetFile, isDryrun);
+                success = performFileCopy(file, targetFile);
             } else {
                 System.out.println("File already exist: " + targetFile.getAbsolutePath());
                 StateConstants.addAlreadyExists();
@@ -28,25 +42,20 @@ public class CopyHandler {
         return success;
     }
 
-    private static boolean canCopy(final File file, final File targetFile) {
+    private boolean canCopy(final File file, final File targetFile) {
         if (targetFile.exists()) {
-            try {
-                final double sourceFileSize = FileSize.size(file).getBytes();
-                final double targetFileSize = FileSize.size(targetFile).getBytes();
-                return sourceFileSize > targetFileSize;
-            } catch (final FileNotFoundException e) {
-                return false;
-            }
+            final double sourceFileSize = FileSize.getBytes(file);
+            final double targetFileSize = FileSize.getBytes(targetFile);
+            return sourceFileSize > targetFileSize;
         }
         return true;
     }
 
-    private static boolean performFileCopy(final File file, final File targetFile, boolean isDryrun) {
-        final PrograssBar progressBar = new PrograssBar();
+    private boolean performFileCopy(final File file, final File targetFile) {
+        final double sourceFileSize = FileSize.getBytes(file);
+        final PrograssBarWrapper progressBar = PrograssBarWrapper.prepare(sourceFileSize, targetFile, "Copying......");
         try {
-            if (!isDryrun) {
-                final double sourceFileSize = FileSize.size(file).getBytes();
-                progressBar.init(sourceFileSize, targetFile, "Copying......");
+            if (!config.isDryRun()) {
                 progressBar.start();
 
                 Files.copy(file, targetFile);

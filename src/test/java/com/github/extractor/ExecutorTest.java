@@ -21,13 +21,14 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import com.github.extractor.candidate.FolderScanner;
-import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.configuration.Configuration;
-import com.github.extractor.configuration.models.ConfigFolder;
 import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.CopyHandler;
-import com.github.extractor.handlers.RarHandler;
+import com.github.extractor.handlers.UnrarHandler;
+import com.github.extractor.models.Candidate;
+import com.github.extractor.models.ConfigFolder;
 import com.github.extractor.utils.Dirs;
+import com.github.extractor.utils.Rars;
 
 public class ExecutorTest {
 
@@ -35,6 +36,10 @@ public class ExecutorTest {
     private Configuration mockConfig;
     @Mock
     private FolderScanner mockFolderScanner;
+    @Mock
+    private CopyHandler copyHandler;
+    @Mock
+    private UnrarHandler unrarHandler;
 
     private Executor executor;
 
@@ -42,7 +47,7 @@ public class ExecutorTest {
     void setUp() {
         MockitoAnnotations.openMocks(this);
         when(mockConfig.isDryRun()).thenReturn(true);
-        executor = new Executor(mockConfig, mockFolderScanner);
+        executor = new Executor(mockConfig, mockFolderScanner, copyHandler, unrarHandler);
     }
 
     @Test
@@ -52,7 +57,7 @@ public class ExecutorTest {
 
     @Test
     void runShouldInvokeScanAndCopyUnrarMethods() {
-        final Executor spyExecutor = Mockito.spy(new Executor(mockConfig, mockFolderScanner));
+        final Executor spyExecutor = Mockito.spy(new Executor(mockConfig, mockFolderScanner, copyHandler, unrarHandler));
 
         spyExecutor.run();
 
@@ -74,7 +79,7 @@ public class ExecutorTest {
 
     @Test
     void scanForCandidatesShouldHandleFolderException() throws FolderException {
-        final Executor executorSpy = Mockito.spy(new Executor(mockConfig, mockFolderScanner));
+        final Executor executorSpy = Mockito.spy(new Executor(mockConfig, mockFolderScanner, copyHandler, unrarHandler));
 
         final List<ConfigFolder> folders = Collections.singletonList(new ConfigFolder("input", "output"));
         when(mockConfig.getFolders()).thenReturn(folders);
@@ -90,21 +95,20 @@ public class ExecutorTest {
     }
 
     @Test
-    void copyAndUnrarCandidatesShouldProcessEachCandidate() {
+    void copyAndUnrarCandidatesShouldProcessEachCandidate() throws IOException {
         final List<Candidate> candidates = Arrays.asList(new Candidate("candidate1", new File("targetDir1")),
                 new Candidate("candidate2", new File("targetDir2")));
         when(mockFolderScanner.getCandidates()).thenReturn(candidates);
 
         try (MockedStatic<Dirs> mockedDirs = Mockito.mockStatic(Dirs.class);
-                MockedStatic<CopyHandler> mockedCopyHandler = Mockito.mockStatic(CopyHandler.class);
-                MockedStatic<RarHandler> mockedRarHandler = Mockito.mockStatic(RarHandler.class)) {
+                MockedStatic<Rars> mockedRarHandler = Mockito.mockStatic(Rars.class)) {
 
             executor.copyAndUnrarCandidates();
 
             for (final Candidate candidate : candidates) {
+                verify(copyHandler).copyFiles(candidate);
+                verify(unrarHandler).unrarFiles(candidate);
                 mockedDirs.verify(() -> Dirs.createDirs(candidate.targetDir), times(1));
-                mockedCopyHandler.verify(() -> CopyHandler.copyFiles(candidate, mockConfig.isDryRun()), times(1));
-                mockedRarHandler.verify(() -> RarHandler.unrarFiles(candidate, mockConfig.isDryRun()), times(1));
             }
         }
     }
@@ -116,10 +120,9 @@ public class ExecutorTest {
         when(mockFolderScanner.getCandidates()).thenReturn(Collections.singletonList(candidate));
         when(mockConfig.isDryRun()).thenReturn(false);
 
-        try (MockedStatic<Dirs> mockedDirs = Mockito.mockStatic(Dirs.class);
-                MockedStatic<CopyHandler> mockedCopyHandler = Mockito.mockStatic(CopyHandler.class)) {
+        try (MockedStatic<Dirs> mockedDirs = Mockito.mockStatic(Dirs.class)) {
             final IOException exception = new IOException("Error");
-            mockedCopyHandler.when(() -> Dirs.createDirs(targetDir)).thenThrow(exception);
+            mockedDirs.when(() -> Dirs.createDirs(targetDir)).thenThrow(exception);
 
             executor.copyAndUnrarCandidates();
 

@@ -3,12 +3,12 @@ package com.github.extractor;
 import java.io.IOException;
 
 import com.github.extractor.candidate.FolderScanner;
-import com.github.extractor.candidate.models.Candidate;
 import com.github.extractor.configuration.Configuration;
-import com.github.extractor.configuration.models.ConfigFolder;
 import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.CopyHandler;
-import com.github.extractor.handlers.RarHandler;
+import com.github.extractor.handlers.UnrarHandler;
+import com.github.extractor.models.Candidate;
+import com.github.extractor.models.ConfigFolder;
 import com.github.extractor.models.StateConstants;
 import com.github.extractor.utils.Dirs;
 
@@ -16,15 +16,21 @@ public class Executor {
 
     private Configuration config;
     private FolderScanner folderScanner;
+    private CopyHandler copyHandler;
+    private UnrarHandler unrarHandler;
 
     public Executor() {
         config = Configuration.getInstance();
         folderScanner = new FolderScanner();
+        copyHandler = new CopyHandler();
+        unrarHandler = new UnrarHandler();
     }
 
-    public Executor(Configuration config, FolderScanner folderScanner) {
+    public Executor(Configuration config, FolderScanner folderScanner, CopyHandler copyHandler, UnrarHandler unrarHandler) {
         this.config = config;
         this.folderScanner = folderScanner;
+        this.copyHandler = copyHandler;
+        this.unrarHandler = unrarHandler;
     }
 
     public void run() {
@@ -55,8 +61,8 @@ public class Executor {
     private void copyAndUnrarCandidate(final Candidate candidate) {
         try {
             Dirs.createDirs(candidate.targetDir);
-            CopyHandler.copyFiles(candidate, config.isDryRun());
-            RarHandler.unrarFiles(candidate, config.isDryRun());
+            copyHandler.copyFiles(candidate);
+            unrarHandler.unrarFiles(candidate);
         } catch (final IOException e) {
             System.out.println("Failed to process folder: " + candidate.name);
             e.printStackTrace();

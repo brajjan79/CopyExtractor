@@ -7,6 +7,8 @@ import java.io.File;
 
 import org.junit.jupiter.api.Test;
 
+import com.github.extractor.models.Candidate;
+
 public class CandiateTest {
 
     @Test

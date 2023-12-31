@@ -8,6 +8,7 @@ import java.io.File;
 import org.junit.jupiter.api.Test;
 
 import com.github.extractor.exceptions.ConfigurationException;
+import com.github.extractor.models.ConfigFolder;
 
 public class ConfigFolderTest {
 
