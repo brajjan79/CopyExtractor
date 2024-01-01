@@ -24,6 +24,9 @@ class CopyHandlerTest {
     private Configuration mockConfig;
     @Mock
     private FileHandler mockFileHandler;
+    @Mock
+    private File targetFile;
+
     private CopyHandler copyHandler;
     private Candidate candidate;
 
@@ -35,12 +38,12 @@ class CopyHandlerTest {
         candidate = new Candidate("name", new File("targetDir"));
         candidate.filesToCopy.add(new File("sourceFile1.txt"));
         candidate.filesToCopy.add(new File("sourceFile2.txt"));
+
+        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
     }
 
     @Test
     void copyFilesShouldCopyFilesCorrectly() throws IOException, InterruptedException {
-        final File targetFile = mock(File.class);
-        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
         when(targetFile.exists()).thenReturn(true);
 
         try (MockedStatic<Files> mockedFiles = mockStatic(Files.class);
@@ -62,8 +65,6 @@ class CopyHandlerTest {
 
     @Test
     void copyFilesShouldCopyFilesCorrectlyTargetFileNoneExisting() throws IOException, InterruptedException {
-        final File targetFile = mock(File.class);
-        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
         when(targetFile.exists()).thenReturn(false);
 
         try (MockedStatic<Files> mockedFiles = mockStatic(Files.class);
@@ -84,8 +85,6 @@ class CopyHandlerTest {
 
     @Test
     void copyFilesShouldCopyFilesCorrectlyButIsDryRun() throws IOException, InterruptedException {
-        final File targetFile = mock(File.class);
-        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
         when(targetFile.exists()).thenReturn(false);
 
         try (MockedStatic<Files> mockedFiles = mockStatic(Files.class);
@@ -106,8 +105,6 @@ class CopyHandlerTest {
 
     @Test
     void copyFilesShouldCopyFilesButThrowException() throws IOException, InterruptedException {
-        final File targetFile = mock(File.class);
-        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
         when(targetFile.exists()).thenReturn(false);
 
         try (MockedStatic<Files> mockedFiles = mockStatic(Files.class);
@@ -129,8 +126,6 @@ class CopyHandlerTest {
 
     @Test
     void copyFilesShouldHandleFileAlreadyExistsScenario() {
-        final File targetFile = mock(File.class);
-        when(mockFileHandler.createFile(any(), anyString())).thenReturn(targetFile);
         when(targetFile.exists()).thenReturn(true);
 
         try (MockedStatic<FileSize> mockedFileSize = mockStatic(FileSize.class);
