@@ -2,8 +2,7 @@ package com.github.extractor.handlers;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -12,17 +11,21 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import com.github.extractor.configuration.Configuration;
 
 public class FileHandlerTest {
 
+    @Mock
     private Configuration config;
+
     private FileHandler fileHandler;
 
     @BeforeEach
     public void init() {
-        config = mock(Configuration.class);
+        MockitoAnnotations.openMocks(this);
 
         final List<String> copyFiles = new ArrayList<>(Arrays.asList("included"));
         final List<String> ignoderFiles = new ArrayList<>(Arrays.asList("ignored"));
