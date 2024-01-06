@@ -29,7 +29,7 @@ public class FileHandler {
         File targetPath = path;
         if (createFolderInBaseDir) {
             final String baseDir = Dirs.getBaseDirName(file, config.getGroupByRegex());
-            if (baseDir != "") {
+            if (!baseDir.equals("")) {
                 targetPath = new File(targetPath, baseDir);
             }
             if (config.isKeepFolder()) {

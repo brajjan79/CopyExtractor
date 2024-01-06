@@ -2,7 +2,6 @@ package com.github.extractor.handlers;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.models.Candidate;
