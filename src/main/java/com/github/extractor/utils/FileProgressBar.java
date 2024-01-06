@@ -76,6 +76,7 @@ public class FileProgressBar {
             try {
                 Thread.sleep(updateInterval);
             } catch (final InterruptedException e) {
+                // Ignore
             }
         }
         System.out.println("");
