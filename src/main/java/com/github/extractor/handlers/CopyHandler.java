@@ -7,7 +7,7 @@ import java.io.IOException;
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
-import com.github.extractor.utils.ProgressBarWrapper;
+import com.github.extractor.utils.FileProgressBar;
 import com.github.filesize.FileSize;
 
 public class CopyHandler {
@@ -27,18 +27,24 @@ public class CopyHandler {
 
     public boolean copyFiles(final Candidate candidate) {
         boolean success = true;
-
         for (final File file : candidate.filesToCopy) {
-            final File targetFile = fileHandler.createFile(candidate.targetDir, file.getName());
-            if (canCopy(file, targetFile)) {
-                success = performFileCopy(file, targetFile);
-            } else {
-                System.out.println("File already exist: " + targetFile.getAbsolutePath());
-                StateConstants.addAlreadyExists();
-                success = false;
+            try {
+                final boolean createFolderInBaseDir = candidate.isBaseDir && config.isCreateFolder();
+                System.out.println("File :: " + file.getName() + " createfolder " + String.valueOf(createFolderInBaseDir));
+                final File targetFile = fileHandler.createFile(candidate.targetDir, file, createFolderInBaseDir);
+                if (canCopy(file, targetFile)) {
+                    success = performFileCopy(file, targetFile);
+                } else {
+                    System.out.println("File already exist: " + targetFile.getAbsolutePath());
+                    StateConstants.addAlreadyExists();
+                    success = false;
+                }
+            } catch (final IOException e) {
+                StateConstants.addFailure();
             }
 
         }
+
         return success;
     }
 
@@ -53,10 +59,10 @@ public class CopyHandler {
 
     private boolean performFileCopy(final File file, final File targetFile) {
         final double sourceFileSize = FileSize.getBytes(file);
-        final ProgressBarWrapper progressBar = ProgressBarWrapper.prepare(sourceFileSize, targetFile, "Copying......");
+        final FileProgressBar fpb = FileProgressBar.build().trackedFile(targetFile).expectedSize(sourceFileSize);
         try {
             if (!config.isDryRun()) {
-                progressBar.start();
+                fpb.start();
 
                 Files.copy(file, targetFile);
                 Thread.sleep(10); // Let progress bar to finish.
@@ -69,8 +75,10 @@ public class CopyHandler {
         } catch (final IOException | InterruptedException e) {
             e.printStackTrace();
             StateConstants.addFailure();
-            progressBar.cancel();
+            fpb.complete();
             return false;
+        } finally {
+            fpb.waitForCompletion();
         }
 
     }

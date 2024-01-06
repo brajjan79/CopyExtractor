@@ -2,14 +2,15 @@ package com.github.extractor.handlers;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
 import com.github.extractor.utils.JunrarWrapper;
-import com.github.extractor.utils.ProgressBarWrapper;
 import com.github.extractor.utils.AutoCloseableIterator;
 import com.github.extractor.utils.FileHeaderWrapper;
+import com.github.extractor.utils.FileProgressBar;
 import com.github.filesize.FileSize;
 import com.github.junrar.exception.RarException;
 
@@ -47,8 +48,7 @@ public class UnrarHandler {
 
     }
 
-    private void processFileHeader(final Candidate candidate, AutoCloseableIterator<FileHeaderWrapper> fileHeaders)
-            throws FileNotFoundException, InterruptedException, RarException {
+    private void processFileHeader(final Candidate candidate, AutoCloseableIterator<FileHeaderWrapper> fileHeaders) throws RarException {
         while (fileHeaders.hasNext()) {
             final FileHeaderWrapper fileHeader = fileHeaders.next();
             final File targetFile = fileHeader.getDestinationFile(candidate.targetDir);
@@ -62,7 +62,7 @@ public class UnrarHandler {
         }
     }
 
-    private boolean validTargetFileExist(final FileHeaderWrapper fileHeader, final File targetFile) throws FileNotFoundException {
+    private boolean validTargetFileExist(final FileHeaderWrapper fileHeader, final File targetFile) {
         if (targetFile.exists()) {
             final double existingFileSize = FileSize.getBytes(targetFile);
             if (existingFileSize >= fileHeader.getUnpackedSize()) {
@@ -74,17 +74,18 @@ public class UnrarHandler {
         return false;
     }
 
-    private void extractFileHeader(final FileHeaderWrapper fileHeader, final File targetFile)
-            throws InterruptedException, RarException, FileNotFoundException {
-        final ProgressBarWrapper progressBar = ProgressBarWrapper.prepare(fileHeader.getUnpackedSize(), targetFile, "Extracting...");
-        progressBar.start();
+    private void extractFileHeader(final FileHeaderWrapper fileHeader, final File targetFile) throws RarException {
+        final FileProgressBar fpb = FileProgressBar.build().trackedFile(targetFile).expectedSize(fileHeader.getUnpackedSize());
+        fpb.start();
 
         try {
             fileHeader.extractFile(targetFile);
             StateConstants.addSuccess();
-            Thread.sleep(10); // Let progress bar to finish.cd gi
+        } catch (final FileNotFoundException e) {
+            e.printStackTrace();
+            fpb.complete();
         } finally {
-            progressBar.cancel();
+            fpb.waitForCompletion();
         }
     }
 }

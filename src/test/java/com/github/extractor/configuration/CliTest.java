@@ -93,6 +93,7 @@ public class CliTest {
                 FULL_NAME_DASHES + CliKeys.GROUP_BY_REGEX.name, "abc",
                 FULL_NAME_DASHES + CliKeys.RECURSIVE.name,
                 FULL_NAME_DASHES + CliKeys.KEEP_FOLDER.name,
+                FULL_NAME_DASHES + CliKeys.CREATE_FOLDER.name,
                 FULL_NAME_DASHES + CliKeys.KEEP_FOLDER_STRUCTURE.name,
                 FULL_NAME_DASHES + CliKeys.DRY_RUN.name
         };
@@ -114,6 +115,7 @@ public class CliTest {
                 SHORT_NAME_DASHES + CliKeys.GROUP_BY_REGEX.shortName, "abc",
                 SHORT_NAME_DASHES + CliKeys.RECURSIVE.shortName,
                 SHORT_NAME_DASHES + CliKeys.KEEP_FOLDER.shortName,
+                SHORT_NAME_DASHES + CliKeys.CREATE_FOLDER.shortName,
                 SHORT_NAME_DASHES + CliKeys.KEEP_FOLDER_STRUCTURE.shortName,
                 SHORT_NAME_DASHES + CliKeys.DRY_RUN.shortName
         };
@@ -133,6 +135,7 @@ public class CliTest {
         expectedJson.add(CliKeys.RECURSIVE.name, null);
         expectedJson.add(CliKeys.RECURSIVE.name, null);
         expectedJson.add(CliKeys.KEEP_FOLDER.name, null);
+        expectedJson.add(CliKeys.CREATE_FOLDER.name, null);
         expectedJson.add(CliKeys.KEEP_FOLDER_STRUCTURE.name, null);
         expectedJson.add(CliKeys.DRY_RUN.name, null);
         return expectedJson;

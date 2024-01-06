@@ -76,9 +76,8 @@ public class DirHandler {
     }
 
     /**
-     * Buils a File based on the dir and the name of the provided file and the
-     * directory name the file is in. This file will be grouped if groupBy regex is
-     * provided.
+     * Builds a File based on the dir and the name of the provided file and the directory name the file is in. This file
+     * will be grouped if groupBy regex is provided.
      *
      * @param dir
      * @param file
@@ -90,8 +89,8 @@ public class DirHandler {
     }
 
     /**
-     * Buils a File based on the dir and the name of the provided file. This file
-     * will be grouped if groupBy regex is provided.
+     * Builds a File based on the dir and the name of the provided file. This file will be grouped if groupBy regex is
+     * provided.
      *
      * @param dir
      * @param file

@@ -41,7 +41,7 @@ public class ConfigFileUtilTest {
     public void init() throws Throwable {
         configFilePath = new File(folder, "config_file_for_test.json");
         gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(File.class, new FileTypeAdapter()).create();
-        configuration = new Configuration(null, null, null, null, null, false, false, false);
+        configuration = new Configuration(null, null, null, null, null, false, false, false, false);
     }
 
     @Test

@@ -16,6 +16,7 @@
     ],
     "groupByRegex":"([.2018.])",
     "keepFolder": false,
+    "createFolder": false,
     "keepFolderStructure": false,
     "recursive": true,
     "dryRun": false

@@ -30,30 +30,26 @@ public class FolderScanner {
         this.candidateFactory = candidateFactory;
     }
 
-    public void setvariablesForTest(CandidateFactory candidateFactory, DirHandler dirHandler) {
-        this.candidateFactory = candidateFactory;
-        this.dirHandler = dirHandler;
-    }
-
     public List<Candidate> getCandidates() {
         return candidates;
     }
 
-    public void scanFolders(ConfigFolder folderItem, final File inputDir, final File outputDir) throws FolderException {
-        if (inputDir.isFile()) {
+    public void scanFolders(ConfigFolder configFolder) throws FolderException {
+        if (configFolder.getInputFolder().isFile()) {
             throw new FolderException("Folder is not folder.");
         }
 
-        createAndAddInputDirCandidate(inputDir, outputDir);
-        scanSubDirectories(inputDir, outputDir);
+        createAndAddInputDirCandidate(configFolder);
+        scanSubDirectories(configFolder.getInputFolder(), configFolder.getOutputFolder());
     }
 
-    private void createAndAddInputDirCandidate(final File dir, final File outputDir) {
-        final File targetDir = dirHandler.buildTargetBaseDirFile(outputDir, dir);
-        createAndAddCandidate(dir, targetDir);
+    private void createAndAddInputDirCandidate(ConfigFolder configFolder) {
+        final File targetDir = dirHandler.buildTargetBaseDirFile(configFolder.getOutputFolder(), configFolder.getInputFolder());
+        createAndAddCandidate(configFolder.getInputFolder(), targetDir, true);
     }
 
     private void scanSubDirectories(final File inputDir, final File outputDir) throws FolderException {
+        // configFolder.getInputFolder(), configFolder.getOutputFolder()
         final File[] directories = inputDir.listFiles();
         for (final File dir : directories) {
             if (dirHandler.isValidSubfolder(dir, outputDir)) {
@@ -65,10 +61,10 @@ public class FolderScanner {
     private void scanFolderForPossibleCandidates(final File dir, final File outputDir) throws FolderException {
         if (dirHandler.folderHasMultipleFoldersToScan(dir)) {
             handleGroupedDirs(dir, outputDir);
-            createAndAddCandidate(dir, outputDir);
+            createAndAddCandidate(dir, outputDir, false);
         } else {
             final File targetDir = dirHandler.buildTargetSubdirFile(outputDir, dir);
-            createAndAddCandidate(dir, targetDir);
+            createAndAddCandidate(dir, targetDir, false);
         }
     }
 
@@ -85,9 +81,10 @@ public class FolderScanner {
         }
     }
 
-    private void createAndAddCandidate(final File file, final File targetDir) {
+    private void createAndAddCandidate(final File file, final File targetDir, boolean isBaseDir) {
         final Candidate candidate = candidateFactory.createCandidate(file, targetDir);
         if (!candidate.isEmpty()) {
+            candidate.setIsBaseDir(isBaseDir);
             candidates.add(candidate);
         }
     }

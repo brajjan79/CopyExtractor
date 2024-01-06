@@ -2,6 +2,7 @@ package com.github.extractor;
 
 import com.github.extractor.configuration.Cli;
 import com.github.extractor.configuration.ConfigFactory;
+import com.github.extractor.configuration.Configuration;
 import com.github.extractor.exceptions.HelpGivenException;
 import com.google.gson.JsonObject;
 

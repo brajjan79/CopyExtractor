@@ -10,6 +10,7 @@ public enum CliKeys {
     GROUP_BY_REGEX ("rx", "group-by-regex", true, "list", "Regex to group files or fodlers."),
     RECURSIVE ("R", "recursive", "Extract recursively."),
     KEEP_FOLDER ("kf", "keep-folder", "Source folder will be kept."),
+    CREATE_FOLDER("cf", "create-folder", "Create a folder if none exist for a file (only applicable for files in root dir)."),
     KEEP_FOLDER_STRUCTURE ("kfs", "keep-folder-structure", "Target dirs will keep the same folder structure as source."),
     DRY_RUN ("d", "dry-run", "Will not copy or extract, only log."),
     HELP ("h", "help", "Prints this Help Text");
@@ -57,9 +58,7 @@ public enum CliKeys {
      */
     public boolean isRequired(final boolean isConfigFileRequired) {
         final boolean configFileOptionRequired = isConfigFileRequired && this.equals(CONFIG_FILE_PATH);
-        final boolean inpudFolderAndOutputFolderRequired = (
-            !isConfigFileRequired && (this.equals(TARGET_FOLDER) || this.equals(SOURCE_FOLDER))
-            );
+        final boolean inpudFolderAndOutputFolderRequired = !isConfigFileRequired && (this.equals(TARGET_FOLDER) || this.equals(SOURCE_FOLDER));
 
         return configFileOptionRequired || inpudFolderAndOutputFolderRequired;
     }
