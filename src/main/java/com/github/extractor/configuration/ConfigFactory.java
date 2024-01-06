@@ -21,8 +21,8 @@ public class ConfigFactory {
             }
             return config;
         }
-        final Configuration option = createFromConfigFilefromArguments(cliOptions);
-        return option;
+        final Configuration config = createFromConfigFilefromArguments(cliOptions);
+        return config;
     }
 
     private static Configuration createFromConfigFilefromArguments(final JsonObject cliOptions) {
@@ -37,11 +37,12 @@ public class ConfigFactory {
         }
 
         final boolean keepFolder = cliOptions.has(CliKeys.KEEP_FOLDER.name);
+        final boolean createFolder = cliOptions.has(CliKeys.CREATE_FOLDER.name);
         final boolean keepFolderStructure = cliOptions.has(CliKeys.KEEP_FOLDER_STRUCTURE.name);
         final boolean recursive = cliOptions.has(CliKeys.RECURSIVE.name);
 
         final Configuration config = new Configuration(
-                fileTypes, ignore, includeFolders, folders, groupByRegex, keepFolder,
+                fileTypes, ignore, includeFolders, folders, groupByRegex, keepFolder, createFolder,
                 keepFolderStructure, recursive);
         config.setDryRun(cliOptions.has(CliKeys.DRY_RUN.name));
         return config;
@@ -78,6 +79,7 @@ public class ConfigFactory {
     private static Configuration createConfiguration(final JsonObject jsonConfig) {
         final Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(File.class, new FileTypeAdapter()).create();
         final Configuration config = gson.fromJson(jsonConfig, Configuration.class);
+        Configuration.setInstance(config);
         return config;
     }
 }

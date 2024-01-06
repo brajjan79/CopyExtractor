@@ -10,40 +10,42 @@ import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.exceptions.FolderException;
 import com.github.extractor.handlers.DirHandler;
 import com.github.extractor.models.Candidate;
+import com.github.extractor.models.ConfigFolder;
 
 public class FolderScannerTest {
 
-    private File inputDir;
-    private File outputDir;
 
+    @Mock
+    private ConfigFolder configFolder;
+    @Mock
     private Candidate mockedCandidate;
+    @Mock
     private Candidate mockedEmptyCandidate;
+    @Mock
+    private CandidateFactory candidateFactory;
+    @Mock
+    private DirHandler dirHandler;
+    @Mock
+    private Configuration config;
 
     private FolderScanner folderScanner;
-    private CandidateFactory candidateFactory;
-    private DirHandler dirHandler;
-    private Configuration config;
 
     @BeforeEach
     public void init() throws Exception {
-        dirHandler = mock(DirHandler.class);
-        config = mock(Configuration.class);
-        candidateFactory = mock(CandidateFactory.class);
+        MockitoAnnotations.openMocks(this);
 
-        mockedCandidate = mock(Candidate.class);
         when(mockedCandidate.isEmpty()).thenReturn(false);
-        mockedEmptyCandidate = mock(Candidate.class);
         when(mockedEmptyCandidate.isEmpty()).thenReturn(true);
 
-        Configuration.setInstance(config);
-        folderScanner = new FolderScanner();
-        folderScanner.setvariablesForTest(candidateFactory, dirHandler);
+        folderScanner = new FolderScanner(config, dirHandler, candidateFactory);
         setupMockFolderFolders();
     }
 
@@ -56,7 +58,7 @@ public class FolderScannerTest {
     public void testScanFoldersRecursiveOff() throws Throwable {
         when(config.isRecursive()).thenReturn(false);
 
-        folderScanner.scanFolders(null, inputDir, outputDir);
+        folderScanner.scanFolders(configFolder);
         final List<Candidate> candidates = folderScanner.getCandidates();
         assertEquals("Expect 3 folders to be valid candidates.", 3, candidates.size());
     }
@@ -71,7 +73,7 @@ public class FolderScannerTest {
         when(config.isRecursive()).thenReturn(true);
         when(config.isKeepFolderStructure()).thenReturn(false);
 
-        folderScanner.scanFolders(null, inputDir, outputDir);
+        folderScanner.scanFolders(configFolder);
         final List<Candidate> candidates = folderScanner.getCandidates();
         assertEquals("Expect 3 folders to be valid candidates.", 6, candidates.size());
     }
@@ -86,7 +88,7 @@ public class FolderScannerTest {
         when(config.isRecursive()).thenReturn(true);
         when(config.isKeepFolderStructure()).thenReturn(true);
 
-        folderScanner.scanFolders(null, inputDir, outputDir);
+        folderScanner.scanFolders(configFolder);
         final List<Candidate> candidates = folderScanner.getCandidates();
         assertEquals("Expect 3 folders to be valid candidates.", 6, candidates.size());
     }
@@ -101,8 +103,9 @@ public class FolderScannerTest {
         final File mockedFile = mock(File.class);
         when(mockedFile.isFile()).thenReturn(true);
         when(mockedFile.isDirectory()).thenReturn(false);
+        when(configFolder.getInputFolder()).thenReturn(mockedFile);
         assertThrows(FolderException.class, () -> {
-            folderScanner.scanFolders(null, mockedFile, outputDir);
+            folderScanner.scanFolders(configFolder);
         });
     }
 
@@ -121,8 +124,8 @@ public class FolderScannerTest {
         // recursive should provide 6 candidates
 
         // Init mocks
-        outputDir = mock(File.class);
-        inputDir = mock(File.class);
+        final File outputDir = mock(File.class);
+        final File inputDir = mock(File.class);
 
         final File subDirA = mock(File.class);
         final File subDirB = mock(File.class);
@@ -192,6 +195,9 @@ public class FolderScannerTest {
         when(dirHandler.buildFile(Mockito.any(), Mockito.any(File.class))).thenReturn(outputDir);
 
         when(outputDir.getAbsolutePath()).thenReturn("/out/");
+
+        when(configFolder.getInputFolder()).thenReturn(inputDir);
+        when(configFolder.getOutputFolder()).thenReturn(outputDir);
     }
 
 }

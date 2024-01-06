@@ -29,7 +29,7 @@ public class ConfigurationTest {
 
     @Test
     public void testDefaults() throws Throwable {
-        final Configuration config = new Configuration(null, null, null, folders, null, false, false, false);
+        final Configuration config = new Configuration(null, null, null, folders, null, false, false, false, false);
 
         assertTrue(config.getFileTypes().isEmpty());
         assertTrue(config.getIgnored().isEmpty());
@@ -53,7 +53,7 @@ public class ConfigurationTest {
         files.add("jpg");
         final List<String> includes = new ArrayList<>();
         includes.add("info");
-        final Configuration config = new Configuration(files, ignores, includes, folders, null, false, false, false);
+        final Configuration config = new Configuration(files, ignores, includes, folders, null, false, false, false, false);
 
         assertEquals("jpg", config.getFileTypes().get(0));
         assertEquals("ignore", config.getIgnored().get(0));
@@ -83,7 +83,7 @@ public class ConfigurationTest {
         files.add("jpg");
         final List<String> includes = new ArrayList<>();
         includes.add("info");
-        final Configuration config = new Configuration(files, ignores, includes, folders, "regex", true, true, true);
+        final Configuration config = new Configuration(files, ignores, includes, folders, "regex", true, true, true, true);
         config.setDryRun(true);
 
         assertEquals(expectedString, config.toString());
@@ -91,7 +91,7 @@ public class ConfigurationTest {
 
     @Test
     public void testNoFoldersThrowsException() throws Throwable {
-        final Configuration config = new Configuration(null, null, null, null, null, false, false, false);
+        final Configuration config = new Configuration(null, null, null, null, null, false, false, false, false);
         assertThrows(RuntimeException.class, () -> {
             config.getFolders();
         });

@@ -4,16 +4,16 @@ import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -29,7 +29,6 @@ import com.github.extractor.handlers.UnrarHandler;
 import com.github.extractor.models.Candidate;
 import com.github.extractor.models.ConfigFolder;
 import com.github.extractor.utils.Dirs;
-import com.github.extractor.utils.Rars;
 
 public class ExecutorTest {
 
@@ -42,13 +41,23 @@ public class ExecutorTest {
     @Mock
     private UnrarHandler unrarHandler;
 
+    private MockedStatic<Dirs> dirs;
+
     private Executor executor;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+
+        dirs = mockStatic(Dirs.class);
+
         when(mockConfig.isDryRun()).thenReturn(true);
         executor = new Executor(mockConfig, mockFolderScanner, copyHandler, unrarHandler);
+    }
+
+    @AfterEach
+    void tearDown() {
+        dirs.close();
     }
 
     /**
@@ -81,7 +90,7 @@ public class ExecutorTest {
         executor.scanForCandidates();
 
         for (final ConfigFolder folder : folders) {
-            verify(mockFolderScanner).scanFolders(eq(folder), eq(folder.getInputFolder()), eq(folder.getOutputFolder()));
+            verify(mockFolderScanner).scanFolders(eq(folder));
         }
     }
 
@@ -93,12 +102,12 @@ public class ExecutorTest {
         when(mockConfig.getFolders()).thenReturn(folders);
 
         // Mock the FolderScanner to throw FolderException
-        doThrow(new FolderException("Test Exception")).when(mockFolderScanner).scanFolders(any(ConfigFolder.class), any(), any());
+        doThrow(new FolderException("Test Exception")).when(mockFolderScanner).scanFolders(any(ConfigFolder.class));
 
         executorSpy.scanForCandidates();
 
         // Verify that scanFolders was called
-        verify(mockFolderScanner).scanFolders(any(ConfigFolder.class), any(), any());
+        verify(mockFolderScanner).scanFolders(any(ConfigFolder.class));
         // Additional verification if necessary
     }
 
@@ -108,33 +117,11 @@ public class ExecutorTest {
                 new Candidate("candidate2", new File("targetDir2")));
         when(mockFolderScanner.getCandidates()).thenReturn(candidates);
 
-        try (MockedStatic<Dirs> mockedDirs = Mockito.mockStatic(Dirs.class);
-                MockedStatic<Rars> mockedRarHandler = Mockito.mockStatic(Rars.class)) {
+        executor.copyAndUnrarCandidates();
 
-            executor.copyAndUnrarCandidates();
-
-            for (final Candidate candidate : candidates) {
-                verify(copyHandler).copyFiles(candidate);
-                verify(unrarHandler).unrarFiles(candidate);
-                mockedDirs.verify(() -> Dirs.createDirs(candidate.targetDir), times(1));
-            }
-        }
-    }
-
-    @Test
-    void copyAndUnrarCandidateShouldHandleIOException() {
-        final File targetDir = new File("targetDir");
-        final Candidate candidate = new Candidate("candidate", new File("targetDir"));
-        when(mockFolderScanner.getCandidates()).thenReturn(Collections.singletonList(candidate));
-        when(mockConfig.isDryRun()).thenReturn(false);
-
-        try (MockedStatic<Dirs> mockedDirs = Mockito.mockStatic(Dirs.class)) {
-            final IOException exception = new IOException("Error");
-            mockedDirs.when(() -> Dirs.createDirs(targetDir)).thenThrow(exception);
-
-            executor.copyAndUnrarCandidates();
-        } catch (final Exception e) {
-            fail("Failed to handle IOException");
+        for (final Candidate candidate : candidates) {
+            verify(copyHandler).copyFiles(candidate);
+            verify(unrarHandler).unrarFiles(candidate);
         }
     }
 

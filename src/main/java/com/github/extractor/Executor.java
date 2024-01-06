@@ -39,9 +39,9 @@ public class Executor {
     }
 
     public void scanForCandidates() {
-        for (final ConfigFolder folderItem : config.getFolders()) {
+        for (final ConfigFolder configFolder : config.getFolders()) {
             try {
-                folderScanner.scanFolders(folderItem, folderItem.getInputFolder(), folderItem.getOutputFolder());
+                folderScanner.scanFolders(configFolder);
             } catch (final FolderException e) {
                 e.printStackTrace();
             }
@@ -60,7 +60,7 @@ public class Executor {
 
     private void copyAndUnrarCandidate(final Candidate candidate) {
         try {
-            Dirs.createDirs(candidate.targetDir);
+            Dirs.createDirs(candidate.getTargetDir());
             copyHandler.copyFiles(candidate);
             unrarHandler.unrarFiles(candidate);
         } catch (final IOException e) {

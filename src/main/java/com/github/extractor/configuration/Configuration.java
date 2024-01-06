@@ -20,26 +20,28 @@ public class Configuration {
     private final String groupByRegex;
 
     private final boolean keepFolder;
+    private final boolean createFolder;
     private final boolean keepFolderStructure;
     private final boolean recursive;
     private boolean dryRun = false;
 
+
     /**
      *
-     * @param fileTypes           :: List of FolderItem  File types to copy
-     * @param ignore              :: List of String  Folders that should not be scanned.
-     * @param includeFolders      :: List of String  Folders to include (extra folders not normally scanned)
-     * @param folders             :: List of String  Folders to scan and copy to
-     * @param groupByRegex        :: String  If item can be grouped, copy exstract items to a folder with the
-     *                               grouped name.
+     * @param fileTypes           :: List of FolderItem File types to copy
+     * @param ignore              :: List of String Folders that should not be scanned.
+     * @param includeFolders      :: List of String Folders to include (extra folders not normally scanned)
+     * @param folders             :: List of String Folders to scan and copy to
+     * @param groupByRegex        :: String If item can be grouped, copy exstract items to a folder with the grouped name.
      * @param keepFolder          :: boolean If file is in folder, keep the folder
+     * @param createFolder        :: boolean If file is in folder, keep the folder
      * @param keepFolderStructure :: boolean When scanning recursively keep the structure
      * @param recursive           :: boolean Folders should be scanned recursively
      * @throws ConfigurationException
      */
     public Configuration(final List<String> fileTypes, final List<String> ignore,
             final List<String> includeFolders, final List<ConfigFolder> folders,
-            final String groupByRegex, final boolean keepFolder, final boolean keepFolderStructure,
+            final String groupByRegex, final boolean keepFolder, final boolean createFolder, final boolean keepFolderStructure,
             final boolean recursive) throws ConfigurationException {
         this.folders = folders;
         this.fileTypes = fileTypes;
@@ -47,8 +49,10 @@ public class Configuration {
         this.includeFolders = includeFolders;
         this.groupByRegex = groupByRegex;
         this.keepFolder = keepFolder;
+        this.createFolder = createFolder;
         this.keepFolderStructure = keepFolderStructure;
         this.recursive = recursive;
+        Configuration.setInstance(this);
     }
 
     public static synchronized Configuration getInstance() {
@@ -110,6 +114,10 @@ public class Configuration {
 
     public boolean isKeepFolder() {
         return keepFolder;
+    }
+
+    public boolean isCreateFolder() {
+        return createFolder;
     }
 
     public boolean isKeepFolderStructure() {
