@@ -30,7 +30,6 @@ public class CopyHandler {
         for (final File file : candidate.filesToCopy) {
             try {
                 final boolean createFolderInBaseDir = candidate.isBaseDir && config.isCreateFolder();
-                System.out.println("File :: " + file.getName() + " createfolder " + String.valueOf(createFolderInBaseDir));
                 final File targetFile = fileHandler.createFile(candidate.targetDir, file, createFolderInBaseDir);
                 if (canCopy(file, targetFile)) {
                     success = performFileCopy(file, targetFile);
