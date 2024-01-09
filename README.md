@@ -76,6 +76,8 @@ Options:
  -rx,--group-by-regex <str>     Regex to group files or folders.
  -R,--recursive                 Extract recursively.
  -kf,--keep-folder              Source folder will be kept.
+ -cf,--create-folder            Create a folder if none exist for a file (only applicable for files
+                                in root dir).
  -kfs,--keep-folder-structure   Target dirs will keep the same folder structure as source.
  -d,--dry-run                   Will not copy or extract, only log.
  -h,--help                      Prints this Help Text
@@ -99,6 +101,8 @@ The configuration file is written in JSON format.
 -   **groupByRegex** String, Example: `"(?<=[0-9]{4}).*"`. GroupByRegex is a regex that when detected will put multiple found items in the same directory. The example `"(?<=[0-9]{4}).*"` would group all items based on the year and name before year.
 
 -   **keepFolder** boolean, Example: `true`. If **true** files extracted or copied from a folder will be copied or extracted to a folder with the same name. If **false** files will be copied or extracted directly to **outputFolder**.
+
+-   **createFolder** boolean, Example: `true`. If **true** files copied from a root folder will be copied to a folder with the same name as the file without the file ending. If **false** files will be copied to a folder in **outputFolder**.
 
 -   **keepFolderStructure** boolean, Example: `false`. only affected if recursive is **true**. If **true** files will be extracted and copied to the same structure as the inputFolder has, if **false** files will be copied to outputFolder unless groupByRegex groups the files.
 
@@ -131,6 +135,7 @@ The configuration file is written in JSON format.
     ],
     "groupByRegex":"([.2018.])",
     "keepFolder": false,
+    "createFolder": true, 
     "keepFolderStructure": false,
     "recursive": true,
     "dryRun": false
