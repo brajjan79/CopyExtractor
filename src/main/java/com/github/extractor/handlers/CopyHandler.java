@@ -58,7 +58,7 @@ public class CopyHandler {
 
     private boolean performFileCopy(final File file, final File targetFile) {
         final double sourceFileSize = FileSize.getBytes(file);
-        final FileProgressBar fpb = FileProgressBar.build().trackedFile(targetFile).expectedSize(sourceFileSize);
+        final FileProgressBar fpb = FileProgressBar.build().setAction("Copying").trackedFile(targetFile).expectedSize(sourceFileSize);
         try {
             if (!config.isDryRun()) {
                 fpb.start();

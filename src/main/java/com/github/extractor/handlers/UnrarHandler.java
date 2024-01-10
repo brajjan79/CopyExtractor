@@ -74,7 +74,8 @@ public class UnrarHandler {
     }
 
     private void extractFileHeader(final FileHeaderWrapper fileHeader, final File targetFile) throws RarException {
-        final FileProgressBar fpb = FileProgressBar.build().trackedFile(targetFile).expectedSize(fileHeader.getUnpackedSize());
+        final FileProgressBar fpb = FileProgressBar.build().trackedFile(targetFile).setAction("Extracting")
+                .expectedSize(fileHeader.getUnpackedSize());
         fpb.start();
 
         try {

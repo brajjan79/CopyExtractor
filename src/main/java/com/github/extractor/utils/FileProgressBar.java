@@ -13,6 +13,7 @@ public class FileProgressBar {
     private final long updateInterval = 5; // Update interval in milliseconds
     private boolean running;
     private String fileName;
+    private String action = "";
     private String indicator = "#";
 
     public static FileProgressBar build() {
@@ -37,6 +38,11 @@ public class FileProgressBar {
         return this;
     }
 
+    public FileProgressBar setAction(String action) {
+        this.action = action;
+        return this;
+    }
+
     public void start() {
         running = true;
         thread.start();
@@ -47,7 +53,7 @@ public class FileProgressBar {
             final double processedSize = fileSize.getBytes();
             update(processedSize);
             if (processedSize >= totalSize) {
-                System.out.println("");
+                update(totalSize, true);
                 break;
             }
             try {
@@ -62,12 +68,22 @@ public class FileProgressBar {
     }
 
     private void update(double processedSizeMB) {
+        update(processedSizeMB, false);
+    }
+
+    private void update(double processedSizeMB, boolean finalPrint) {
         final double progressPercentage = processedSizeMB / totalSize;
         final int filledLength = (int) (barWidth * progressPercentage);
 
         final String bar = "[" + indicator.repeat(filledLength) + " ".repeat(barWidth - filledLength) + "]";
-        System.out.printf("\r%s %s %3d%% %s/%s", fileName, bar, (int) (progressPercentage * 100),
-                DataSizeFormatter.formatBytes(processedSizeMB, 4, 2), DataSizeFormatter.formatBytes(totalSize, 4, 2));
+        final String output = String.format("\r%s %s %3d%% %s/%s %s", fileName, bar, (int) (progressPercentage * 100),
+                DataSizeFormatter.formatBytes(processedSizeMB, 4, 2), DataSizeFormatter.formatBytes(totalSize, 4, 2), action);
+
+        if (finalPrint) {
+            System.out.println(output);
+        } else {
+            System.out.print(output);
+        }
     }
 
     public void complete() {
@@ -79,7 +95,6 @@ public class FileProgressBar {
                 e.printStackTrace();
             }
         }
-        System.out.println("");
     }
 
     public void waitForCompletion() {
