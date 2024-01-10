@@ -52,6 +52,7 @@ class UnrarHandlerTest {
         mockedFileProgressBarClass.when(() -> FileProgressBar.build()).thenReturn(mockedFileProgressBar);
         when(mockedFileProgressBar.expectedSize(anyDouble())).thenReturn(mockedFileProgressBar);
         when(mockedFileProgressBar.trackedFile(any())).thenReturn(mockedFileProgressBar);
+        when(mockedFileProgressBar.setAction(any())).thenReturn(mockedFileProgressBar);
 
         mockedFileSize = mockStatic(FileSize.class);
         mockedStateConstants = mockStatic(StateConstants.class);

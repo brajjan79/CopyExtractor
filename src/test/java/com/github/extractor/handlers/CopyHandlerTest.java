@@ -51,6 +51,7 @@ class CopyHandlerTest {
         mockedFileProgressBarClass.when(() -> FileProgressBar.build()).thenReturn(mockedFileProgressBar);
         when(mockedFileProgressBar.expectedSize(anyDouble())).thenReturn(mockedFileProgressBar);
         when(mockedFileProgressBar.trackedFile(any())).thenReturn(mockedFileProgressBar);
+        when(mockedFileProgressBar.setAction(any())).thenReturn(mockedFileProgressBar);
 
         mockedFileSize.when(() -> FileSize.getBytes(any(File.class))).thenReturn(1000.0);
 
