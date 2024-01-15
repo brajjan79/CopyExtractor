@@ -49,9 +49,17 @@ public class FileProgressBar {
     }
 
     private void updateProgressBar() {
+        int updateCount = 0;
+        // Calculate how many updates are needed for approximately 20 prints per second
+        final int updateWaitCount = (int) (1000 / (20 * updateInterval));
         while (running) {
             final double processedSize = fileSize.getBytes();
-            update(processedSize);
+            if (updateCount == 0 || updateCount >= updateWaitCount) {
+                // This reduces the print spam
+                update(processedSize);
+                updateCount = 1;
+            }
+            updateCount += 1;
             if (processedSize >= totalSize) {
                 update(totalSize, true);
                 break;
@@ -77,7 +85,7 @@ public class FileProgressBar {
 
         final String bar = "[" + indicator.repeat(filledLength) + " ".repeat(barWidth - filledLength) + "]";
         final String output = String.format("\r%s %s %3d%% %s/%s %s", fileName, bar, (int) (progressPercentage * 100),
-                DataSizeFormatter.formatBytes(processedSizeMB, 4, 2), DataSizeFormatter.formatBytes(totalSize, 4, 2), action);
+                DataSizeFormatter.formatBytes(processedSizeMB, 4, 2), DataSizeFormatter.formatBytes(totalSize, 5, 2), action);
 
         if (finalPrint) {
             System.out.println(output);
