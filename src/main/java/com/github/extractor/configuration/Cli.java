@@ -1,5 +1,11 @@
 package com.github.extractor.configuration;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.Properties;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -8,7 +14,8 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import com.github.extractor.exceptions.HelpGivenException;
+import com.github.extractor.App;
+import com.github.extractor.exceptions.ArgsExitGivenException;
 import com.github.extractor.exceptions.InputException;
 import com.google.gson.JsonObject;
 
@@ -23,9 +30,9 @@ public class Cli {
      *
      *
      * @param args - Program input args
-     * @throws HelpGivenException
+     * @throws ArgsExitGivenException
      */
-    public static JsonObject parseArgs(final String[] args) throws HelpGivenException {
+    public static JsonObject parseArgs(final String[] args) throws ArgsExitGivenException {
         final Options options = addOptions(isConfigFileRequired(args));
         final CommandLine commandLine = parseInputToCommandLine(args, options);
         final JsonObject inputConfig = parseCommandLineInputToJson(commandLine);
@@ -59,7 +66,7 @@ public class Cli {
         return options;
     }
 
-    private static CommandLine parseInputToCommandLine(final String[] args, final Options options) throws HelpGivenException {
+    private static CommandLine parseInputToCommandLine(final String[] args, final Options options) throws ArgsExitGivenException {
         checkForHelpOption(args, options);
         try {
             final CommandLineParser parser = new DefaultParser();
@@ -67,27 +74,59 @@ public class Cli {
             return commandLine;
         } catch (final ParseException e) {
             System.out.println(e.getMessage());
-            writeHelp(options);
+            printHelp(options);
             throw new InputException("Missing required options!");
         }
     }
 
-    private static void checkForHelpOption(final String[] args, final Options options) throws HelpGivenException {
+    private static void checkForHelpOption(final String[] args, final Options options) throws ArgsExitGivenException {
         for (final String argument : args) {
             final Boolean containsHelp = argument.equals("--help") || argument.equals("-h");
             if (containsHelp) {
-                writeHelp(options);
-                throw new HelpGivenException("Help option was given.");
+                printHelp(options);
+                throw new ArgsExitGivenException("Help option was given.");
+            }
+            final Boolean containsVersion = argument.equals("--version") || argument.equals("-v");
+            if (containsVersion) {
+                printVersion();
+                throw new ArgsExitGivenException("Version option was given.");
+            }
+            final Boolean quietMode = argument.equals("--quiet") || argument.equals("-q");
+            if (quietMode) {
+                setQuietMode();
             }
         }
     }
 
-    private static void writeHelp(final Options options) {
+    private static void printHelp(final Options options) {
         final HelpFormatter formatter = new HelpFormatter();
         formatter.setOptionComparator(null);
         final String usageExample = String.format("java --jar %s %s [options value]", JAR_FILE_NAME,
-                                                  "");
+                "");
         formatter.printHelp(100, usageExample, "\nOptions:\n", options, null);
     }
 
+    private static void printVersion() {
+        final Properties prop = new Properties();
+        try (InputStream input = App.class.getClassLoader().getResourceAsStream("version.properties")) {
+            if (input == null) {
+                System.out.println("Sorry, unable to find version.properties");
+                return;
+            }
+            prop.load(input);
+            final String version = prop.getProperty("version");
+            System.out.println(version);
+        } catch (final IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private static void setQuietMode() {
+        System.setOut(new PrintStream(new OutputStream() {
+            @Override
+            public void write(int b) {
+                // NO-OP
+            }
+        }));
+    }
 }
