@@ -2,8 +2,6 @@ package com.github.extractor.configuration;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.Properties;
 
 import org.apache.commons.cli.CommandLine;
@@ -91,10 +89,6 @@ public class Cli {
                 printVersion();
                 throw new ArgsExitGivenException("Version option was given.");
             }
-            final Boolean quietMode = argument.equals("--quiet") || argument.equals("-q");
-            if (quietMode) {
-                setQuietMode();
-            }
         }
     }
 
@@ -117,12 +111,4 @@ public class Cli {
         }
     }
 
-    private static void setQuietMode() {
-        System.setOut(new PrintStream(new OutputStream() {
-            @Override
-            public void write(int b) {
-                // NO-OP
-            }
-        }));
-    }
 }

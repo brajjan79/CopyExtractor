@@ -13,7 +13,6 @@ public enum CliKeys {
     CREATE_FOLDER("cf", "create-folder", "Create a folder if none exist for a file (only applicable for files in root dir)."),
     KEEP_FOLDER_STRUCTURE ("kfs", "keep-folder-structure", "Target dirs will keep the same folder structure as source."),
     DRY_RUN("d", "dry-run", "This means that no files are impacted or changed."),
-    QUIET("q", "quiet", "Execute copyExtractor in quiet mode."),
     VERSION("v", "version", "Print CopyExtractor version."),
     HELP("h", "help", "Prints this Help Text.");
 
