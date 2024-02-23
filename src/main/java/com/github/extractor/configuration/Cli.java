@@ -109,15 +109,11 @@ public class Cli {
     private static void printVersion() {
         final Properties prop = new Properties();
         try (InputStream input = App.class.getClassLoader().getResourceAsStream("version.properties")) {
-            if (input == null) {
-                System.out.println("Sorry, unable to find version.properties");
-                return;
-            }
             prop.load(input);
             final String version = prop.getProperty("version");
             System.out.println(version);
         } catch (final IOException ex) {
-            ex.printStackTrace();
+            System.out.println("Sorry, unable to find version.properties");
         }
     }
 

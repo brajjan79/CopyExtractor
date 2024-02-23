@@ -42,6 +42,22 @@ public class CliTest {
     }
 
     @Test
+    public void testVersionOptionProvided() throws Throwable {
+        final String[] args = { FULL_NAME_DASHES + CliKeys.VERSION.name };
+        assertThrows(ArgsExitGivenException.class, () -> {
+            Cli.parseArgs(args);
+        });
+    }
+
+    @Test
+    public void testSvortVersionOptionProvided() throws Throwable {
+        final String[] args = { SHORT_NAME_DASHES + CliKeys.VERSION.shortName };
+        assertThrows(ArgsExitGivenException.class, () -> {
+            Cli.parseArgs(args);
+        });
+    }
+
+    @Test
     public void testNoArgsProvided() throws Throwable {
         final String[] args = {};
         assertThrows(InputException.class, () -> {
