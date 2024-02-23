@@ -6,7 +6,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.jupiter.api.Test;
 
-import com.github.extractor.exceptions.HelpGivenException;
+import com.github.extractor.exceptions.ArgsExitGivenException;
 import com.github.extractor.exceptions.InputException;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -28,7 +28,7 @@ public class CliTest {
     @Test
     public void testHelpOptionProvided() throws Throwable {
         final String[] args = {FULL_NAME_DASHES + CliKeys.HELP.name};
-        assertThrows(HelpGivenException.class, () -> {
+        assertThrows(ArgsExitGivenException.class, () -> {
             Cli.parseArgs(args);
         });
     }
@@ -36,7 +36,23 @@ public class CliTest {
     @Test
     public void testShortHelpOptionProvided() throws Throwable {
         final String[] args = {SHORT_NAME_DASHES + CliKeys.HELP.shortName};
-        assertThrows(HelpGivenException.class, () -> {
+        assertThrows(ArgsExitGivenException.class, () -> {
+            Cli.parseArgs(args);
+        });
+    }
+
+    @Test
+    public void testVersionOptionProvided() throws Throwable {
+        final String[] args = { FULL_NAME_DASHES + CliKeys.VERSION.name };
+        assertThrows(ArgsExitGivenException.class, () -> {
+            Cli.parseArgs(args);
+        });
+    }
+
+    @Test
+    public void testSvortVersionOptionProvided() throws Throwable {
+        final String[] args = { SHORT_NAME_DASHES + CliKeys.VERSION.shortName };
+        assertThrows(ArgsExitGivenException.class, () -> {
             Cli.parseArgs(args);
         });
     }

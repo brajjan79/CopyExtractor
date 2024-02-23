@@ -12,8 +12,9 @@ public enum CliKeys {
     KEEP_FOLDER ("kf", "keep-folder", "Source folder will be kept."),
     CREATE_FOLDER("cf", "create-folder", "Create a folder if none exist for a file (only applicable for files in root dir)."),
     KEEP_FOLDER_STRUCTURE ("kfs", "keep-folder-structure", "Target dirs will keep the same folder structure as source."),
-    DRY_RUN ("d", "dry-run", "Will not copy or extract, only log."),
-    HELP ("h", "help", "Prints this Help Text");
+    DRY_RUN("d", "dry-run", "This means that no files are impacted or changed."),
+    VERSION("v", "version", "Print CopyExtractor version."),
+    HELP("h", "help", "Prints this Help Text.");
 
     public String shortName;
     public String name;
