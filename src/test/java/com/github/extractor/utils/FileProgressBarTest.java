@@ -14,7 +14,7 @@ import java.io.File;
 import java.io.PrintStream;
 import java.time.Duration;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 public class FileProgressBarTest {
@@ -60,7 +60,7 @@ public class FileProgressBarTest {
         final double totalSize = 100.0;
 
         final FileProgressBar progressBar = FileProgressBar.build().trackedFile(mockFile).expectedSize(totalSize)
-                .setFileSizeInstance(mockedFileSize);
+                .setFileSizeInstance(mockedFileSize).setAction("Some action");
 
         Assertions.assertTimeoutPreemptively(Duration.ofMillis(500), () -> {
             progressBar.start();
@@ -82,5 +82,6 @@ public class FileProgressBarTest {
         final String truncatedFullPath = FileProgressBar.truncateFileName(fileName, 15);
         assertEquals(truncatedFullPath, fileName + "  ");
     }
+
 }
 

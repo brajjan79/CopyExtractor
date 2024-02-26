@@ -1,6 +1,5 @@
 package com.github.extractor.handlers;
 
-import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
 
@@ -8,7 +7,9 @@ import com.github.extractor.configuration.Configuration;
 import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
 import com.github.extractor.utils.FileProgressBar;
+import com.github.extractor.utils.PathShortener;
 import com.github.filesize.FileSize;
+import com.google.common.io.Files;
 
 public class CopyHandler {
 
@@ -34,7 +35,10 @@ public class CopyHandler {
                 if (canCopy(file, targetFile)) {
                     success = performFileCopy(file, targetFile);
                 } else {
-                    System.out.println("File already exist: " + targetFile.getAbsolutePath());
+                    System.out.println("The file " +
+                            targetFile.getName() +
+                            " already exists " +
+                            PathShortener.shortenPath(targetFile.getPath(), 30));
                     StateConstants.addAlreadyExists();
                     success = false;
                 }
