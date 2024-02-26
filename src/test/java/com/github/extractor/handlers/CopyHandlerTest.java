@@ -1,24 +1,32 @@
 package com.github.extractor.handlers;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyDouble;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.IOException;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.MockedStatic;
+import org.mockito.MockitoAnnotations;
 
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
 import com.github.extractor.utils.FileProgressBar;
+import com.github.extractor.utils.PathShortener;
 import com.github.filesize.FileSize;
-
-import java.io.File;
-import java.io.IOException;
 import com.google.common.io.Files;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
 
 class CopyHandlerTest {
 
@@ -35,6 +43,7 @@ class CopyHandlerTest {
     private MockedStatic<Files> mockedFiles;
     private MockedStatic<FileProgressBar> mockedFileProgressBarClass;
     private MockedStatic<StateConstants> mockedStateConstants;
+    private MockedStatic<PathShortener> mockPathShortener;
 
     private CopyHandler copyHandler;
     private Candidate candidate;
@@ -47,6 +56,7 @@ class CopyHandlerTest {
         mockedFiles = mockStatic(Files.class);
         mockedFileProgressBarClass = mockStatic(FileProgressBar.class);
         mockedStateConstants = mockStatic(StateConstants.class);
+        mockPathShortener = mockStatic(PathShortener.class);
 
         mockedFileProgressBarClass.when(() -> FileProgressBar.build()).thenReturn(mockedFileProgressBar);
         when(mockedFileProgressBar.expectedSize(anyDouble())).thenReturn(mockedFileProgressBar);
@@ -72,6 +82,7 @@ class CopyHandlerTest {
         mockedFiles.close();
         mockedFileProgressBarClass.close();
         mockedStateConstants.close();
+        mockPathShortener.close();
     }
 
     @Test

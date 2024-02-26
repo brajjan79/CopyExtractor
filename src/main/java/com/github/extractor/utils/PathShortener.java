@@ -15,10 +15,8 @@ public class PathShortener {
                 shortenedPath.append("/");
             }
             String part = parts[i];
-            if (i < parts.length - 1) {
-                if (part.length() > 3) {
-                    part = part.substring(0, 3) + "...";
-                }
+            if (i < parts.length - 1 && part.length() > 3) {
+                part = part.substring(0, 3) + "...";
             }
             shortenedPath.append(part);
 
