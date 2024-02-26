@@ -6,10 +6,11 @@ import java.io.FileNotFoundException;
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
-import com.github.extractor.utils.JunrarWrapper;
 import com.github.extractor.utils.AutoCloseableIterator;
 import com.github.extractor.utils.FileHeaderWrapper;
 import com.github.extractor.utils.FileProgressBar;
+import com.github.extractor.utils.JunrarWrapper;
+import com.github.extractor.utils.PathShortener;
 import com.github.filesize.FileSize;
 import com.github.junrar.exception.RarException;
 
@@ -65,7 +66,10 @@ public class UnrarHandler {
         if (targetFile.exists()) {
             final double existingFileSize = FileSize.getBytes(targetFile);
             if (existingFileSize >= fileHeader.getUnpackedSize()) {
-                System.out.println("The file " + targetFile.getName() + " already" + " exists in the target dir " + targetFile.getPath());
+                System.out.println("The file " +
+                        targetFile.getName() +
+                        " already exists " +
+                        PathShortener.shortenPath(targetFile.getPath(), 30));
                 StateConstants.addAlreadyExists();
                 return true;
             }
