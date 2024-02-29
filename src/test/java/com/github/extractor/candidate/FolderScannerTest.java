@@ -2,6 +2,7 @@ package com.github.extractor.candidate;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -103,7 +104,7 @@ public class FolderScannerTest {
         final File mockedFile = mock(File.class);
         when(mockedFile.isFile()).thenReturn(true);
         when(mockedFile.isDirectory()).thenReturn(false);
-        when(configFolder.getInputFolder()).thenReturn(mockedFile);
+        doThrow(new FolderException("Test")).when(configFolder).validate();
         assertThrows(FolderException.class, () -> {
             folderScanner.scanFolders(configFolder);
         });
