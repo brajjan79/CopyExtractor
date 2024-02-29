@@ -35,9 +35,7 @@ public class FolderScanner {
     }
 
     public void scanFolders(ConfigFolder configFolder) throws FolderException {
-        if (configFolder.getInputFolder().isFile()) {
-            throw new FolderException("Folder is not folder.");
-        }
+        configFolder.validate();
 
         createAndAddInputDirCandidate(configFolder);
         scanSubDirectories(configFolder.getInputFolder(), configFolder.getOutputFolder());
