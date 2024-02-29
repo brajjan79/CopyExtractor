@@ -10,7 +10,7 @@ public class FileProgressBar {
     private double totalSize;
     private FileSize fileSize;
     private final int barWidth = 50; // Width of the progress bar
-    private final long updateInterval = 5; // Update interval in milliseconds
+    private final int updateInterval = 5; // Update interval in milliseconds
     private boolean running;
     private String fileName;
     private String action = "";
@@ -51,7 +51,7 @@ public class FileProgressBar {
     private void updateProgressBar() {
         int updateCount = 0;
         // Calculate how many updates are needed for approximately 20 prints per second
-        final int updateWaitCount = (int) (1000 / (20 * updateInterval));
+        final int updateWaitCount = 1000 / (20 * updateInterval);
         while (running) {
             final double processedSize = fileSize.getBytes();
             if (updateCount == 0 || updateCount >= updateWaitCount) {
@@ -64,13 +64,7 @@ public class FileProgressBar {
                 update(totalSize, true);
                 break;
             }
-            try {
-                Thread.sleep(updateInterval);
-            } catch (final InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.err.println("Progress update interrupted: " + e.getMessage());
-                break;
-            }
+            sleep(updateInterval);
         }
         running = false;
     }
@@ -97,20 +91,13 @@ public class FileProgressBar {
     public void complete() {
         running = false;
         if (thread.isAlive()) {
-            try {
-                Thread.sleep(updateInterval);
-            } catch (final InterruptedException e) {
-                e.printStackTrace();
-            }
+            sleep(updateInterval);
         }
     }
 
     public void waitForCompletion() {
         while (running) {
-            try {
-                Thread.sleep(updateInterval);
-            } catch (final InterruptedException e) {
-            }
+            sleep(updateInterval);
         }
     }
 
@@ -120,6 +107,15 @@ public class FileProgressBar {
         }
         final String start = fileName.substring(0, width - 3);
         return start + "...";
+    }
+
+    private void sleep(int milliSeconds) {
+        try {
+            Thread.sleep(milliSeconds);
+        } catch (final InterruptedException e) {
+            this.running = false;
+            e.printStackTrace();
+        }
     }
 
 }
