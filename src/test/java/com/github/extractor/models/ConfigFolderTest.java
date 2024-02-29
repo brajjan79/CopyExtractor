@@ -2,6 +2,7 @@ package com.github.extractor.models;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -42,7 +43,9 @@ public class ConfigFolderTest {
         when(mockedInputFolder.isFile()).thenReturn(false);
         when(mockedInputFolder.exists()).thenReturn(true);
         final ConfigFolder configFolder = new ConfigFolder(mockedInputFolder, mockedOutputFolder);
-        configFolder.validate();
+        assertDoesNotThrow(() -> {
+            configFolder.validate();
+        });
     }
 
     @Test
