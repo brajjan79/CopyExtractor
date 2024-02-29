@@ -79,7 +79,8 @@ Options:
  -cf,--create-folder            Create a folder if none exist for a file (only applicable for files
                                 in root dir).
  -kfs,--keep-folder-structure   Target dirs will keep the same folder structure as source.
- -d,--dry-run                   Will not copy or extract, only log.
+ -d,--dry-run                   This means that no files are impacted or changed.
+ -v,--version                   Print CopyExtractor version.
  -h,--help                      Prints this Help Text
 ```
 
