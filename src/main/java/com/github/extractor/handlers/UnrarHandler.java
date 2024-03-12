@@ -10,7 +10,6 @@ import com.github.extractor.utils.AutoCloseableIterator;
 import com.github.extractor.utils.FileHeaderWrapper;
 import com.github.extractor.utils.FileProgressBar;
 import com.github.extractor.utils.JunrarWrapper;
-import com.github.extractor.utils.PathShortener;
 import com.github.filesize.FileSize;
 import com.github.junrar.exception.RarException;
 
@@ -66,10 +65,9 @@ public class UnrarHandler {
         if (targetFile.exists()) {
             final double existingFileSize = FileSize.getBytes(targetFile);
             if (existingFileSize >= fileHeader.getUnpackedSize()) {
-                System.out.println("The file " +
+                System.out.println("The file '" +
                         targetFile.getName() +
-                        " already exists " +
-                        PathShortener.shortenPath(targetFile.getPath(), 30));
+                        "' already exists.");
                 StateConstants.addAlreadyExists();
                 return true;
             }
