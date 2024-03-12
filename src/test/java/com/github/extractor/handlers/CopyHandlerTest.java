@@ -24,7 +24,6 @@ import com.github.extractor.configuration.Configuration;
 import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
 import com.github.extractor.utils.FileProgressBar;
-import com.github.extractor.utils.PathShortener;
 import com.github.filesize.FileSize;
 import com.google.common.io.Files;
 
@@ -43,7 +42,6 @@ class CopyHandlerTest {
     private MockedStatic<Files> mockedFiles;
     private MockedStatic<FileProgressBar> mockedFileProgressBarClass;
     private MockedStatic<StateConstants> mockedStateConstants;
-    private MockedStatic<PathShortener> mockPathShortener;
 
     private CopyHandler copyHandler;
     private Candidate candidate;
@@ -56,7 +54,6 @@ class CopyHandlerTest {
         mockedFiles = mockStatic(Files.class);
         mockedFileProgressBarClass = mockStatic(FileProgressBar.class);
         mockedStateConstants = mockStatic(StateConstants.class);
-        mockPathShortener = mockStatic(PathShortener.class);
 
         mockedFileProgressBarClass.when(() -> FileProgressBar.build()).thenReturn(mockedFileProgressBar);
         when(mockedFileProgressBar.expectedSize(anyDouble())).thenReturn(mockedFileProgressBar);
@@ -82,7 +79,6 @@ class CopyHandlerTest {
         mockedFiles.close();
         mockedFileProgressBarClass.close();
         mockedStateConstants.close();
-        mockPathShortener.close();
     }
 
     @Test
