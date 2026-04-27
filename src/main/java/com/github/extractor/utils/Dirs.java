@@ -26,7 +26,7 @@ public class Dirs {
 
         if (hasMatch) {
             try {
-                baseFolder = RegexFormat.reformat(name, groupByRegex + ".*", "").toLowerCase();
+                baseFolder = RegexFormat.reformat(name, groupByRegex + ".*", "").toLowerCase().replace(" ", ".");
             } catch (final MatchNotFoundException e) {
                 // should never happen since we do hasMatch check.
             }
