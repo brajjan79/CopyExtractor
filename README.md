@@ -49,7 +49,7 @@ version on main branch.
 
 ## JAVA compatabilities
 
-Supported JAVA versions: 8 (probably), 16 (tested) 
+Supported JAVA versions: 8 (probably), 17 (tested) 
 
 ## Usage
 
