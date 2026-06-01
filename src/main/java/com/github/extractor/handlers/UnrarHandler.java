@@ -1,7 +1,6 @@
 package com.github.extractor.handlers;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.models.Candidate;
@@ -83,7 +82,8 @@ public class UnrarHandler {
         try {
             fileHeader.extractFile(targetFile);
             StateConstants.addSuccess();
-        } catch (final FileNotFoundException e) {
+        } catch (final Exception e) {
+            StateConstants.addFailure();
             e.printStackTrace();
             fpb.complete();
         } finally {
