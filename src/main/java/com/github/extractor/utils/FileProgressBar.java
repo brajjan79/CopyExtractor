@@ -2,23 +2,24 @@ package com.github.extractor.utils;
 
 import java.io.File;
 
-import com.github.filesize.FileSize;
 import com.github.filesize.DataSizeFormatter;
+import com.github.filesize.FileSize;
 
 public class FileProgressBar {
-    private static Thread thread;
     private double totalSize;
     private FileSize fileSize;
     private final int barWidth = 50; // Width of the progress bar
     private final int updateInterval = 5; // Update interval in milliseconds
-    private boolean running;
     private String fileName;
     private String action = "";
     private String indicator = "#";
 
+    private Thread thread;
+    private volatile boolean running;
+
     public static FileProgressBar build() {
         final FileProgressBar instance = new FileProgressBar();
-        thread = new Thread(instance::updateProgressBar);
+        instance.thread = new Thread(instance::updateProgressBar);
         return instance;
     }
 
@@ -96,9 +97,21 @@ public class FileProgressBar {
     }
 
     public void waitForCompletion() {
-        while (running) {
+        waitForCompletion(30_000);
+    }
+
+    public void waitForCompletion(long timeoutMs) {
+        final long deadline = System.currentTimeMillis() + timeoutMs;
+
+        while (running && System.currentTimeMillis() < deadline) {
             sleep(updateInterval);
         }
+
+        if (running) {
+            System.out.println("Progressbar timeout, continuing.");
+            running = false;
+        }
+
     }
 
     public static String truncateFileName(String fileName, int width) {
