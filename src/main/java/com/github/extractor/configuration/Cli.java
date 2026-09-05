@@ -7,14 +7,15 @@ import java.util.Properties;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.help.HelpFormatter;
 
 import com.github.extractor.App;
 import com.github.extractor.exceptions.ArgsExitGivenException;
 import com.github.extractor.exceptions.InputException;
+import com.github.extractor.extraction.ArchiveExtractorReporter;
 import com.google.gson.JsonObject;
 
 public class Cli {
@@ -38,7 +39,13 @@ public class Cli {
     }
 
     private static boolean isConfigFileRequired(final String[] args) {
-        return args.length <= 3;
+        for (final String argument : args) {
+            if (argument.equals("--" + CliKeys.CONFIG_FILE_PATH.name)
+                    || argument.equals("-" + CliKeys.CONFIG_FILE_PATH.shortName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static JsonObject parseCommandLineInputToJson(final CommandLine commandLine) {
@@ -89,15 +96,26 @@ public class Cli {
                 printVersion();
                 throw new ArgsExitGivenException("Version option was given.");
             }
+            final Boolean containsListExtractors = argument.equals("--list-extractors") || argument.equals("-le");
+            if (containsListExtractors) {
+                new ArchiveExtractorReporter().printAvailableExtractors();
+                throw new ArgsExitGivenException("List extractors option was given.");
+            }
         }
     }
 
     private static void printHelp(final Options options) {
-        final HelpFormatter formatter = new HelpFormatter();
-        formatter.setOptionComparator(null);
+        final HelpFormatter formatter = HelpFormatter.builder()
+                .setComparator((first, second) -> 0)
+                .setShowSince(false)
+                .get();
         final String usageExample = String.format("java --jar %s %s [options value]", JAR_FILE_NAME,
                 "");
-        formatter.printHelp(100, usageExample, "\nOptions:\n", options, null);
+        try {
+            formatter.printHelp(usageExample, "\nOptions:\n", options, null, false);
+        } catch (final IOException e) {
+            throw new InputException("Unable to print help text.");
+        }
     }
 
     private static void printVersion() {

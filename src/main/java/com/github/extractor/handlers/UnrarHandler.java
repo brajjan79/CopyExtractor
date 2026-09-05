@@ -3,91 +3,63 @@ package com.github.extractor.handlers;
 import java.io.File;
 
 import com.github.extractor.configuration.Configuration;
+import com.github.extractor.extraction.ArchiveExtractor;
+import com.github.extractor.extraction.ArchiveExtractorSelector;
+import com.github.extractor.extraction.ConsoleProgressListener;
+import com.github.extractor.extraction.ExtractionResult;
+import com.github.extractor.extraction.ProgressListener;
 import com.github.extractor.models.Candidate;
 import com.github.extractor.models.StateConstants;
-import com.github.extractor.utils.AutoCloseableIterator;
-import com.github.extractor.utils.FileHeaderWrapper;
-import com.github.extractor.utils.FileProgressBar;
-import com.github.extractor.utils.JunrarWrapper;
-import com.github.filesize.FileSize;
-import com.github.junrar.exception.RarException;
 
+/**
+ * Coordinates archive extraction without depending on a specific backend.
+ */
 public class UnrarHandler {
 
-    private Configuration config;
+    private final Configuration config;
+    private final ArchiveExtractor archiveExtractor;
+    private final ProgressListener progressListener;
 
     public UnrarHandler() {
-        this.config = Configuration.getInstance();
+        this(Configuration.getInstance());
     }
 
-    public UnrarHandler(Configuration config) {
+    public UnrarHandler(final Configuration config) {
+        this(config, new ArchiveExtractorSelector().select(config.getArchiveExtractor()), new ConsoleProgressListener());
+    }
+
+    public UnrarHandler(final Configuration config, final ArchiveExtractor archiveExtractor,
+            final ProgressListener progressListener) {
         this.config = config;
+        this.archiveExtractor = archiveExtractor;
+        this.progressListener = progressListener;
     }
 
-    /**
-     * Extract rar-files in a candidate if any. Currently does not support RAR5.
-     *
-     * @param candidate
-     * @param dryRun
-     * @return
-     */
     public void unrarFiles(final Candidate candidate) {
-        for (final File file : candidate.filesToUnrar) {
-            try (AutoCloseableIterator<FileHeaderWrapper> fileHeaders = JunrarWrapper.getFileHeaderIterator(file)) {
-                processFileHeader(candidate, fileHeaders);
-            } catch (final Exception e) {
-                System.out.println("Failed to extract file: " + file.getName());
-                StateConstants.addFailure();
-                e.printStackTrace();
+        for (final File archive : candidate.filesToUnrar) {
+            if (config.isDryRun()) {
+                System.out.println("Should have extracted " + archive.getAbsolutePath() + " with "
+                        + archiveExtractor.getName());
                 continue;
             }
 
-        }
-
-    }
-
-    private void processFileHeader(final Candidate candidate, AutoCloseableIterator<FileHeaderWrapper> fileHeaders) throws RarException {
-        while (fileHeaders.hasNext()) {
-            final FileHeaderWrapper fileHeader = fileHeaders.next();
-            final File targetFile = fileHeader.getDestinationFile(candidate.targetDir);
-
-            if (validTargetFileExist(fileHeader, targetFile)) {
-                continue;
-            }
-            if (!config.isDryRun()) {
-                extractFileHeader(fileHeader, targetFile);
+            final ExtractionResult result = archiveExtractor.extract(archive, candidate.targetDir, progressListener);
+            if (result.isSuccess()) {
+                StateConstants.addSuccess();
+            } else {
+                reportFailure(archive, result);
             }
         }
     }
 
-    private boolean validTargetFileExist(final FileHeaderWrapper fileHeader, final File targetFile) {
-        if (targetFile.exists()) {
-            final double existingFileSize = FileSize.getBytes(targetFile);
-            if (existingFileSize >= fileHeader.getUnpackedSize()) {
-                System.out.println("The file '" +
-                        targetFile.getName() +
-                        "' already exists.");
-                StateConstants.addAlreadyExists();
-                return true;
-            }
+    private void reportFailure(final File archive, final ExtractionResult result) {
+        System.out.println("Failed to extract file with " + archiveExtractor.getName() + ": " + archive.getName());
+        if (!result.output().isBlank()) {
+            System.out.println(result.output());
         }
-        return false;
-    }
-
-    private void extractFileHeader(final FileHeaderWrapper fileHeader, final File targetFile) throws RarException {
-        final FileProgressBar fpb = FileProgressBar.build().trackedFile(targetFile).setAction("Extracting")
-                .expectedSize(fileHeader.getUnpackedSize());
-        fpb.start();
-
-        try {
-            fileHeader.extractFile(targetFile);
-            StateConstants.addSuccess();
-        } catch (final Exception e) {
-            StateConstants.addFailure();
-            e.printStackTrace();
-            fpb.complete();
-        } finally {
-            fpb.waitForCompletion();
+        if (result.cause() != null) {
+            result.cause().printStackTrace();
         }
+        StateConstants.addFailure();
     }
 }
