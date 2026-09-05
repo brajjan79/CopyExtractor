@@ -15,6 +15,7 @@ import org.apache.commons.cli.ParseException;
 import com.github.extractor.App;
 import com.github.extractor.exceptions.ArgsExitGivenException;
 import com.github.extractor.exceptions.InputException;
+import com.github.extractor.extraction.ArchiveExtractorReporter;
 import com.google.gson.JsonObject;
 
 public class Cli {
@@ -38,7 +39,13 @@ public class Cli {
     }
 
     private static boolean isConfigFileRequired(final String[] args) {
-        return args.length <= 3;
+        for (final String argument : args) {
+            if (argument.equals("--" + CliKeys.CONFIG_FILE_PATH.name)
+                    || argument.equals("-" + CliKeys.CONFIG_FILE_PATH.shortName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static JsonObject parseCommandLineInputToJson(final CommandLine commandLine) {
@@ -88,6 +95,11 @@ public class Cli {
             if (containsVersion) {
                 printVersion();
                 throw new ArgsExitGivenException("Version option was given.");
+            }
+            final Boolean containsListExtractors = argument.equals("--list-extractors") || argument.equals("-le");
+            if (containsListExtractors) {
+                new ArchiveExtractorReporter().printAvailableExtractors();
+                throw new ArgsExitGivenException("List extractors option was given.");
             }
         }
     }

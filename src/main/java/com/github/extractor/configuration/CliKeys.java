@@ -13,6 +13,9 @@ public enum CliKeys {
     CREATE_FOLDER("cf", "create-folder", "Create a folder if none exist for a file (only applicable for files in root dir)."),
     KEEP_FOLDER_STRUCTURE ("kfs", "keep-folder-structure", "Target dirs will keep the same folder structure as source."),
     DRY_RUN("d", "dry-run", "This means that no files are impacted or changed."),
+    ARCHIVE_EXTRACTOR("ae", "archive-extractor", true, "auto|unrar|7z|junrar",
+            "Archive extractor to use. Defaults to auto."),
+    LIST_EXTRACTORS("le", "list-extractors", "List available archive extractors."),
     VERSION("v", "version", "Print CopyExtractor version."),
     HELP("h", "help", "Prints this Help Text.");
 

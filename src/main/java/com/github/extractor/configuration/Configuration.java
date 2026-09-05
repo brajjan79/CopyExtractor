@@ -24,6 +24,7 @@ public class Configuration {
     private final boolean keepFolderStructure;
     private final boolean recursive;
     private boolean dryRun = false;
+    private String archiveExtractor = "auto";
 
 
     /**
@@ -110,6 +111,14 @@ public class Configuration {
 
     public void setDryRun(final boolean dryRun) {
         this.dryRun = dryRun;
+    }
+
+    public String getArchiveExtractor() {
+        return archiveExtractor == null || archiveExtractor.isBlank() ? "auto" : archiveExtractor;
+    }
+
+    public void setArchiveExtractor(final String archiveExtractor) {
+        this.archiveExtractor = archiveExtractor;
     }
 
     public boolean isKeepFolder() {
