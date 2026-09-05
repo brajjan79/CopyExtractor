@@ -5,9 +5,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedConstruction;
+import org.mockito.Mockito;
 
 import com.github.extractor.exceptions.ArgsExitGivenException;
 import com.github.extractor.exceptions.InputException;
+import com.github.extractor.extraction.ArchiveExtractorReporter;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
@@ -58,6 +61,26 @@ public class CliTest {
     }
 
     @Test
+    public void testListExtractorsOptionProvided() throws Throwable {
+        try (MockedConstruction<ArchiveExtractorReporter> reporter = Mockito.mockConstruction(
+                ArchiveExtractorReporter.class)) {
+            assertThrows(ArgsExitGivenException.class,
+                    () -> Cli.parseArgs(new String[] { "--" + CliKeys.LIST_EXTRACTORS.name }));
+            Mockito.verify(reporter.constructed().get(0)).printAvailableExtractors();
+        }
+    }
+
+    @Test
+    public void testShortListExtractorsOptionProvided() throws Throwable {
+        try (MockedConstruction<ArchiveExtractorReporter> reporter = Mockito.mockConstruction(
+                ArchiveExtractorReporter.class)) {
+            assertThrows(ArgsExitGivenException.class,
+                    () -> Cli.parseArgs(new String[] { "-" + CliKeys.LIST_EXTRACTORS.shortName }));
+            Mockito.verify(reporter.constructed().get(0)).printAvailableExtractors();
+        }
+    }
+
+    @Test
     public void testNoArgsProvided() throws Throwable {
         final String[] args = {};
         assertThrows(InputException.class, () -> {
@@ -97,6 +120,19 @@ public class CliTest {
     }
 
     @Test
+    public void testConfigFilePathWithExtractorProvided() throws Throwable {
+        final String[] args = {
+                FULL_NAME_DASHES + CliKeys.CONFIG_FILE_PATH.name, "/some/path",
+                FULL_NAME_DASHES + CliKeys.ARCHIVE_EXTRACTOR.name, "unrar"
+        };
+
+        final JsonObject inputConfig = Cli.parseArgs(args);
+
+        assertTrue(inputConfig.has(CliKeys.CONFIG_FILE_PATH.name));
+        assertTrue(inputConfig.get(CliKeys.ARCHIVE_EXTRACTOR.name).getAsString().equals("unrar"));
+    }
+
+    @Test
     public void testSourceAndTargetProvidedEtc() throws Throwable {
         final JsonObject expectedJson = getExpectedJson();
 
@@ -111,7 +147,8 @@ public class CliTest {
                 FULL_NAME_DASHES + CliKeys.KEEP_FOLDER.name,
                 FULL_NAME_DASHES + CliKeys.CREATE_FOLDER.name,
                 FULL_NAME_DASHES + CliKeys.KEEP_FOLDER_STRUCTURE.name,
-                FULL_NAME_DASHES + CliKeys.DRY_RUN.name
+                FULL_NAME_DASHES + CliKeys.DRY_RUN.name,
+                FULL_NAME_DASHES + CliKeys.ARCHIVE_EXTRACTOR.name, "unrar"
         };
         final JsonObject inputConfig = Cli.parseArgs(args);
 
@@ -133,7 +170,8 @@ public class CliTest {
                 SHORT_NAME_DASHES + CliKeys.KEEP_FOLDER.shortName,
                 SHORT_NAME_DASHES + CliKeys.CREATE_FOLDER.shortName,
                 SHORT_NAME_DASHES + CliKeys.KEEP_FOLDER_STRUCTURE.shortName,
-                SHORT_NAME_DASHES + CliKeys.DRY_RUN.shortName
+                SHORT_NAME_DASHES + CliKeys.DRY_RUN.shortName,
+                SHORT_NAME_DASHES + CliKeys.ARCHIVE_EXTRACTOR.shortName, "unrar"
         };
         final JsonObject inputConfig = Cli.parseArgs(args);
 
@@ -154,6 +192,7 @@ public class CliTest {
         expectedJson.add(CliKeys.CREATE_FOLDER.name, null);
         expectedJson.add(CliKeys.KEEP_FOLDER_STRUCTURE.name, null);
         expectedJson.add(CliKeys.DRY_RUN.name, null);
+        expectedJson.addProperty(CliKeys.ARCHIVE_EXTRACTOR.name, "unrar");
         return expectedJson;
     }
 

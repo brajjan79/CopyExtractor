@@ -19,6 +19,7 @@ public class ConfigFactory {
             if (cliOptions.has(CliKeys.DRY_RUN.name)) {
                 config.setDryRun(true);
             }
+            applyArchiveExtractor(cliOptions, config);
             return config;
         }
         final Configuration config = createFromConfigFilefromArguments(cliOptions);
@@ -45,7 +46,14 @@ public class ConfigFactory {
                 fileTypes, ignore, includeFolders, folders, groupByRegex, keepFolder, createFolder,
                 keepFolderStructure, recursive);
         config.setDryRun(cliOptions.has(CliKeys.DRY_RUN.name));
+        applyArchiveExtractor(cliOptions, config);
         return config;
+    }
+
+    private static void applyArchiveExtractor(final JsonObject cliOptions, final Configuration config) {
+        if (cliOptions.has(CliKeys.ARCHIVE_EXTRACTOR.name)) {
+            config.setArchiveExtractor(cliOptions.get(CliKeys.ARCHIVE_EXTRACTOR.name).getAsString());
+        }
     }
 
     private static List<ConfigFolder> getConfigFolder(final JsonObject cliOptions) {

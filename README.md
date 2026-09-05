@@ -6,9 +6,13 @@
 CopyExtractor scans a given folder for files to unrar or copy depending on the
 given configuration.
 
+Existing extracted files are preserved and are not overwritten. On Linux,
+automatic UnRAR detection requires the official RARLAB UnRAR; the legacy
+`unrar-free` 0.0.2 implementation is not considered compatible.
+
 **CopyExtractor can**:
 
--   extraxt rar files up to RAR 4
+-   extract RAR and RAR5 files
 
 -   copy any files based on the configured file types
 
@@ -20,8 +24,6 @@ given configuration.
 **CopyExtractor currently does not support**:
 
 -   copying only
-
--   RAR 5
 
 -   zip or anything that is not rar
 
@@ -57,6 +59,15 @@ Supported JAVA versions: 8 (probably), 17 (tested)
 # Display help text.
 java -jar \<some path\> CopyExtractor-\<version\>.jar --help
 
+# List archive extractors available on this machine.
+java -jar \<some path\> CopyExtractor-\<version\>.jar --list-extractors
+
+# Automatically use UnRAR, then 7-Zip, then Junrar.
+java -jar \<some path\> CopyExtractor-\<version\>.jar -f path/to/config_file.json --archive-extractor auto
+
+# Force a specific available extractor.
+java -jar \<some path\> CopyExtractor-\<version\>.jar -f path/to/config_file.json --archive-extractor unrar
+
 # Execute configuration
 java -jar \<some path\> CopyExtractor-\<version\>.jar -f path/to/config_file.json
 ```
@@ -78,8 +89,11 @@ Options:
  -kf,--keep-folder              Source folder will be kept.
  -cf,--create-folder            Create a folder if none exist for a file (only applicable for files
                                 in root dir).
+ -le,--list-extractors          List available archive extractors.
  -kfs,--keep-folder-structure   Target dirs will keep the same folder structure as source.
  -d,--dry-run                   This means that no files are impacted or changed.
+ -ae,--archive-extractor <auto|unrar|7z|junrar>
+                                Archive extractor to use. Defaults to auto.
  -v,--version                   Print CopyExtractor version.
  -h,--help                      Prints this Help Text
 ```
@@ -111,6 +125,8 @@ The configuration file is written in JSON format.
 
 -   **dryRun** boolean, Example: `true`. If **true** will only log action but none will be taken.
 
+-   **archiveExtractor** String, one of `auto`, `unrar`, `7z` or `junrar`. Defaults to `auto`.
+
 ```JSON
 # Note: Only folders are mandatory.
 {
@@ -139,6 +155,7 @@ The configuration file is written in JSON format.
     "createFolder": true, 
     "keepFolderStructure": false,
     "recursive": true,
-    "dryRun": false
+    "dryRun": false,
+    "archiveExtractor": "auto"
 }
 ```

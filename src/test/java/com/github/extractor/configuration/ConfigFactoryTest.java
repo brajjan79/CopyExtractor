@@ -35,6 +35,7 @@ public class ConfigFactoryTest {
         inputArgs.add(CliKeys.KEEP_FOLDER.name, null);
         inputArgs.add(CliKeys.KEEP_FOLDER_STRUCTURE.name, null);
         inputArgs.add(CliKeys.DRY_RUN.name, null);
+        inputArgs.addProperty(CliKeys.ARCHIVE_EXTRACTOR.name, "junrar");
 
         final Configuration config = ConfigFactory.createFromInputArgs(inputArgs);
 
@@ -47,6 +48,7 @@ public class ConfigFactoryTest {
         assertTrue(config.isKeepFolder());
         assertTrue(config.isKeepFolderStructure());
         assertTrue(config.isRecursive());
+        assertEquals("junrar", config.getArchiveExtractor());
     }
 
     @Test
@@ -66,6 +68,7 @@ public class ConfigFactoryTest {
         assertFalse(config.isKeepFolder());
         assertFalse(config.isKeepFolderStructure());
         assertFalse(config.isRecursive());
+        assertEquals("auto", config.getArchiveExtractor());
     }
 
     @Test
@@ -99,6 +102,7 @@ public class ConfigFactoryTest {
             final JsonObject inputArgs = new JsonObject();
             inputArgs.addProperty("config-file-path", "mocked");
             inputArgs.add("dry-run", null);
+            inputArgs.addProperty(CliKeys.ARCHIVE_EXTRACTOR.name, "7z");
             final Configuration config = ConfigFactory.createFromInputArgs(inputArgs);
 
             assertEquals(1, config.getFolders().size());
@@ -110,6 +114,7 @@ public class ConfigFactoryTest {
             assertTrue(config.isKeepFolder());
             assertTrue(config.isKeepFolderStructure());
             assertTrue(config.isRecursive());
+            assertEquals("7z", config.getArchiveExtractor());
         }
     }
 
