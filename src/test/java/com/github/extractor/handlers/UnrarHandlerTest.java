@@ -19,7 +19,6 @@ import org.mockito.MockedStatic;
 
 import com.github.extractor.configuration.Configuration;
 import com.github.extractor.extraction.ArchiveExtractor;
-import com.github.extractor.extraction.ExtractionProgress;
 import com.github.extractor.extraction.ExtractionResult;
 import com.github.extractor.extraction.ProgressListener;
 import com.github.extractor.models.Candidate;
