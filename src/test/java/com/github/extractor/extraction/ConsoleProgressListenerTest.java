@@ -1,6 +1,7 @@
 package com.github.extractor.extraction;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -42,7 +43,7 @@ class ConsoleProgressListenerTest {
     @Test
     void shouldSupportDefaultOutput() {
         try (ConsoleProgressListener listener = new ConsoleProgressListener()) {
-            listener.close();
+            assertDoesNotThrow(listener::close);
         }
     }
 }

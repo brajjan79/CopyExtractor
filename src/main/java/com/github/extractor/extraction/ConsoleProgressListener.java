@@ -35,6 +35,7 @@ public class ConsoleProgressListener implements ProgressListener, AutoCloseable 
         switch (progress.phase()) {
             case TESTING, EXTRACTING -> startOrUpdate(progress);
             case COMPLETED, FAILED -> finish(progress);
+            default -> throw new IllegalArgumentException("Unsupported extraction phase: " + progress.phase());
         }
     }
 

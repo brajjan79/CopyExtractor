@@ -1,5 +1,7 @@
 package com.github.extractor.handlers;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -51,7 +53,7 @@ class UnrarHandlerTest {
         when(archiveExtractor.extract(any(File.class), any(File.class), any(ProgressListener.class)))
                 .thenReturn(new ExtractionResult(ExtractionResult.Status.SUCCESS, 0, "", null));
 
-        new UnrarHandler(config, archiveExtractor, progressListener).unrarFiles(candidate);
+        assertDoesNotThrow(() -> new UnrarHandler(config, archiveExtractor, progressListener).unrarFiles(candidate));
 
         verify(archiveExtractor).extract(candidate.filesToUnrar.get(0), candidate.targetDir, progressListener);
         stateConstants.verify(StateConstants::addSuccess);
@@ -64,7 +66,7 @@ class UnrarHandlerTest {
         when(archiveExtractor.extract(any(File.class), any(File.class), any(ProgressListener.class)))
                 .thenReturn(new ExtractionResult(ExtractionResult.Status.ARCHIVE_ERROR, 2, "CRC error", cause));
 
-        new UnrarHandler(config, archiveExtractor, progressListener).unrarFiles(candidate);
+        assertDoesNotThrow(() -> new UnrarHandler(config, archiveExtractor, progressListener).unrarFiles(candidate));
 
         stateConstants.verify(StateConstants::addFailure);
     }
@@ -84,8 +86,8 @@ class UnrarHandlerTest {
         final Configuration singleton = mock(Configuration.class);
         try (MockedStatic<Configuration> configuration = mockStatic(Configuration.class)) {
             configuration.when(Configuration::getInstance).thenReturn(singleton);
-            new UnrarHandler();
+            assertNotNull(new UnrarHandler());
         }
-        new UnrarHandler(config);
+        assertNotNull(new UnrarHandler(config));
     }
 }

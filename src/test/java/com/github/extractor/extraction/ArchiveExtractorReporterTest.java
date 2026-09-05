@@ -1,6 +1,7 @@
 package com.github.extractor.extraction;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,6 +35,6 @@ class ArchiveExtractorReporterTest {
 
     @Test
     void shouldSupportDefaultReporter() {
-        new ArchiveExtractorReporter();
+        assertNotNull(new ArchiveExtractorReporter());
     }
 }
