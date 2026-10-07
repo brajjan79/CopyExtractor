@@ -1,6 +1,6 @@
 package com.github.extractor;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -60,15 +60,13 @@ public class ExecutorTest {
         dirs.close();
     }
 
-    /**
-     * Just for 100% test coverage.
-     */
     @Test
     public void testInit() {
-        try {
-            new Executor();
-        } catch (final Exception e) {
-            fail("Failed to initiate");
+        try (MockedStatic<Configuration> configuration = mockStatic(Configuration.class)) {
+            configuration.when(Configuration::getInstance).thenReturn(mockConfig);
+            when(mockConfig.getArchiveExtractor()).thenReturn("junrar");
+
+            assertDoesNotThrow(() -> new Executor());
         }
     }
 
